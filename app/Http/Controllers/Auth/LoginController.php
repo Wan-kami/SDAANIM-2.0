@@ -29,7 +29,6 @@ class LoginController extends Controller
 
             // Redirect based on role
             return match ($user->role) {
-                'Administrador' => redirect()->route('admin.dashboard'),
                 'Voluntario' => redirect()->route('volunteer.dashboard'),
                 'Veterinario' => redirect()->route('vet.dashboard'),
                 'Adoptante' => redirect()->route('adopter.dashboard'),

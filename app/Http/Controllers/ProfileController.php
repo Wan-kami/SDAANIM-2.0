@@ -109,12 +109,4 @@ class ProfileController extends Controller
         return redirect('/')->with('success', 'Tu cuenta ha sido desactivada.');
     }
 
-    /**
-     * Admin Index for users.
-     */
-    public function adminIndex()
-    {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
-    }
 }

@@ -1,6 +1,5 @@
 @php
     $layout = match(Auth::user()->role) {
-        'Administrador' => 'layouts.admin.app',
         'Veterinario' => 'layouts.vet.app',
         'Adoptante' => 'layouts.adopter.app',
         default => 'layouts.volunteer.app',

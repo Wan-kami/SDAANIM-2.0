@@ -67,7 +67,6 @@ Route::middleware(['auth'])->group(function () {
     // REDIRECTION ROUTE (Universal Dashboard)
     Route::get('/dashboard', function () {
         return match (Auth::user()->role) {
-            'Administrador' => redirect()->route('admin.dashboard'),
             'Voluntario' => redirect()->route('volunteer.dashboard'),
             'Veterinario' => redirect()->route('vet.dashboard'),
             'Adoptante' => redirect()->route('adopter.dashboard'),
@@ -133,7 +132,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/historial/{animal_id}', [MedicalHistoryController::class, 'index'])->name('history');
         Route::post('/historial', [MedicalHistoryController::class, 'store'])->name('history.store');
 
-        // Vet tasks (tareas asignadas por el admin)
+        // Vet tasks (tareas asignadas)
         Route::get('/tareas', [TaskController::class, 'index'])->name('tasks');
         Route::get('/progreso', [TaskController::class, 'volunteerProgress'])->name('progress');
         Route::patch('/tareas/{id}/estado', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
@@ -145,46 +144,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/disponibilidad', [AvailabilityController::class, 'store'])->name('availability.store');
         Route::delete('/disponibilidad/{id}', [AvailabilityController::class, 'destroy'])->name('availability.destroy');
     });
-
-    // ADMIN PANEL
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
-        Route::resource('animals', AnimalController::class);
-        Route::resource('products', ProductController::class);
-        
-        // Orders management for admin
-        Route::get('/pedidos', [OrderController::class, 'history'])->name('orders.history');
-        Route::post('/pedidos/{ord_id}/recoger', [OrderController::class, 'markAsPickedUp'])->name('orders.mark-picked-up');
-        Route::post('/pedidos/{ord_id}/cancelar', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
-        Route::get('/solicitudes', [AdoptionController::class, 'adminIndex'])->name('requests.index');
-        Route::post('/solicitudes/{id}/approve', [AdoptionController::class, 'approve'])->name('requests.approve');
-        Route::post('/solicitudes/{id}/assign-volunteer', [AdoptionController::class, 'assignVolunteer'])->name('requests.assignVolunteer');
-        Route::post('/solicitudes/{id}/submit-report', [AdoptionController::class, 'submitReport'])->name('requests.submitReport');
-        Route::post('/solicitudes/{id}/decide', [AdoptionController::class, 'decide'])->name('requests.decide');
-        Route::get('/usuarios', [ProfileController::class, 'adminIndex'])->name('users.index');
-
-        // Admin Task management
-        Route::get('/tareas', [TaskController::class, 'adminIndex'])->name('tasks.index');
-        Route::post('/tareas', [TaskController::class, 'store'])->name('tasks.store');
-        Route::post('/tareas/{task}/assign-volunteer', [TaskController::class, 'assignVolunteer'])->name('tasks.assignVolunteer');
-        Route::get('/actividades', [TaskController::class, 'adminActivities'])->name('activities');
-
-        // Inscriptions (Vet/Volunteer requests)
-        Route::get('/inscripciones', [InscriptionController::class, 'adminIndex'])->name('inscriptions.index');
-        Route::post('/inscripciones/{id}/approve', [InscriptionController::class, 'approve'])->name('inscriptions.approve');
-        Route::post('/inscripciones/{id}/reject', [InscriptionController::class, 'reject'])->name('inscriptions.reject');
-
-        // Donaciones admin view
-        Route::get('/donaciones', [DonationController::class, 'adminIndex'])->name('donations.index');
-    });
-
-    // ADMIN: Task expiration (should run as scheduled command)
-    Route::post('/admin/orders/expire', function () {
-        OrderController::expireOldOrders();
-        return response()->json(['message' => 'Pedidos expirados procesados']);
-    })->middleware('admin')->name('admin.expire-orders');
 
     Route::post('/notificaciones/leer', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notificaciones.leer');
     Route::get('/notifications', function () {

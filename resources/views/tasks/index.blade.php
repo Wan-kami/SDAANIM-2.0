@@ -136,28 +136,8 @@
                         @endif
                     @endif
 
-                    {{-- Formulario especial para adopciones --}}
-                    @if(str_contains(strtolower($task->Tar_descripcion), 'seguimiento') || str_contains(strtolower($task->Tar_descripcion), 'adopción') || str_contains(strtolower($task->Tar_descripcion), 'visita'))
-                        @php
-                            $adoptionRequest = \App\Models\AdoptionRequest::where('Soli_voluntario', Auth::user()->Usu_documento)
-                                ->where('Soli_estado', 'En Revisión')
-                                ->first();
-                        @endphp
-                        @if($adoptionRequest && !$adoptionRequest->reporte_voluntario)
-                            <form action="{{ route('admin.requests.submitReport', $adoptionRequest->Soli_id) }}" method="POST" style="width: 100%; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
-                                @csrf
-                                <label style="font-size:0.9em; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Reporte de Visita de Adopción</label>
-                                <textarea name="reporte" rows="4" placeholder="Describe lo que observaste en el hogar del adoptante, condiciones, etc." required style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin-bottom: 10px;"></textarea>
-                                <div style="margin-bottom: 10px;">
-                                    <label><input type="radio" name="apto" value="1" required> Apto para adopción</label>
-                                    <label style="margin-left: 20px;"><input type="radio" name="apto" value="0" required> No apto para adopción</label>
-                                </div>
-                                <button style="background:#28a745;color:#fff;padding:10px 20px;border:none;border-radius:8px;cursor:pointer; font-weight: bold;">
-                                    ✓ Enviar Reporte
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route($routePrefix . '.tasks.complete', $task->Tar_id) }}" method="POST" style="width: 100%; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                    {{-- Formulario para completar tareas --}}
+                    <form action="{{ route($routePrefix . '.tasks.complete', $task->Tar_id) }}" method="POST" style="width: 100%; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
                                 @csrf
                                 <label style="font-size:0.9em; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Completar Tarea (Observaciones)</label>
                                 <div style="display:flex; gap:10px; flex-direction: column;">
@@ -179,7 +159,6 @@
                                 </button>
                             </div>
                         </form>
-                    @endif
 
                 @else
                     {{-- Editar Comentario --}}

@@ -131,7 +131,7 @@
     <!-- DEACTIVATE SECTION -->
     <div id="deactivate-section" class="profile-section" style="display: none; text-align: center; padding: 30px; background: #fef2f2; border-radius: 15px; border: 1px solid #fecaca;">
         <h3 style="color: #dc2626; margin-top: 0;">⚠️ Zona de Peligro</h3>
-        <p style="color: #7f1d1d; margin-bottom: 25px;">Si desactivas tu cuenta no podrás iniciar sesión hasta que un administrador la reactive.</p>
+        <p style="color: #7f1d1d; margin-bottom: 25px;">Si desactivas tu cuenta no podrás iniciar sesión hasta que sea reactivada.</p>
         <form action="{{ route('profile.deactivate') }}" method="POST" onsubmit="return confirm('¿Estás SEGURO de que deseas desactivar tu cuenta?');">
             @csrf
             <button type="submit" style="background: #dc2626; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer;">Desactivar Mi Cuenta</button>

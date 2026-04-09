@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('Usu_telefono');
-            $table->enum('role', ['Adoptante', 'Voluntario', 'Veterinario', 'Administrador']);
+            $table->enum('role', ['Adoptante', 'Voluntario', 'Veterinario']);
             $table->string('Usu_direccion');
             $table->string('password');
             $table->enum('status', ['Activo', 'Desactivado'])->nullable();
