@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/styles.css') }}">
     @yield('styles')
 </head>
 

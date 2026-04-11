@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MedicalHistory extends Model
+class Appointment extends Model
 {
-    protected $primaryKey = 'Hist_id';
-    protected $fillable = ['Anim_id', 'Usu_documento', 'Hist_fecha', 'Hist_diagnostico', 'Hist_tratamiento', 'Hist_observaciones'];
+    protected $table = 'citas';
+    protected $primaryKey = 'Cita_id';
+    protected $fillable = ['Anim_id', 'Usu_documento', 'Cita_fecha', 'Cita_motivo', 'Cita_estado'];
+    public $timestamps = false;
 
     public function animal()
     {
