@@ -32,7 +32,8 @@ class LoginController extends Controller
                 'Voluntario' => redirect()->route('volunteer.dashboard'),
                 'Veterinario' => redirect()->route('vet.dashboard'),
                 'Adoptante' => redirect()->route('adopter.dashboard'),
-                default => redirect()->to('/'),
+                'Administrador' => redirect()->route('admin.dashboard'),
+                default => redirect()->route('dashboard'),
             };
         }
 
