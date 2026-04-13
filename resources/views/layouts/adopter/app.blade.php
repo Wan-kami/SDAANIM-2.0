@@ -26,7 +26,6 @@
                 <a href="{{ route('adopta') }}">Adopta</a>
                 <a href="{{ route('products.public') }}">Productos</a>
                 <a href="{{ route('adopter.requests') }}">Solicitudes</a>
-                <a href="{{ route('adopter.donation.create') }}">Dona</a>
                 <div class="dropdown">
                     <a href="#" class="dropbtn">Apóyanos ▾</a>
                     <div class="dropdown-content">

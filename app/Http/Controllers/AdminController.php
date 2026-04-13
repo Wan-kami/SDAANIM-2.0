@@ -10,7 +10,6 @@ use App\Models\AdoptionRequest;
 use App\Models\AdoptionFollowup;
 use App\Models\Appointment;
 use App\Models\AboutPage;
-use App\Models\Donation;
 use App\Models\MedicalHistory;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -32,7 +31,6 @@ class AdminController extends Controller
             'volunteers' => User::where('role', 'Voluntario')->count(),
             'veterinarians' => User::where('role', 'Veterinario')->count(),
             'adoptants' => User::where('role', 'Adoptante')->count(),
-            'donations' => Donation::sum('Don_monto'),
             'tasks' => Task::where('Tar_estado', 'Pendiente')->count(),
         ];
 
@@ -525,15 +523,6 @@ class AdminController extends Controller
     }
 
 
-    // ==================== DONATIONS ====================
-    public function donations()
-    {
-        $donations = Donation::with(['user'])
-            ->orderBy('Don_fecha', 'DESC')
-            ->get();
-
-        return view('admin.donations.index', compact('donations'));
-    }
 
     // ==================== MEDICAL HISTORIES ====================
     public function medicalHistories()

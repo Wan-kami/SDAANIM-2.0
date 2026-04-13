@@ -144,12 +144,6 @@
             <a href="{{ route('adopter.requests') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center;">Ver Solicitudes</a>
         </div>
 
-        <div class="premium-card" style="text-align: center;">
-            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">❤️</span>
-            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Hacer Donación</h3>
-            <p style="color: #64748b; margin-bottom: 30px;">Tu aporte ayuda a comprar comida y medicinas para los que aún esperan.</p>
-            <a href="{{ route('adopter.donation.create') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center;">Donar Ahora</a>
-        </div>
     </div>
 
     <!-- MODAL -->

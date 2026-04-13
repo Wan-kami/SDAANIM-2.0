@@ -87,13 +87,6 @@
         </div>
 
 
-        <div class="admin-card">
-            <div class="icon">💰</div>
-            <h3>Donaciones</h3>
-            <p>Ver el historial de donaciones.</p>
-            <p><strong>Total: ${{ number_format($stats['donations'] ?? 0, 0) }}</strong></p>
-            <a href="{{ route('admin.donations') }}">Ver Donaciones</a>
-        </div>
 
         <div class="admin-card">
             <div class="icon">🏥</div>

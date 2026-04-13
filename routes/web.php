@@ -85,8 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mis-solicitudes', [AdoptionController::class, 'userRequests'])->name('requests');
         Route::get('/solicitar-adopcion/{animal_id}', [AdoptionController::class, 'create'])->name('adoption.create');
         Route::post('/solicitar-adopcion', [AdoptionController::class, 'store'])->name('adoption.store');
-        Route::get('/donar', [DonationController::class, 'create'])->name('donation.create');
-        Route::post('/donar', [DonationController::class, 'store'])->name('donation.store');
     });
 
     // CART ROUTES (all authenticated users)
@@ -232,8 +230,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/tasks/{id}/status', [AdminController::class, 'updateTaskStatus'])->name('tasks.updateStatus');
 
 
-        // Donations
-        Route::get('/donations', [AdminController::class, 'donations'])->name('donations');
 
         // Medical Histories
         Route::get('/medical', [AdminController::class, 'medicalHistories'])->name('medical');
