@@ -86,12 +86,6 @@
             <a href="{{ route('admin.tasks') }}">Ver Tareas</a>
         </div>
 
-        <div class="admin-card">
-            <div class="icon">📦</div>
-            <h3>Reservas</h3>
-            <p>Gestionar las reservas de productos.</p>
-            <a href="{{ route('admin.reservations') }}">Ver Reservas</a>
-        </div>
 
         <div class="admin-card">
             <div class="icon">💰</div>

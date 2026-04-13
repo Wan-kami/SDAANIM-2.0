@@ -13,9 +13,16 @@
             <label for="Usu_documento">Asignar a:</label>
             <select name="Usu_documento" id="Usu_documento" required>
                 <option value="">Seleccionar usuario</option>
-                @foreach($users as $user)
-                <option value="{{ $user->Usu_documento }}">{{ $user->name }} ({{ $user->role }})</option>
-                @endforeach
+                <optgroup label="Voluntarios">
+                    @foreach($users->where('role', 'Voluntario') as $user)
+                    <option value="{{ $user->Usu_documento }}">{{ $user->name }}</option>
+                    @endforeach
+                </optgroup>
+                <optgroup label="Veterinarios">
+                    @foreach($users->where('role', 'Veterinario') as $user)
+                    <option value="{{ $user->Usu_documento }}">{{ $user->name }}</option>
+                    @endforeach
+                </optgroup>
             </select>
 
             <label for="Tar_titulo">Título:</label>

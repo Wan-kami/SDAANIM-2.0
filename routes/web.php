@@ -25,7 +25,8 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/quienes-somos', function () {
-    return view('public.about');
+    $about = \App\Models\AboutPage::first();
+    return view('public.about', compact('about'));
 })->name('about');
 Route::get('/adopta', [AnimalController::class, 'publicIndex'])->name('adopta');
 Route::get('/animal/{id}', [AnimalController::class, 'show'])->name('animal.show');
@@ -230,10 +231,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/tasks', [AdminController::class, 'storeTask'])->name('tasks.store');
         Route::put('/tasks/{id}/status', [AdminController::class, 'updateTaskStatus'])->name('tasks.updateStatus');
 
-        // Reservations
-        Route::get('/reservations', [AdminController::class, 'reservations'])->name('reservations');
-        Route::get('/reservations/{id}/paid', [AdminController::class, 'markAsPaid'])->name('reservations.paid');
-        Route::get('/reservations/{id}/cancel', [AdminController::class, 'cancelReservation'])->name('reservations.cancel');
 
         // Donations
         Route::get('/donations', [AdminController::class, 'donations'])->name('donations');

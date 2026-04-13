@@ -9,7 +9,6 @@ use App\Models\Inscription;
 use App\Models\AdoptionRequest;
 use App\Models\AdoptionFollowup;
 use App\Models\Appointment;
-use App\Models\Reservation;
 use App\Models\AboutPage;
 use App\Models\Donation;
 use App\Models\MedicalHistory;
@@ -17,6 +16,10 @@ use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Mail\InscriptionStatusMail;
 
 class AdminController extends Controller
 {
@@ -315,6 +318,7 @@ class AdminController extends Controller
     public function processVeterinarian(Request $request)
     {
         $inscription = Inscription::findOrFail($request->id);
+        $password = null;
 
         if ($request->accion === 'aceptar') {
             $inscription->update(['ins_estado' => 'Aprobada']);
@@ -322,12 +326,28 @@ class AdminController extends Controller
             $user = User::where('Usu_documento', $inscription->ins_documento)->first();
             if ($user) {
                 $user->update(['role' => 'Veterinario']);
+            } else {
+                // Crear usuario si no existe
+                $password = Str::random(10);
+                $user = User::create([
+                    'Usu_documento' => $inscription->ins_documento,
+                    'name' => $inscription->ins_nombre,
+                    'email' => $inscription->ins_email,
+                    'Usu_telefono' => $inscription->ins_telefono,
+                    'role' => 'Veterinario',
+                    'password' => Hash::make($password),
+                    'status' => 'Activo',
+                ]);
             }
+            
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Veterinario', $inscription->ins_nombre, $password));
+
         } elseif ($request->accion === 'rechazar') {
             $inscription->update(['ins_estado' => 'Rechazada']);
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Veterinario', $inscription->ins_nombre));
         }
 
-        return redirect()->back()->with('success', 'Acción realizada correctamente.');
+        return redirect()->back()->with('success', 'Acción realizada y notificación enviada.');
     }
 
     public function volunteers()
@@ -339,6 +359,7 @@ class AdminController extends Controller
     public function processVolunteer(Request $request)
     {
         $inscription = Inscription::findOrFail($request->id);
+        $password = null;
 
         if ($request->accion === 'aceptar') {
             $inscription->update(['ins_estado' => 'Aprobada']);
@@ -346,18 +367,34 @@ class AdminController extends Controller
             $user = User::where('Usu_documento', $inscription->ins_documento)->first();
             if ($user) {
                 $user->update(['role' => 'Voluntario']);
+            } else {
+                // Crear usuario si no existe
+                $password = Str::random(10);
+                $user = User::create([
+                    'Usu_documento' => $inscription->ins_documento,
+                    'name' => $inscription->ins_nombre,
+                    'email' => $inscription->ins_email,
+                    'Usu_telefono' => $inscription->ins_telefono,
+                    'role' => 'Voluntario',
+                    'password' => Hash::make($password),
+                    'status' => 'Activo',
+                ]);
             }
+
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Voluntario', $inscription->ins_nombre, $password));
+
         } elseif ($request->accion === 'rechazar') {
             $inscription->update(['ins_estado' => 'Rechazada']);
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Voluntario', $inscription->ins_nombre));
         }
 
-        return redirect()->back()->with('success', 'Acción realizada correctamente.');
+        return redirect()->back()->with('success', 'Acción realizada y notificación enviada.');
     }
 
     // ==================== ADOPTIONS ====================
     public function adoptions()
     {
-        $adoptions = AdoptionRequest::with(['animal', 'user', 'followups'])
+        $adoptions = AdoptionRequest::with(['animal', 'user', 'followups', 'volunteer'])
             ->orderBy('Soli_fecha', 'DESC')
             ->get();
 
@@ -487,37 +524,6 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Estado de tarea actualizado.');
     }
 
-    // ==================== RESERVATIONS ====================
-    public function reservations()
-    {
-        $reservations = Reservation::with(['user', 'product'])
-            ->orderBy('re_fecha', 'DESC')
-            ->get();
-
-        return view('admin.reservations.index', compact('reservations'));
-    }
-
-    public function markAsPaid($id)
-    {
-        $reservation = Reservation::findOrFail($id);
-        $reservation->update(['re_estado' => 'Pagado']);
-
-        return redirect()->route('admin.reservations')->with('success', 'Reserva marcada como pagada.');
-    }
-
-    public function cancelReservation($id)
-    {
-        $reservation = Reservation::findOrFail($id);
-
-        $product = Product::find($reservation->prod_id);
-        if ($product) {
-            $product->increment('prod_cantidad');
-        }
-
-        $reservation->update(['re_estado' => 'Cancelado']);
-
-        return redirect()->route('admin.reservations')->with('success', 'Reserva cancelada.');
-    }
 
     // ==================== DONATIONS ====================
     public function donations()

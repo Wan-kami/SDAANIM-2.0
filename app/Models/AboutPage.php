@@ -10,4 +10,7 @@ class AboutPage extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['mision', 'vision', 'valores'];
     public $timestamps = false;
+    protected $casts = [
+        'valores' => 'array',
+    ];
 }
