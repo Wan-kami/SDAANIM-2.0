@@ -1,40 +1,48 @@
-@extends('layouts.admin.app')
-
-@section('title', 'Gestión de Animales | SDAANIM')
+@extends('layouts.app')
 
 @section('content')
-<div style="max-width: 1100px; margin: 30px auto; padding: 20px;">
-    <a href="{{ route('dashboard') }}" style="display: inline-block; margin-bottom: 20px; background: #f1f5f9; color: #475569; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold;">← Volver al Inicio</a>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2>Animales en el Refugio</h2>
-        <a href="{{ route('admin.animals.create') }}" style="background: #2e8b57; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none;">+ Agregar Animal</a>
-    </div>
-    
-    <div class="premium-grid">
-        @foreach($animals as $animal)
-            <div class="premium-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-                <div style="height: 220px; position: relative;">
-                    <img src="{{ asset('img/' . ($animal->Anim_foto ?? 'placeholder.jpg')) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    <div style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 12px; border-radius: 20px; font-size: 0.75em; font-weight: 700; color: #2e8b57; border: 1px solid #eee;">
-                        {{ $animal->Anim_estado }}
-                    </div>
-                </div>
-                <div style="padding: 20px; flex-grow: 1;">
-                    <h3 style="margin: 0; font-size: 1.3em; color: #2c3e50;">{{ $animal->Anim_nombre }}</h3>
-                    <p style="color: #64748b; margin: 8px 0; font-size: 0.9em; line-height: 1.4;">
-                        {{ $animal->Anim_raza }} <br>
-                        {{ $animal->Anim_edad }}
-                    </p>
-                </div>
-                <div style="padding: 15px 20px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 10px;">
-                    <a href="{{ route('admin.animals.edit', $animal->Anim_id) }}" class="premium-btn" style="flex: 1; justify-content: center; background: #e0f2fe; color: #075985; font-size: 0.85em; padding: 6px;">Editar</a>
-                    <form action="{{ route('admin.animals.destroy', $animal->Anim_id) }}" method="POST" style="flex: 1;" onsubmit="return confirm('¿Eliminar?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="premium-btn" style="width: 100%; justify-content: center; background: #fee2e2; color: #991b1b; font-size: 0.85em; padding: 6px;">Borrar</button>
-                    </form>
-                </div>
+<main>
+    <a href="{{ route('admin.dashboard') }}" class="fancy-btn"><span>← Volver</span></a>
+    <h2>Gestión de Mascotas en Adopción</h2>
+    <p style="text-align:center;">Administra, edita o agrega nuevos amigos peludos 🐶🐾</p>
+
+    <div class="adopta-grid">
+        @forelse($animals as $animal)
+        <div class="adopta-card">
+            @if($animal->Anim_foto)
+            <img src="{{ asset('img/' . $animal->Anim_foto) }}" alt="{{ $animal->Anim_nombre }}">
+            @else
+            <img src="{{ asset('img/default.png') }}" alt="Sin imagen">
+            @endif
+            <h3>{{ $animal->Anim_nombre }}</h3>
+            <p>Raza: {{ $animal->Anim_raza }}</p>
+            <p>Edad: {{ $animal->Anim_edad }}</p>
+            <p>Estado: 
+                @if($animal->Anim_estado == 'Disponible')
+                <span style="color: #4CAF50; font-weight: bold;">{{ $animal->Anim_estado }}</span>
+                @elseif($animal->Anim_estado == 'Adoptado')
+                <span style="color: #2196F3; font-weight: bold;">{{ $animal->Anim_estado }}</span>
+                @else
+                <span style="color: #FFC107; font-weight: bold;">{{ $animal->Anim_estado }}</span>
+                @endif
+            </p>
+            <div style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="window.location.href='{{ route('admin.animals.edit', $animal->Anim_id) }}'">Editar</button>
+                <form action="{{ route('admin.animals.destroy', $animal->Anim_id) }}" method="POST" onsubmit="return confirm('¿Eliminar este animal?')" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="background-color: #dc3545;">Eliminar</button>
+                </form>
             </div>
-        @endforeach
+        </div>
+        @empty
+        <p style="text-align:center; grid-column: 1/-1;">No hay animales registrados aún 🐾</p>
+        @endforelse
+
+        <div class="adopta-card add-card" onclick="window.location.href='{{ route('admin.animals.create') }}'">
+            <img src="{{ asset('img/agregar.png') }}" alt="Agregar nuevo">
+            <h3>Agregar nueva mascota</h3>
+        </div>
     </div>
-</div>
+</main>
 @endsection

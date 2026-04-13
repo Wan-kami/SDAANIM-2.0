@@ -13,22 +13,28 @@
 
     <section class="seccion">
         <h3>🐶 Nuestra Misión</h3>
-        <p>Quitar la adopción responsable de animales rescatados, ofreciendo un sistema digital que optimice la gestión del refugio, facilite el acceso a la información de los animales en espera y agilice el proceso de adopción. Buscamos mejorar la calidad de vida de los peluditos y fomentar hogares responsables que les brinden amor y cuidado.</p>
+        <p>{{ $about->mision ?? 'Nuestra misión es fomentar la adopción responsable de animales rescatados, ofreciendo un sistema digital que optimice la gestión del refugio.' }}</p>
     </section>
 
     <section class="seccion">
         <h3>🌟 Nuestra Visión</h3>
-        <p>Para el año 2040 seremos una plataforma líder en adopción responsable de animales en Colombia, reconocida por su innovación tecnológica y su impacto social, expandiendo nuestra solución a múltiples refugios y convirtiéndonos en un referente en la protección animal y el bienestar comunitario.</p>
+        <p>{{ $about->vision ?? 'Nuestra visión es ser la plataforma líder en adopción responsable de animales en Colombia.' }}</p>
     </section>
 
     <section class="seccion valores">
         <h3>💡 Nuestros Valores</h3>
         <ul>
-            <li>Compromiso</li>
-            <li>Transparencia</li>
-            <li>Innovación tecnológica</li>
-            <li>Responsabilidad</li>
-            <li>Empatía</li>
+            @if(isset($about->valores) && is_array($about->valores))
+                @foreach($about->valores as $valor)
+                    <li>{{ $valor }}</li>
+                @endforeach
+            @else
+                <li>Compromiso</li>
+                <li>Transparencia</li>
+                <li>Innovación tecnológica</li>
+                <li>Responsabilidad</li>
+                <li>Empatía</li>
+            @endif
         </ul>
     </section>
 </main>

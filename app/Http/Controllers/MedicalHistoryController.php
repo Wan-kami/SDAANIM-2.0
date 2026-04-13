@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\MedicalHistory;
 use App\Models\Animal;
-use App\Models\Notification;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,19 +44,6 @@ class MedicalHistoryController extends Controller
             'Hist_tratamiento' => $data['His_tratamiento'],
             'Hist_observaciones' => $request->get('Hist_observaciones', null),
         ]);
-
-        // NOTIFY ADMIN IF URGENCY OR VACCINE
-        if (in_array($data['His_tipo'], ['Vacuna', 'Urgencia', 'Revision'])) {
-            $admin = User::where('role', 'Administrador')->first();
-            if ($admin) {
-                Notification::create([
-                    'Usu_documento' => $admin->Usu_documento,
-                    'Noti_mensaje' => "Nueva {$data['His_tipo']} registrada para {$animal->Anim_nombre} por Dr. " . Auth::user()->name,
-                    'Noti_fecha' => now(),
-                    'Noti_link' => route('admin.animals.index'),
-                ]);
-            }
-        }
 
         return back()->with('success', 'Historial médico actualizado.');
     }

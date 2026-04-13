@@ -8,6 +8,9 @@ class AdoptionRequest extends Model
 {
     protected $primaryKey = 'Soli_id';
     protected $fillable = ['Usu_documento', 'Anim_id', 'Soli_fecha', 'Soli_estado', 'Soli_voluntario', 'Soli_motivo', 'Soli_otras_mascotas', 'Soli_tipo_vivienda', 'Soli_tiempo_disponible', 'Soli_comentarios', 'visita_fecha', 'reporte_voluntario', 'apto'];
+    protected $casts = [
+        'Soli_fecha' => 'datetime',
+    ];
 
     public function user()
     {

@@ -23,7 +23,7 @@
                 <a href="{{ route('about') }}">Quienes somos</a>
                 <a href="{{ route('adopta') }}">Adopta</a>
                 <a href="{{ route('products.public') }}">Productos</a>
-                <a href="{{ route('adopter.donation.create') }}">Dona</a>
+
                 <div class="dropdown">
                     <a href="#" class="dropbtn">Apóyanos ▾</a>
                     <div class="dropdown-content">
@@ -58,45 +58,40 @@
     @endif
 
     <!-- LOGIN -->
-    <div class="login-container">
-        <h2>Inicia Sesión</h2>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <h2>Inicia Sesión</h2>
 
-        <form action="{{ route('login') }}" method="POST">
-            @csrf
-            <input
-                type="text"
-                name="Usu_documento"
-                placeholder="Número de Documento"
-                value="{{ old('Usu_documento') }}"
-                required
-                autofocus
-            />
-            @error('Usu_documento')
-                <p style="color: red; font-size: 0.8rem;">{{ $message }}</p>
-            @enderror
-
-            <div style="position: relative; width: 100%;">
+            <form action="{{ route('login') }}" method="POST">
+                @csrf
                 <input
-                    type="password"
-                    name="password"
-                    id="login-password"
-                    placeholder="Contraseña"
+                    type="text"
+                    name="Usu_documento"
+                    placeholder="Número de Documento"
+                    value="{{ old('Usu_documento') }}"
                     required
-                    style="width: 100%; padding-right: 42px;"
+                    autofocus
                 />
-                <button type="button" onclick="togglePasswordVisibility('login-password', this)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; font-size: 1.1rem;">👁️</button>
-            </div>
-            @error('password')
-                <p style="color: red; font-size: 0.8rem;">{{ $message }}</p>
-            @enderror
+                @error('Usu_documento')
+                    <p class="input-error">{{ $message }}</p>
+                @enderror
 
-            {{-- El rol se maneja automáticamente en el controlador tras el login, pero lo mantenemos visualmente si es necesario --}}
-            <select name="rol_visual" disabled title="El rol se detectará automáticamente">
-                <option value="">Tu rol se detectará al entrar</option>
-            </select>
+                <div class="password-field">
+                    <input
+                        type="password"
+                        name="password"
+                        id="login-password"
+                        placeholder="Contraseña"
+                        required
+                    />
+                    <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="eye-toggle">👁️</button>
+                </div>
+                @error('password')
+                    <p class="input-error">{{ $message }}</p>
+                @enderror
 
-            <button type="submit" class="btn" name="login">Ingresar</button>
-        </form>
+                <button type="submit" class="btn" name="login">Ingresar</button>
+            </form>
 
         <button type="button" class="forgot-password-link" onclick="openModal('forgot')">¿Has olvidado la contraseña?</button>
 
@@ -107,8 +102,8 @@
 
         <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
 
-        <br><br>
         <a href="{{ url('/') }}" class="btn volver-btn">Regresar</a>
+        </div>
     </div>
 
     <div id="forgotModal" class="modal-overlay">

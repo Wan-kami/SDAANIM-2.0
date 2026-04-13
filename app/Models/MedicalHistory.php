@@ -14,7 +14,7 @@ class MedicalHistory extends Model
         return $this->belongsTo(Animal::class, 'Anim_id', 'Anim_id');
     }
 
-    public function vet()
+    public function veterinarian()
     {
         return $this->belongsTo(User::class, 'Usu_documento', 'Usu_documento');
     }

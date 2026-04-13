@@ -359,7 +359,7 @@ CREATE TABLE `users` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Usu_telefono` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('Adoptante','Voluntario','Veterinario','Administrador') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` enum('Adoptante','Voluntario','Veterinario') COLLATE utf8mb4_unicode_ci NOT NULL,
   `Usu_direccion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Usu_foto` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,

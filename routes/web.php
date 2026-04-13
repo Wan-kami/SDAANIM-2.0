@@ -16,6 +16,7 @@ use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\InscriptionController;
+use App\Http\Controllers\AdminController;
 
 // --- GUEST / PUBLIC ROUTES ---
 Route::get('/', function () {
@@ -24,7 +25,8 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/quienes-somos', function () {
-    return view('public.about');
+    $about = \App\Models\AboutPage::first();
+    return view('public.about', compact('about'));
 })->name('about');
 Route::get('/adopta', [AnimalController::class, 'publicIndex'])->name('adopta');
 Route::get('/animal/{id}', [AnimalController::class, 'show'])->name('animal.show');
@@ -67,10 +69,10 @@ Route::middleware(['auth'])->group(function () {
     // REDIRECTION ROUTE (Universal Dashboard)
     Route::get('/dashboard', function () {
         return match (Auth::user()->role) {
-            'Administrador' => redirect()->route('admin.dashboard'),
             'Voluntario' => redirect()->route('volunteer.dashboard'),
             'Veterinario' => redirect()->route('vet.dashboard'),
             'Adoptante' => redirect()->route('adopter.dashboard'),
+            'Administrador' => redirect()->route('admin.dashboard'),
             default => redirect('/'),
         };
     })->name('dashboard');
@@ -83,8 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mis-solicitudes', [AdoptionController::class, 'userRequests'])->name('requests');
         Route::get('/solicitar-adopcion/{animal_id}', [AdoptionController::class, 'create'])->name('adoption.create');
         Route::post('/solicitar-adopcion', [AdoptionController::class, 'store'])->name('adoption.store');
-        Route::get('/donar', [DonationController::class, 'create'])->name('donation.create');
-        Route::post('/donar', [DonationController::class, 'store'])->name('donation.store');
     });
 
     // CART ROUTES (all authenticated users)
@@ -133,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/historial/{animal_id}', [MedicalHistoryController::class, 'index'])->name('history');
         Route::post('/historial', [MedicalHistoryController::class, 'store'])->name('history.store');
 
-        // Vet tasks (tareas asignadas por el admin)
+        // Vet tasks (tareas asignadas)
         Route::get('/tareas', [TaskController::class, 'index'])->name('tasks');
         Route::get('/progreso', [TaskController::class, 'volunteerProgress'])->name('progress');
         Route::patch('/tareas/{id}/estado', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
@@ -145,46 +145,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/disponibilidad', [AvailabilityController::class, 'store'])->name('availability.store');
         Route::delete('/disponibilidad/{id}', [AvailabilityController::class, 'destroy'])->name('availability.destroy');
     });
-
-    // ADMIN PANEL
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
-        Route::resource('animals', AnimalController::class);
-        Route::resource('products', ProductController::class);
-        
-        // Orders management for admin
-        Route::get('/pedidos', [OrderController::class, 'history'])->name('orders.history');
-        Route::post('/pedidos/{ord_id}/recoger', [OrderController::class, 'markAsPickedUp'])->name('orders.mark-picked-up');
-        Route::post('/pedidos/{ord_id}/cancelar', [OrderController::class, 'cancelOrder'])->name('orders.cancel');
-        Route::get('/solicitudes', [AdoptionController::class, 'adminIndex'])->name('requests.index');
-        Route::post('/solicitudes/{id}/approve', [AdoptionController::class, 'approve'])->name('requests.approve');
-        Route::post('/solicitudes/{id}/assign-volunteer', [AdoptionController::class, 'assignVolunteer'])->name('requests.assignVolunteer');
-        Route::post('/solicitudes/{id}/submit-report', [AdoptionController::class, 'submitReport'])->name('requests.submitReport');
-        Route::post('/solicitudes/{id}/decide', [AdoptionController::class, 'decide'])->name('requests.decide');
-        Route::get('/usuarios', [ProfileController::class, 'adminIndex'])->name('users.index');
-
-        // Admin Task management
-        Route::get('/tareas', [TaskController::class, 'adminIndex'])->name('tasks.index');
-        Route::post('/tareas', [TaskController::class, 'store'])->name('tasks.store');
-        Route::post('/tareas/{task}/assign-volunteer', [TaskController::class, 'assignVolunteer'])->name('tasks.assignVolunteer');
-        Route::get('/actividades', [TaskController::class, 'adminActivities'])->name('activities');
-
-        // Inscriptions (Vet/Volunteer requests)
-        Route::get('/inscripciones', [InscriptionController::class, 'adminIndex'])->name('inscriptions.index');
-        Route::post('/inscripciones/{id}/approve', [InscriptionController::class, 'approve'])->name('inscriptions.approve');
-        Route::post('/inscripciones/{id}/reject', [InscriptionController::class, 'reject'])->name('inscriptions.reject');
-
-        // Donaciones admin view
-        Route::get('/donaciones', [DonationController::class, 'adminIndex'])->name('donations.index');
-    });
-
-    // ADMIN: Task expiration (should run as scheduled command)
-    Route::post('/admin/orders/expire', function () {
-        OrderController::expireOldOrders();
-        return response()->json(['message' => 'Pedidos expirados procesados']);
-    })->middleware('admin')->name('admin.expire-orders');
 
     Route::post('/notificaciones/leer', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notificaciones.leer');
     Route::get('/notifications', function () {
@@ -201,4 +161,87 @@ Route::middleware(['auth'])->group(function () {
         $notification->delete();
         return back()->with('success', 'Notificación eliminada.');
     })->name('notifications.delete');
+
+    // PROFILE ROUTES
+    Route::get('/perfil', function () {
+        return view('profile.show');
+    })->name('profile.show');
+
+    // ADMIN PANEL
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+        // Animals CRUD
+        Route::get('/animals', [AdminController::class, 'animals'])->name('animals');
+        Route::get('/animals/create', [AdminController::class, 'createAnimal'])->name('animals.create');
+        Route::post('/animals', [AdminController::class, 'storeAnimal'])->name('animals.store');
+        Route::get('/animals/{id}/edit', [AdminController::class, 'editAnimal'])->name('animals.edit');
+        Route::put('/animals/{id}', [AdminController::class, 'updateAnimal'])->name('animals.update');
+        Route::delete('/animals/{id}', [AdminController::class, 'destroyAnimal'])->name('animals.destroy');
+
+        // Products CRUD
+        Route::get('/products', [AdminController::class, 'products'])->name('products');
+        Route::get('/products/create', [AdminController::class, 'createProduct'])->name('products.create');
+        Route::get('/products/{id}/edit', [AdminController::class, 'editProduct'])->name('products.edit');
+        Route::post('/products', [AdminController::class, 'storeProduct'])->name('products.store');
+        Route::put('/products/{id}', [AdminController::class, 'updateProduct'])->name('products.update');
+        Route::delete('/products/{id}', [AdminController::class, 'destroyProduct'])->name('products.destroy');
+
+        // Appointments
+        Route::get('/appointments', [AdminController::class, 'appointments'])->name('appointments');
+        Route::post('/appointments', [AdminController::class, 'storeAppointment'])->name('appointments.store');
+        Route::put('/appointments/{id}/status', [AdminController::class, 'updateAppointmentStatus'])->name('appointments.updateStatus');
+
+        // About Page
+        Route::get('/about', [AdminController::class, 'about'])->name('about');
+        Route::put('/about', [AdminController::class, 'updateAbout'])->name('about.update');
+
+        // Users Management
+        Route::get('/adoptants', [AdminController::class, 'adoptants'])->name('adoptants');
+        Route::put('/users/{id}/role', [AdminController::class, 'updateUserRole'])->name('users.role');
+        Route::put('/users/{id}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
+        Route::put('/users/{id}/activate', [AdminController::class, 'activateUser'])->name('users.activate');
+
+        // Veterinarians (inscriptions)
+        Route::get('/veterinarians', [AdminController::class, 'veterinarians'])->name('veterinarians');
+        Route::post('/veterinarians/process', [AdminController::class, 'processVeterinarian'])->name('veterinarians.process');
+
+        // Volunteers (inscriptions)
+        Route::get('/volunteers', [AdminController::class, 'volunteers'])->name('volunteers');
+        Route::post('/volunteers/process', [AdminController::class, 'processVolunteer'])->name('volunteers.process');
+
+        // Adoptions
+        Route::get('/adoptions', [AdminController::class, 'adoptions'])->name('adoptions');
+        Route::get('/adoptions/all', [AdminController::class, 'allAdoptions'])->name('adoptions.all');
+        Route::get('/adoptions/{id}', [AdminController::class, 'adoptions'])->name('adoptions.show');
+        Route::get('/adoptions/{id}/assign', [AdminController::class, 'showAssignVolunteer'])->name('adoptions.assign');
+        Route::post('/adoptions/assign', [AdminController::class, 'assignVolunteer'])->name('adoptions.assign.store');
+        Route::get('/adoptions/{id}/approve', [AdminController::class, 'approveAdoption'])->name('adoptions.approve');
+        Route::get('/adoptions/{id}/reject', [AdminController::class, 'rejectAdoption'])->name('adoptions.reject');
+
+        // Followups
+        Route::get('/adoptions/{soliId}/followup', [AdminController::class, 'createFollowup'])->name('adoptions.followup.create');
+        Route::post('/adoptions/{soliId}/followup', [AdminController::class, 'storeFollowup'])->name('adoptions.followup.store');
+
+        // Tasks
+        Route::get('/tasks', [AdminController::class, 'tasks'])->name('tasks');
+        Route::get('/tasks/create', [AdminController::class, 'createTask'])->name('tasks.create');
+        Route::post('/tasks', [AdminController::class, 'storeTask'])->name('tasks.store');
+        Route::put('/tasks/{id}/status', [AdminController::class, 'updateTaskStatus'])->name('tasks.updateStatus');
+
+
+
+        // Medical Histories
+        Route::get('/medical', [AdminController::class, 'medicalHistories'])->name('medical');
+
+        // Notifications
+        Route::get('/notifications', [AdminController::class, 'notifications'])->name('notifications');
+        Route::delete('/notifications/{id}', [AdminController::class, 'deleteNotification'])->name('notifications.delete');
+    });
+
+    // PROFILE PASSWORD CHANGE
+    Route::get('/cambiar-password', function () {
+        return view('profile.password');
+    })->name('profile.password');
+    Route::put('/cambiar-password', [ProfileController::class, 'changePassword'])->name('profile.password.update');
 });
