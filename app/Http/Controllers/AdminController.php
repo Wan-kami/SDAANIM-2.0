@@ -287,6 +287,13 @@ class AdminController extends Controller
     public function about()
     {
         $about = AboutPage::first();
+        if (!$about) {
+            $about = AboutPage::create([
+                'mision' => 'Proteger y cuidar animales en situación de vulnerabilidad.',
+                'vision' => 'Ser un refugio modelo en la protección animal.',
+                'valores' => json_encode(['Compasión', 'Responsabilidad', 'Dedicación']),
+            ]);
+        }
         return view('admin.about', compact('about'));
     }
 
@@ -345,8 +352,9 @@ class AdminController extends Controller
     // ==================== INSCRIPTIONS ====================
     public function veterinarians()
     {
-        $veterinarians = Inscription::where('ins_tipo_rol', 'veterinario')->get();
-        return view('admin.veterinarians.index', compact('veterinarians'));
+        $veterinarians = User::where('role', 'Veterinario')->orderBy('name', 'ASC')->get();
+        $inscriptions = Inscription::where('ins_tipo_rol', 'veterinario')->where('ins_estado', 'Pendiente')->get();
+        return view('admin.veterinarians.index', compact('veterinarians', 'inscriptions'));
     }
 
     public function processVeterinarian(Request $request)
@@ -386,8 +394,9 @@ class AdminController extends Controller
 
     public function volunteers()
     {
-        $volunteers = Inscription::where('ins_tipo_rol', 'voluntario')->get();
-        return view('admin.volunteers.index', compact('volunteers'));
+        $volunteers = User::where('role', 'Voluntario')->orderBy('name', 'ASC')->get();
+        $inscriptions = Inscription::where('ins_tipo_rol', 'voluntario')->where('ins_estado', 'Pendiente')->get();
+        return view('admin.volunteers.index', compact('volunteers', 'inscriptions'));
     }
 
     public function processVolunteer(Request $request)

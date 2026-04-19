@@ -1,10 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<main>
-    <a href="{{ route('admin.dashboard') }}" class="fancy-btn"><span>← Volver</span></a>
-    <h2>Gestión productos para mascotas</h2>
-    <p style="text-align:center;">Administra los productos o accesorios para las mascotas</p>
+<main class="products-main">
+    <!-- Professional Header -->
+    <div class="professional-header-prod">
+        <div class="header-content-prod">
+            <a href="{{ route('admin.dashboard') }}" class="btn-back-prod" title="Volver al Panel">
+                <span class="back-icon-prod">←</span>
+            </a>
+            <div>
+                <h1>📦 Gestión de Productos</h1>
+                <p class="subtitle">Administra los productos y accesorios para las mascotas</p>
+            </div>
+        </div>
+    </div>
 
     <div class="adopta-grid">
         @forelse($products as $product)
@@ -37,4 +46,68 @@
         </div>
     </div>
 </main>
+
+<style>
+    .products-main {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Professional Header Styles */
+    .professional-header-prod {
+        margin-bottom: 2rem;
+    }
+
+    .header-content-prod {
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    .header-content-prod h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+        margin: 0 0 0.5rem 0;
+        font-weight: 700;
+    }
+
+    .header-content-prod .subtitle {
+        font-size: 0.95rem;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Back Button */
+    .btn-back-prod {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 50%;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-back-prod:hover {
+        background: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+        transform: scale(1.1);
+    }
+
+    .back-icon-prod {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
 @endsection

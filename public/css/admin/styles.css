@@ -1,12 +1,6 @@
 /* Admin Panel Styles */
 
-.admin-header {
-    background: linear-gradient(90deg, #2e8b57, #4caf50);
-}
-
-.admin-header h2 {
-    color: black !important;
-}
+/* Note: Header styling is now in layouts/app.blade.php for consistency */
 
 .admin-sections {
     display: grid;

@@ -1,56 +1,495 @@
 @extends('layouts.app')
 
 @section('content')
-<main>
-    <a href="{{ route('admin.dashboard') }}" class="fancy-btn"><span>← Volver</span></a>
+<div class="tasks-container">
+    <!-- Header Section -->
+    <div class="tasks-header-wrapper">
+        <div class="tasks-header">
+            <div class="header-content">
+                <a href="{{ route('admin.dashboard') }}" class="btn-back">
+                    <span class="back-icon">←</span>
+                </a>
+                <div>
+                    <h1>📊 Gestión de Tareas</h1>
+                    <p class="subtitle">Crea, organiza y monitorea las tareas del sistema</p>
+                </div>
+            </div>
+            <a href="{{ route('admin.tasks.create') }}" class="btn-create">
+                <span class="btn-icon">+</span> Nueva Tarea
+            </a>
+        </div>
+    </div>
 
-    <h2>Tareas</h2>
-
+    <!-- Success Alert -->
     @if(session('success'))
-    <p class="mensaje">{{ session('success') }}</p>
+    <div class="alert alert-success">
+        <div class="alert-icon">✅</div>
+        <div class="alert-content">
+            <strong>¡Éxito!</strong>
+            <p>{{ session('success') }}</p>
+        </div>
+    </div>
     @endif
 
-    <a href="{{ route('admin.tasks.create') }}" class="fancy-btn" style="background-color: #4CAF50; color: white; margin-bottom: 20px;">+ Nueva Tarea</a>
-
+    <!-- Tasks Table Card -->
     @if($tasks->count() > 0)
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Título</th>
-                <th>Asignado a</th>
-                <th>Fecha Límite</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($tasks as $task)
-            <tr>
-                <td>{{ $task->Tar_id }}</td>
-                <td>{{ $task->Tar_titulo }}</td>
-                <td>{{ $task->user->name ?? 'N/A' }}</td>
-                <td>{{ $task->Tar_fecha_limite }}</td>
-                <td>
-                    <form action="{{ route('admin.tasks.updateStatus', $task->Tar_id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        <select name="Tar_estado" onchange="this.form.submit()" style="padding: 5px; border-radius: 4px;">
-                            <option value="Pendiente" {{ $task->Tar_estado == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
-                            <option value="Observación" {{ $task->Tar_estado == 'Observación' ? 'selected' : '' }}>Observación</option>
-                            <option value="En Proceso" {{ $task->Tar_estado == 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
-                            <option value="Completado" {{ $task->Tar_estado == 'Completado' ? 'selected' : '' }}>Completado</option>
-                        </select>
-                    </form>
-                </td>
-                <td>
-                    <a href="{{ route('admin.tasks') }}" style="padding: 5px 10px;">Ver</a>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-card">
+        <table class="tasks-table">
+            <thead>
+                <tr>
+                    <th class="col-id">#ID</th>
+                    <th class="col-title">Título</th>
+                    <th class="col-assigned">Asignado a</th>
+                    <th class="col-date">Fecha Límite</th>
+                    <th class="col-status">Estado</th>
+                    <th class="col-actions">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tasks as $task)
+                <tr class="task-row">
+                    <td class="col-id"><span class="task-id">#{{ $task->Tar_id }}</span></td>
+                    <td class="col-title">
+                        <div class="task-title-cell">
+                            <strong>{{ $task->Tar_titulo }}</strong>
+                        </div>
+                    </td>
+                    <td class="col-assigned">
+                        <div class="user-badge">
+                            <span class="avatar">{{ substr($task->user->name ?? 'N/A', 0, 1) }}</span>
+                            <span class="name">{{ $task->user->name ?? 'N/A' }}</span>
+                        </div>
+                    </td>
+                    <td class="col-date">
+                        <span class="date-badge">{{ \Carbon\Carbon::parse($task->Tar_fecha_limite)->format('d/m/Y') }}</span>
+                    </td>
+                    <td class="col-status">
+                        <form action="{{ route('admin.tasks.updateStatus', $task->Tar_id) }}" method="POST" class="status-form">
+                            @csrf
+                            <select name="Tar_estado" class="status-select status-{{ strtolower(str_replace(' ', '-', $task->Tar_estado)) }}" onchange="this.form.submit()">
+                                <option value="Pendiente" {{ $task->Tar_estado == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                <option value="Observación" {{ $task->Tar_estado == 'Observación' ? 'selected' : '' }}>Observación</option>
+                                <option value="En Proceso" {{ $task->Tar_estado == 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
+                                <option value="Completado" {{ $task->Tar_estado == 'Completado' ? 'selected' : '' }}>Completado</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td class="col-actions">
+                        <a href="{{ route('admin.tasks') }}" class="btn-action btn-view" title="Ver detalles">
+                            <span>👁️</span> Ver
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     @else
-    <p class="no-users">No hay tareas registradas.</p>
+    <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No hay tareas registradas</h3>
+        <p>Crea una nueva tarea para comenzar a organizar el trabajo de tu fundación.</p>
+        <a href="{{ route('admin.tasks.create') }}" class="btn-create">
+            <span class="btn-icon">+</span> Crear Primera Tarea
+        </a>
+    </div>
     @endif
-</main>
+</div>
+
+<style>
+    .tasks-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    /* Header Styles */
+    .tasks-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex: 1;
+    }
+
+    .header-content h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+        margin: 0 0 0.5rem 0;
+        font-weight: 700;
+    }
+
+    .subtitle {
+        font-size: 0.95rem;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Create Button */
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        border: none;
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Back Button */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 50%;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-back:hover {
+        background: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+        transform: scale(1.1);
+    }
+
+    .back-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Header Wrapper */
+    .tasks-header-wrapper {
+        margin-bottom: 2rem;
+    }
+
+    .btn-icon {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* Success Alert */
+    .alert {
+        margin-bottom: 2rem;
+        padding: 1.2rem;
+        border-radius: 12px;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        animation: slideInDown 0.4s ease;
+    }
+
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-success {
+        background: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .alert-content strong {
+        color: #2e7d32;
+        display: block;
+        margin-bottom: 0.3rem;
+    }
+
+    .alert-content p {
+        color: #558b2f;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    /* Table Card */
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    /* Table Styles */
+    .tasks-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .tasks-table thead {
+        background: linear-gradient(135deg, #f8fbf8 0%, #f0f8f0 100%);
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .tasks-table th {
+        padding: 1.2rem;
+        text-align: left;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .col-id { width: 70px; }
+    .col-title { flex: 1; }
+    .col-assigned { width: 180px; }
+    .col-date { width: 140px; }
+    .col-status { width: 150px; }
+    .col-actions { width: 120px; text-align: center; }
+
+    .task-row {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+    }
+
+    .task-row:hover {
+        background-color: #f9faf9;
+    }
+
+    .tasks-table td {
+        padding: 1rem 1.2rem;
+        vertical-align: middle;
+    }
+
+    .task-id {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .task-title-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .task-title-cell strong {
+        color: #1a1a1a;
+    }
+
+    /* User Badge */
+    .user-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4CAF50, #81C784);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .user-badge .name {
+        font-weight: 500;
+        color: #333;
+    }
+
+    /* Date Badge */
+    .date-badge {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Status Select */
+    .status-form {
+        display: inline;
+    }
+
+    .status-select {
+        padding: 0.5rem 0.8rem;
+        border: 2px solid #f0f0f0;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+    .status-select:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .status-select.status-pendiente {
+        background-color: #fff8e1;
+        color: #f57c00;
+        border-color: #f9a825;
+    }
+
+    .status-select.status-en-proceso {
+        background-color: #e1f5fe;
+        color: #0277bd;
+        border-color: #0277bd;
+    }
+
+    .status-select.status-observación {
+        background-color: #fce4ec;
+        color: #c2185b;
+        border-color: #c2185b;
+    }
+
+    .status-select.status-completado {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border-color: #4CAF50;
+    }
+
+    /* Action Buttons */
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: #f0f0f0;
+        color: #667;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-view:hover {
+        background: #4CAF50;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        font-size: 1.3rem;
+        color: #1a1a1a;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .empty-state p {
+        color: #666;
+        margin: 0 0 1.5rem 0;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .tasks-container {
+            padding: 1rem;
+        }
+
+        .tasks-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-content {
+            width: 100%;
+        }
+
+        .header-content h1 {
+            font-size: 1.5rem;
+        }
+
+        .btn-back {
+            margin-right: 0.5rem;
+        }
+
+        .col-title { display: none; }
+        .col-assigned { display: none; }
+
+        .task-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            padding: 1rem 0;
+        }
+
+        .tasks-table thead {
+            display: none;
+        }
+
+        .tasks-table td {
+            display: block;
+            text-align: right;
+            padding: 0.5rem 0;
+            border-bottom: none;
+        }
+
+        .tasks-table td:before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+        }
+    }
+</style>
 @endsection

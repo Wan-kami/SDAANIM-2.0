@@ -2,10 +2,17 @@
 
 @section('content')
 <div class="admin-container">
-    <div class="admin-header-actions">
-        <a href="{{ route('admin.dashboard') }}" class="fancy-btn secondary"><span>← Volver al Panel</span></a>
-        <h2>Gestión de Voluntarios</h2>
-        <p class="subtitle">Revisa y procesa las solicitudes de personas que quieren ayudar a la fundación 🐾</p>
+    <!-- Professional Header -->
+    <div class="professional-header">
+        <div class="header-content-vol">
+            <a href="{{ route('admin.dashboard') }}" class="btn-back-vol" title="Volver al Panel">
+                <span class="back-icon-vol">←</span>
+            </a>
+            <div>
+                <h1>👥 Gestión de Voluntarios</h1>
+                <p class="subtitle">Revisa y procesa las solicitudes de personas que quieren ayudar a la fundación</p>
+            </div>
+        </div>
     </div>
 
     @if(session('success'))
@@ -15,89 +22,141 @@
     </div>
     @endif
 
-    <div class="table-wrapper box-shadow">
-        @if($volunteers->count() > 0)
-        <table class="modern-table">
-            <thead>
-                <tr>
-                    <th>Postulante</th>
-                    <th>Contacto</th>
-                    <th>Tipo de Ayuda</th>
-                    <th width="200">Comentario</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($volunteers as $vol)
-                <tr>
-                    <td>
-                        <div class="user-info-cell">
-                            <div class="user-avatar-mini">{{ substr($vol->ins_nombre, 0, 1) }}</div>
-                            <div>
-                                <span class="user-name">{{ $vol->ins_nombre }}</span>
-                                <span class="user-id">CC: {{ $vol->ins_documento }}</span>
+    @if($volunteers->count() > 0)
+    <div style="margin-bottom: 3rem;">
+        <h3 style="font-size: 1.3rem; color: #4CAF50; margin-bottom: 1.5rem;">✓ Voluntarios Activos ({{ $volunteers->count() }})</h3>
+        <div class="table-wrapper box-shadow">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Contacto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($volunteers as $vol)
+                    <tr>
+                        <td>
+                            <div class="user-info-cell">
+                                <div class="user-avatar-mini">{{ substr($vol->name, 0, 1) }}</div>
+                                <div>
+                                    <span class="user-name">{{ $vol->name }}</span>
+                                    <span class="user-id">CC: {{ $vol->Usu_documento }}</span>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="contact-info-cell">
-                            <span>📧 {{ $vol->ins_email }}</span>
-                            <span>📱 {{ $vol->ins_telefono }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="category-tag">{{ $vol->ins_tipo_ayuda }}</span>
-                    </td>
-                    <td>
-                        <p class="table-text-muted" title="{{ $vol->ins_comentario }}">
-                            {{ Str::limit($vol->ins_comentario, 60) }}
-                        </p>
-                    </td>
-                    <td>
-                        @if($vol->ins_estado == 'Pendiente')
-                            <span class="status-badge warning">Pendiente</span>
-                        @elseif($vol->ins_estado == 'Aprobada')
-                            <span class="status-badge success">Aprobada</span>
-                        @else
-                            <span class="status-badge danger">Rechazada</span>
-                        @endif
-                    </td>
-                    <td>
-                        <div class="action-buttons">
-                            @if($vol->ins_estado == 'Pendiente')
-                            <form action="{{ route('admin.volunteers.process') }}" method="POST" class="inline-form">
-                                @csrf
-                                <input type="hidden" name="id" value="{{ $vol->ins_id }}">
-                                <input type="hidden" name="accion" value="aceptar">
-                                <button type="submit" class="btn-icon approve" title="Aceptar Postulación">
-                                    <i class="fas fa-check"></i> Aceptar
-                                </button>
-                            </form>
-                            <form action="{{ route('admin.volunteers.process') }}" method="POST" class="inline-form">
-                                @csrf
-                                <input type="hidden" name="id" value="{{ $vol->ins_id }}">
-                                <input type="hidden" name="accion" value="rechazar">
-                                <button type="submit" class="btn-icon reject" title="Rechazar Postulación">
-                                    <i class="fas fa-times"></i> Rechazar
-                                </button>
-                            </form>
-                            @else
-                                <span class="text-muted">Procesada</span>
-                            @endif
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        @else
-        <div class="empty-state">
-            <img src="{{ asset('img/empty-volunteers.png') }}" alt="No hay voluntarios" style="width: 150px; opacity: 0.5;">
-            <p>No hay voluntarios postulados actualmente.</p>
+                        </td>
+                        <td>
+                            <div class="contact-info-cell">
+                                <span>📧 {{ $vol->email }}</span>
+                                <span>📱 {{ $vol->Usu_telefono }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge success">{{ $vol->status }}</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                @if($vol->status === 'Activo')
+                                <form action="{{ route('admin.users.deactivate', $vol->Usu_documento) }}" method="POST" class="inline-form" onsubmit="return confirm('¿Desactivar este voluntario?');">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn-icon reject">
+                                        <i class="fas fa-ban"></i> Desactivar
+                                    </button>
+                                </form>
+                                @else
+                                <form action="{{ route('admin.users.activate', $vol->Usu_documento) }}" method="POST" class="inline-form" onsubmit="return confirm('¿Activar este voluntario?');">
+                                    @csrf
+                                    @method('PUT')
+                                    <button type="submit" class="btn-icon approve">
+                                        <i class="fas fa-check"></i> Activar
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-        @endif
     </div>
+    @endif
+
+    @if($inscriptions->count() > 0)
+    <div>
+        <h3 style="font-size: 1.3rem; color: #1976d2; margin-bottom: 1.5rem;">⏳ Solicitudes Pendientes ({{ $inscriptions->count() }})</h3>
+        <div class="table-wrapper box-shadow">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Postulante</th>
+                        <th>Contacto</th>
+                        <th>Tipo de Ayuda</th>
+                        <th width="200">Comentario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($inscriptions as $vol)
+                    <tr>
+                        <td>
+                            <div class="user-info-cell">
+                                <div class="user-avatar-mini">{{ substr($vol->ins_nombre, 0, 1) }}</div>
+                                <div>
+                                    <span class="user-name">{{ $vol->ins_nombre }}</span>
+                                    <span class="user-id">CC: {{ $vol->ins_documento }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="contact-info-cell">
+                                <span>📧 {{ $vol->ins_email }}</span>
+                                <span>📱 {{ $vol->ins_telefono }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="category-tag">{{ $vol->ins_tipo_ayuda }}</span>
+                        </td>
+                        <td>
+                            <p class="table-text-muted" title="{{ $vol->ins_comentario }}">
+                                {{ Str::limit($vol->ins_comentario, 60) }}
+                            </p>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <form action="{{ route('admin.volunteers.process') }}" method="POST" class="inline-form">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $vol->ins_id }}">
+                                    <input type="hidden" name="accion" value="aceptar">
+                                    <button type="submit" class="btn-icon approve" title="Aceptar Postulación">
+                                        <i class="fas fa-check"></i> Aceptar
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.volunteers.process') }}" method="POST" class="inline-form">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $vol->ins_id }}">
+                                    <input type="hidden" name="accion" value="rechazar">
+                                    <button type="submit" class="btn-icon reject" title="Rechazar Postulación">
+                                        <i class="fas fa-times"></i> Rechazar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @elseif($volunteers->count() == 0)
+    <div class="empty-state">
+        <img src="{{ asset('img/empty-volunteers.png') }}" alt="No hay voluntarios" style="width: 150px; opacity: 0.5;">
+        <p>No hay voluntarios registrados actualmente.</p>
+    </div>
+    @endif
 </div>
 
 <style>
@@ -241,6 +300,64 @@
         padding: 4rem;
         text-align: center;
         color: #999;
+    }
+    .inline-form {
+        display: inline;
+    }
+
+    /* Professional Header Styles */
+    .professional-header {
+        margin-bottom: 2rem;
+    }
+
+    .header-content-vol {
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    .header-content-vol h1 {
+        font-size: 2rem;
+        color: #1a1a1a;
+        margin: 0 0 0.5rem 0;
+        font-weight: 700;
+    }
+
+    .header-content-vol .subtitle {
+        font-size: 0.95rem;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Back Button */
+    .btn-back-vol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        border-radius: 50%;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+        border: 2px solid #e0e0e0;
+    }
+
+    .btn-back-vol:hover {
+        background: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+        transform: scale(1.1);
+    }
+
+    .back-icon-vol {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 @endsection

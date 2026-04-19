@@ -26,6 +26,13 @@ Route::get('/', function () {
 
 Route::get('/quienes-somos', function () {
     $about = \App\Models\AboutPage::first();
+    if (!$about) {
+        $about = \App\Models\AboutPage::create([
+            'mision' => 'Proteger y cuidar animales en situación de vulnerabilidad.',
+            'vision' => 'Ser un refugio modelo en la protección animal.',
+            'valores' => json_encode(['Compasión', 'Responsabilidad', 'Dedicación']),
+        ]);
+    }
     return view('public.about', compact('about'));
 })->name('about');
 Route::get('/adopta', [AnimalController::class, 'publicIndex'])->name('adopta');

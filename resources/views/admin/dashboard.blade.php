@@ -1,16 +1,8 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="admin-header">
-    <div class="logo">
-        <img src="{{ asset('img/a.png') }}" alt="Logo">
-        <h2>Panel Administrador</h2>
-    </div>
-    <div>
-        <button class="notif-toggle" onclick="toggleSidebar()">🔔 Notificaciones</button>
-    </div>
-</div>
+@section('panel-title', 'Panel Administrador')
 
+@section('content')
 <div id="notifSidebar" class="notif-sidebar">
     <button class="close-btn" onclick="toggleSidebar()">✖</button>
     <h3>Notificaciones</h3>
@@ -72,13 +64,6 @@
         </div>
 
         <div class="admin-card">
-            <div class="icon">📅</div>
-            <h3>Citas Veterinarias</h3>
-            <p>Agenda y gestiona las citas veterinarias.</p>
-            <a href="{{ route('admin.appointments') }}">Ver Citas</a>
-        </div>
-
-        <div class="admin-card">
             <div class="icon">📊</div>
             <h3>Tareas</h3>
             <p>Gestiona las tareas del sistema.</p>
@@ -108,10 +93,4 @@
     <p>© 2025 Esperanza Animal BQ | Panel Administrador</p>
 </footer>
 
-<script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById("notifSidebar");
-        sidebar.classList.toggle("active");
-    }
-</script>
 @endsection
