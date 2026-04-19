@@ -46,10 +46,10 @@
         <p style="text-align:center; grid-column: 1/-1;">No hay animales registrados aún 🐾</p>
         @endforelse
 
-        <div class="adopta-card add-card" onclick="window.location.href='{{ route('admin.animals.create') }}'">
+        <a href="{{ route('admin.animals.create') }}" class="adopta-card add-card">
             <img src="{{ asset('img/agregar.png') }}" alt="Agregar nuevo">
             <h3>Agregar nueva mascota</h3>
-        </div>
+        </a>
     </div>
 </main>
 
