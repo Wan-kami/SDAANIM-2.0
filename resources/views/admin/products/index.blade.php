@@ -40,10 +40,10 @@
         <p style="text-align:center; grid-column: 1/-1;">No hay productos registrados aún 🐾</p>
         @endforelse
 
-        <div class="adopta-card add-card" onclick="window.location.href='{{ route('admin.products.create') }}'">
+        <a href="{{ route('admin.products.create') }}" class="adopta-card add-card">
             <img src="{{ asset('img/agregar.png') }}" alt="Agregar nuevo">
             <h3>Agregar nuevo producto</h3>
-        </div>
+        </a>
     </div>
 </main>
 

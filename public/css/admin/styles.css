@@ -117,6 +117,8 @@
     cursor: pointer;
     transition: 0.3s;
     min-height: 380px;
+    text-decoration: none;
+    color: inherit;
 }
 
 .add-card:hover {

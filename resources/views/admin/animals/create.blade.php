@@ -10,18 +10,28 @@
         <form action="{{ route('admin.animals.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
+            @if($errors->any())
+                <div class="form-errors-animals">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Row 1: Nombre y Raza -->
             <div class="form-row-animals">
                 <div class="form-group-animals">
                     <label for="Anim_nombre">🐾 Nombre del Animal</label>
                     <p class="field-description-animals">Nombre descriptivo del animal</p>
-                    <input type="text" id="Anim_nombre" name="Anim_nombre" placeholder="Ej. Luna" required>
+                    <input type="text" id="Anim_nombre" name="Anim_nombre" value="{{ old('Anim_nombre') }}" placeholder="Ej. Luna" required>
                 </div>
 
                 <div class="form-group-animals">
                     <label for="Anim_raza">🏷️ Raza</label>
                     <p class="field-description-animals">Raza del animal</p>
-                    <input type="text" id="Anim_raza" name="Anim_raza" placeholder="Ej. Pitbull" required>
+                    <input type="text" id="Anim_raza" name="Anim_raza" value="{{ old('Anim_raza') }}" placeholder="Ej. Pitbull" required>
                 </div>
             </div>
 
@@ -30,7 +40,7 @@
                 <div class="form-group-animals">
                     <label for="Anim_edad">📅 Edad</label>
                     <p class="field-description-animals">Edad del animal</p>
-                    <input type="text" id="Anim_edad" name="Anim_edad" placeholder="Ej. 3 años" required>
+                    <input type="text" id="Anim_edad" name="Anim_edad" value="{{ old('Anim_edad') }}" placeholder="Ej. 3 años" required>
                 </div>
 
                 <div class="form-group-animals">
@@ -38,8 +48,8 @@
                     <p class="field-description-animals">Selecciona el sexo</p>
                     <select id="Anim_sexo" name="Anim_sexo">
                         <option value="">Seleccionar sexo</option>
-                        <option value="Macho">Macho</option>
-                        <option value="Hembra">Hembra</option>
+                        <option value="Macho" {{ old('Anim_sexo') == 'Macho' ? 'selected' : '' }}>Macho</option>
+                        <option value="Hembra" {{ old('Anim_sexo') == 'Hembra' ? 'selected' : '' }}>Hembra</option>
                     </select>
                 </div>
             </div>
@@ -51,9 +61,9 @@
                     <p class="field-description-animals">Estado actual del animal</p>
                     <select id="Anim_estado" name="Anim_estado" required>
                         <option value="">Seleccionar estado</option>
-                        <option value="Disponible">Disponible</option>
-                        <option value="Adoptado">Adoptado</option>
-                        <option value="En proceso">En proceso</option>
+                        <option value="Disponible" {{ old('Anim_estado') == 'Disponible' ? 'selected' : '' }}>Disponible</option>
+                        <option value="Adoptado" {{ old('Anim_estado') == 'Adoptado' ? 'selected' : '' }}>Adoptado</option>
+                        <option value="En proceso" {{ old('Anim_estado') == 'En proceso' ? 'selected' : '' }}>En proceso</option>
                     </select>
                 </div>
             </div>
@@ -63,7 +73,7 @@
                 <div class="form-group-animals">
                     <label for="Anim_historia">📄 Historia del Animal</label>
                     <p class="field-description-animals">Describe el historial y características del animal</p>
-                    <textarea id="Anim_historia" name="Anim_historia" placeholder="Describe la historia del animal, comportamiento, características especiales..." rows="4"></textarea>
+                    <textarea id="Anim_historia" name="Anim_historia" placeholder="Describe la historia del animal, comportamiento, características especiales..." rows="4">{{ old('Anim_historia') }}</textarea>
                 </div>
             </div>
 
@@ -72,10 +82,10 @@
                 <div class="form-group-animals">
                     <label for="Anim_foto">🖼️ Fotografia del Animal</label>
                     <p class="field-description-animals">Sube una foto clara del animal</p>
-                    <div class="file-input-wrapper-animals">
+                    <label for="Anim_foto" class="file-input-wrapper-animals">
                         <input type="file" id="Anim_foto" name="Anim_foto" accept="image/*" required>
                         <span class="file-input-label-animals">Selecciona una imagen</span>
-                    </div>
+                    </label>
                 </div>
             </div>
 
@@ -225,6 +235,28 @@
         color: #4CAF50;
         font-weight: 600;
         pointer-events: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+    }
+
+    .form-errors-animals {
+        background: #ffe4e6;
+        border: 1px solid #f8b4b4;
+        color: #991b1b;
+        padding: 1rem 1.2rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-errors-animals ul {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .form-errors-animals li {
+        margin-bottom: 0.5rem;
     }
 
     /* Action Buttons */
@@ -307,4 +339,20 @@
     }
 </style>
 
-@endsection
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('Anim_foto');
+        var labelText = document.querySelector('.file-input-label-animals');
+
+        if (fileInput && labelText) {
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files.length) {
+                    labelText.textContent = fileInput.files[0].name;
+                } else {
+                    labelText.textContent = 'Selecciona una imagen';
+                }
+            });
+        }
+    });
+</script>
+

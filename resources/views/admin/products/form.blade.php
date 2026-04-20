@@ -13,6 +13,16 @@
             @method('PUT')
             @endif
 
+            @if($errors->any())
+                <div class="form-errors">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Row 1: Nombre y Categoría -->
             <div class="form-row">
                 <div class="form-group">
@@ -26,11 +36,11 @@
                     <p class="field-description">Selecciona la categoría del producto</p>
                     <select id="prod_categoria" name="prod_categoria" required>
                         <option value="">Seleccionar categoría</option>
-                        <option value="Alimentos" {{ (isset($product) && $product->prod_categoria == 'Alimentos') ? 'selected' : '' }}>Alimentos</option>
-                        <option value="Juguetes" {{ (isset($product) && $product->prod_categoria == 'Juguetes') ? 'selected' : '' }}>Juguetes</option>
-                        <option value="Camas" {{ (isset($product) && $product->prod_categoria == 'Camas') ? 'selected' : '' }}>Camas</option>
-                        <option value="Accesorios" {{ (isset($product) && $product->prod_categoria == 'Accesorios') ? 'selected' : '' }}>Accesorios</option>
-                        <option value="Ropa" {{ (isset($product) && $product->prod_categoria == 'Ropa') ? 'selected' : '' }}>Ropa</option>
+                        <option value="Alimentos" {{ (isset($product) && $product->prod_categoria == 'Alimentos') || old('prod_categoria') == 'Alimentos' ? 'selected' : '' }}>Alimentos</option>
+                        <option value="Juguetes" {{ (isset($product) && $product->prod_categoria == 'Juguetes') || old('prod_categoria') == 'Juguetes' ? 'selected' : '' }}>Juguetes</option>
+                        <option value="Camas" {{ (isset($product) && $product->prod_categoria == 'Camas') || old('prod_categoria') == 'Camas' ? 'selected' : '' }}>Camas</option>
+                        <option value="Accesorios" {{ (isset($product) && $product->prod_categoria == 'Accesorios') || old('prod_categoria') == 'Accesorios' ? 'selected' : '' }}>Accesorios</option>
+                        <option value="Ropa" {{ (isset($product) && $product->prod_categoria == 'Ropa') || old('prod_categoria') == 'Ropa' ? 'selected' : '' }}>Ropa</option>
                     </select>
                 </div>
             </div>
@@ -67,10 +77,10 @@
                 <div class="form-group">
                     <label for="prod_imagen">🖼️ Imagen del Producto</label>
                     <p class="field-description">Sube una imagen para el producto</p>
-                    <div class="file-input-wrapper">
+                    <label for="prod_imagen" class="file-input-wrapper">
                         <input type="file" id="prod_imagen" name="prod_imagen" accept="image/*">
                         <span class="file-input-label">Selecciona una imagen</span>
-                    </div>
+                    </label>
 
                     @if(isset($product) && $product->prod_imagen)
                     <div class="current-image">
@@ -318,6 +328,31 @@
         border-color: #ccc;
     }
 
+    .form-errors {
+        background: #ffe4e6;
+        border: 1px solid #f8b4b4;
+        color: #991b1b;
+        padding: 1rem 1.2rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-errors ul {
+        margin: 0;
+        padding-left: 1.2rem;
+    }
+
+    .form-errors li {
+        margin-bottom: 0.5rem;
+    }
+
+    .file-input-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+    }
+
     /* Info Box */
     .info-box {
         background: linear-gradient(135deg, #fff8e1, #fffde7);
@@ -354,5 +389,22 @@
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('prod_imagen');
+        var labelText = document.querySelector('.file-input-label');
+
+        if (fileInput && labelText) {
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files.length) {
+                    labelText.textContent = fileInput.files[0].name;
+                } else {
+                    labelText.textContent = 'Selecciona una imagen';
+                }
+            });
+        }
+    });
+</script>
 
 @endsection
