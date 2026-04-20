@@ -1,46 +1,144 @@
 @extends('layouts.app')
 
 @section('content')
-<main>
-    <a href="{{ route('admin.adoptions') }}" class="fancy-btn"><span>← Volver</span></a>
+<main style="padding: 40px 20px; background: #f5f5f5; min-height: 100vh;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+        <!-- Back Button -->
+        <a href="{{ route('admin.adoptions') }}" style="display: inline-block; width: 45px; height: 45px; border-radius: 50%; background: #e8e8e8; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 30px; transition: all 0.3s; text-decoration: none; color: #333;" onmouseover="this.style.background='#2e8b57'; this.style.color='white';" onmouseout="this.style.background='#e8e8e8'; this.style.color='#333';">←</a>
 
-    <h2>Detalle de Solicitud #{{ $adoption->Soli_id }}</h2>
+        <!-- Header Card -->
+        <div style="background: linear-gradient(135deg, #2e8b57 0%, #4caf50 100%); border-radius: 8px; padding: 30px; color: white; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h1 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 600;">📋 Detalle de Solicitud #{{ $adoption->Soli_id }}</h1>
+            <p style="margin: 0; font-size: 14px; opacity: 0.9;">Información completa de la solicitud de adopción</p>
+        </div>
 
-    <div class="admin-form" style="max-width: 800px;">
-        <h3>Información del Solicitante</h3>
-        <p><strong>Nombre:</strong> {{ $adoption->user->name ?? 'N/A' }}</p>
-        <p><strong>Documento:</strong> {{ $adoption->Usu_documento }}</p>
-        <p><strong>Email:</strong> {{ $adoption->user->email ?? 'N/A' }}</p>
+        <!-- Status Badge -->
+        <div style="margin-bottom: 30px;">
+            @php
+                $statusColors = [
+                    'Pendiente' => '#FFC107',
+                    'En Revisión' => '#2196F3',
+                    'Aceptada' => '#4CAF50',
+                    'Rechazada' => '#f44336'
+                ];
+                $statusColor = $statusColors[$adoption->Soli_estado] ?? '#999';
+            @endphp
+            <span style="display: inline-block; background: {{ $statusColor }}; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                {{ $adoption->Soli_estado }}
+            </span>
+        </div>
 
-        <h3>Información del Animal</h3>
-        <p><strong>Nombre:</strong> {{ $adoption->animal->Anim_nombre ?? 'N/A' }}</p>
-        <p><strong>Raza:</strong> {{ $adoption->animal->Anim_raza ?? 'N/A' }}</p>
-        <p><strong>Edad:</strong> {{ $adoption->animal->Anim_edad ?? 'N/A' }}</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <!-- Solicitante Card -->
+            <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 15px;">👤 Información del Solicitante</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Nombre</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->user->name ?? 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Documento</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Usu_documento }}</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Email</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->user->email ?? 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
 
-        <h3>Detalles de la Solicitud</h3>
-        <p><strong>Fecha:</strong> {{ $adoption->Soli_fecha->format('d/m/Y H:i') }}</p>
-        <p><strong>Estado:</strong> {{ $adoption->Soli_estado }}</p>
-        <p><strong>Motivo:</strong> {{ $adoption->Soli_motivo ?? 'No especificado' }}</p>
-        <p><strong>Otras mascotas:</strong> {{ $adoption->Soli_otras_mascotas ?? 'No' }}</p>
-        <p><strong>Tipo de vivienda:</strong> {{ $adoption->Soli_tipo_vivienda ?? 'No especificado' }}</p>
-        <p><strong>Tiempo disponible:</strong> {{ $adoption->Soli_tiempo_disponible ?? 'No especificado' }}</p>
-        <p><strong>Comentarios:</strong> {{ $adoption->Soli_comentarios ?? 'Sin comentarios' }}</p>
+            <!-- Animal Card -->
+            <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 15px;">🐾 Información del Animal</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Nombre</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->animal->Anim_nombre ?? 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Raza</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->animal->Anim_raza ?? 'N/A' }}</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Edad</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->animal->Anim_edad ?? 'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Details Card -->
+        <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 15px;">📝 Detalles de la Solicitud</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Fecha</label>
+                    <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_fecha->format('d/m/Y H:i') }}</p>
+                </div>
+                <div>
+                    <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Motivo</label>
+                    <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_motivo ?? 'No especificado' }}</p>
+                </div>
+                <div>
+                    <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Otras mascotas</label>
+                    <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_otras_mascotas ?? 'No' }}</p>
+                </div>
+                <div>
+                    <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Tipo de vivienda</label>
+                    <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_tipo_vivienda ?? 'No especificado' }}</p>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Tiempo disponible</label>
+                <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_tiempo_disponible ?? 'No especificado' }}</p>
+            </div>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Comentarios</label>
+                <p style="margin: 5px 0 0 0; color: #333; font-size: 14px; line-height: 1.6;">{{ $adoption->Soli_comentarios ?? 'Sin comentarios' }}</p>
+            </div>
+        </div>
+
+        <!-- Volunteer Card (if assigned) -->
         @if($adoption->Soli_voluntario)
-        <h3>Seguimiento</h3>
-        <p><strong>Voluntario asignado:</strong> {{ $adoption->volunteer->name ?? 'N/A' }}</p>
+        <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 15px;">👨‍💼 Seguimiento</h3>
+            <div>
+                <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Voluntario asignado</label>
+                <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->volunteer->name ?? 'N/A' }}</p>
+            </div>
+        </div>
         @endif
 
-        <div style="margin-top: 20px;">
-            @if($adoption->Soli_estado == 'Pendiente')
-            <a href="{{ route('admin.adoptions.assign', $adoption->Soli_id) }}" class="btn-asignar" style="padding: 10px 20px;">Asignar Voluntario</a>
-            @endif
-            
-            @if($adoption->Soli_estado == 'En Revisión')
-            <a href="{{ route('admin.adoptions.approve', $adoption->Soli_id) }}" class="btn-ok" style="padding: 10px 20px;">Aprobar</a>
-            <a href="{{ route('admin.adoptions.reject', $adoption->Soli_id) }}" class="btn-cancel" style="padding: 10px 20px;">Rechazar</a>
-            @endif
+        <!-- Actions Card -->
+        <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 20px;">⚙️ Acciones</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                @if($adoption->Soli_estado == 'Pendiente')
+                <a href="{{ route('admin.adoptions.assign', $adoption->Soli_id) }}" style="background: #2196F3; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='#1976D2'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#2196F3'; this.style.transform='translateY(0)';">Asignar Voluntario</a>
+                @endif
+                
+                @if($adoption->Soli_estado == 'En Revisión')
+                <a href="{{ route('admin.adoptions.approve', $adoption->Soli_id) }}" style="background: #4CAF50; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='#388E3C'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#4CAF50'; this.style.transform='translateY(0)';">✓ Aprobar</a>
+                <a href="{{ route('admin.adoptions.reject', $adoption->Soli_id) }}" style="background: #f44336; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='#da190b'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#f44336'; this.style.transform='translateY(0)';">✕ Rechazar</a>
+                @endif
+
+                @if($adoption->Soli_estado == 'Aceptada' || $adoption->Soli_estado == 'En Revisión')
+                <a href="{{ route('admin.adoptions.followup.create', $adoption->Soli_id) }}" style="background: #FF9800; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='#F57C00'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#FF9800'; this.style.transform='translateY(0)';">+ Seguimiento</a>
+                @endif
+            </div>
         </div>
     </div>
 </main>
+
+<style>
+    @media (max-width: 768px) {
+        div[style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+        }
+        h1 {
+            font-size: 20px !important;
+        }
+    }
+</style>
 @endsection

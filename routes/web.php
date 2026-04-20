@@ -220,7 +220,7 @@ Route::middleware(['auth'])->group(function () {
         // Adoptions
         Route::get('/adoptions', [AdminController::class, 'adoptions'])->name('adoptions');
         Route::get('/adoptions/all', [AdminController::class, 'allAdoptions'])->name('adoptions.all');
-        Route::get('/adoptions/{id}', [AdminController::class, 'adoptions'])->name('adoptions.show');
+        Route::get('/adoptions/{id}', [AdminController::class, 'showAdoption'])->name('adoptions.show');
         Route::get('/adoptions/{id}/assign', [AdminController::class, 'showAssignVolunteer'])->name('adoptions.assign');
         Route::post('/adoptions/assign', [AdminController::class, 'assignVolunteer'])->name('adoptions.assign.store');
         Route::get('/adoptions/{id}/approve', [AdminController::class, 'approveAdoption'])->name('adoptions.approve');

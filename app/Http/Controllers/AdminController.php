@@ -12,6 +12,7 @@ use App\Models\Appointment;
 use App\Models\AboutPage;
 use App\Models\MedicalHistory;
 use App\Models\Task;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -367,7 +368,12 @@ class AdminController extends Controller
 
             $user = User::where('Usu_documento', $inscription->ins_documento)->first();
             if ($user) {
-                $user->update(['role' => 'Veterinario']);
+                // Actualizar rol explícitamente
+                $user->role = 'Veterinario';
+                $user->save();
+                
+                // Forzar recarga de la instancia
+                $user->refresh();
             } else {
                 // Crear usuario si no existe
                 $password = Str::random(10);
@@ -389,7 +395,7 @@ class AdminController extends Controller
             Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Veterinario', $inscription->ins_nombre));
         }
 
-        return redirect()->back()->with('success', 'Acción realizada y notificación enviada.');
+        return redirect()->back()->with('success', 'Veterinario procesado correctamente. El rol ha sido actualizado.');
     }
 
     public function volunteers()
@@ -409,7 +415,12 @@ class AdminController extends Controller
 
             $user = User::where('Usu_documento', $inscription->ins_documento)->first();
             if ($user) {
-                $user->update(['role' => 'Voluntario']);
+                // Actualizar rol explícitamente
+                $user->role = 'Voluntario';
+                $user->save();
+                
+                // Forzar recarga de la instancia
+                $user->refresh();
             } else {
                 // Crear usuario si no existe
                 $password = Str::random(10);
@@ -431,7 +442,7 @@ class AdminController extends Controller
             Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Voluntario', $inscription->ins_nombre));
         }
 
-        return redirect()->back()->with('success', 'Acción realizada y notificación enviada.');
+        return redirect()->back()->with('success', 'Voluntario procesado correctamente. El rol ha sido actualizado.');
     }
 
     // ==================== ADOPTIONS ====================
@@ -442,6 +453,14 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.adoptions.index', compact('adoptions'));
+    }
+
+    public function showAdoption($id)
+    {
+        $adoption = AdoptionRequest::with(['animal', 'user', 'followups', 'volunteer'])
+            ->findOrFail($id);
+
+        return view('admin.adoptions.show', compact('adoption'));
     }
 
     public function allAdoptions()
@@ -473,7 +492,31 @@ class AdminController extends Controller
             'Soli_voluntario' => $request->vol_id,
         ]);
 
-        return redirect()->route('admin.adoptions')->with('success', 'Voluntario asignado correctamente.');
+        // Crear tarea automáticamente para el voluntario
+        $animal = $adoption->animal;
+        $user = $adoption->user;
+        
+        Task::create([
+            'Usu_documento' => $request->vol_id,
+            'Tar_titulo' => 'Seguimiento de Adopción: ' . ($animal->Anim_nombre ?? 'Animal'),
+            'Tar_descripcion' => 'Realizar seguimiento de la solicitud de adopción de ' . ($user->name ?? 'Usuario') . ' para ' . ($animal->Anim_nombre ?? 'el animal') . '. Incluye entrevista, visita a domicilio y evaluación del hogar.',
+            'Tar_fecha_asignacion' => now(),
+            'Tar_fecha_limite' => now()->addDays(7),
+            'Tar_estado' => 'Pendiente',
+            'soli_id' => $request->Soli_id,
+        ]);
+
+        // Crear notificación para el voluntario
+        Notification::create([
+            'Usu_documento' => $request->vol_id,
+            'Noti_titulo' => 'Nueva solicitud de seguimiento de adopción',
+            'Noti_mensaje' => 'Se te ha asignado el seguimiento de la solicitud de adopción de ' . ($user->name ?? 'un usuario') . ' para ' . ($animal->Anim_nombre ?? 'un animal') . '. Accede a tus tareas asignadas.',
+            'Noti_tipo' => 'Adopción',
+            'Noti_fecha' => now(),
+            'Noti_leido' => false,
+        ]);
+
+        return redirect()->route('admin.adoptions')->with('success', 'Voluntario asignado correctamente y tarea de seguimiento creada.');
     }
 
     public function approveAdoption($id)

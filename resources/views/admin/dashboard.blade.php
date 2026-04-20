@@ -4,6 +4,20 @@
 
 @section('content')
 
+<!-- SweetAlert2 para mensaje de bienvenida -->
+@if(session('welcome'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            title: 'Bienvenido',
+            text: "{{ session('welcome') }}",
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#2e8b57'
+        });
+    </script>
+@endif
+
 <div class="dashboard-unified-container">
     <div class="section-header-premium">
         <h3 class="section-title">Gestión de SDAANIM</h3>
