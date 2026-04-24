@@ -20,7 +20,7 @@ use App\Http\Controllers\AdminController;
 
 // --- GUEST / PUBLIC ROUTES ---
 Route::get('/', function () {
-    $animals = Animal::latest()->take(6)->get();
+    $animals = Animal::where('Anim_estado', '!=', 'Adoptado')->latest()->take(6)->get();
     return view('welcome', compact('animals'));
 })->name('welcome');
 
