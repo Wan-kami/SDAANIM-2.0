@@ -36,7 +36,13 @@ class ProfileController extends Controller
         $data = $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users,email,' . $user->Usu_documento . ',Usu_documento',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=(?:.*\d){5})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\-_#]).{8,}$/',
+            ],
             'Usu_telefono' => 'nullable|string|max:15',
             'Usu_direccion' => 'nullable|string|max:255',
             'Usu_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif',
@@ -78,7 +84,15 @@ class ProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=(?:.*\d){5})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\-_#]).{8,}$/',
+            ],
+        ], [
+            'password.regex' => 'La contraseña debe tener mínimo 8 caracteres, al menos 5 números, 1 mayúscula, 1 minúscula y 1 carácter especial (@$!%*?&-_#).',
         ]);
 
         $user = Auth::user();
@@ -109,4 +123,29 @@ class ProfileController extends Controller
         return redirect('/')->with('success', 'Tu cuenta ha sido desactivada.');
     }
 
+    /**
+     * Admin Index for users.
+     */
+    public function adminIndex()
+    {
+        $users = User::all();
+        return view('admin.users.index', compact('users'));
+    }
+
+    /**
+     * Admin toggle user status.
+     */
+    public function adminToggleStatus($documento)
+    {
+        $user = User::findOrFail($documento);
+        
+        if ($user->Usu_documento == Auth::user()->Usu_documento) {
+            return back()->with('error', 'No puedes cambiar tu propio estado de esta manera.');
+        }
+
+        $user->status = $user->status === 'Activo' ? 'Desactivado' : 'Activo';
+        $user->save();
+
+        return back()->with('success', 'Estado del usuario actualizado correctamente.');
+    }
 }

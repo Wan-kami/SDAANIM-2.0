@@ -81,4 +81,53 @@ class OrderController extends Controller
         return view('orders.history', compact('orders'));
     }
 
+    // ADMIN: Marcar como pagado/recogido
+    public function markAsPickedUp($ord_id)
+    {
+        $order = Order::findOrFail($ord_id);
+        
+        $order->update([
+            'ord_estado' => 'recogido',
+            'ord_fechaRecogida' => now(),
+        ]);
+
+        return back()->with('success', 'Pedido marcado como recogido y finalizado.');
+    }
+
+    // ADMIN: Cancelar pedido (devolver stock)
+    public function cancelOrder($ord_id)
+    {
+        $order = Order::findOrFail($ord_id);
+        
+        if ($order->ord_estado === 'recogido') {
+            return back()->with('error', 'No se puede cancelar un pedido ya recogido');
+        }
+
+        // Devolver stock
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            $product->update(['prod_cantidad' => $product->prod_cantidad + $item->oit_cantidad]);
+        }
+
+        $order->update(['ord_estado' => 'cancelado']);
+
+        return back()->with('success', 'Pedido cancelado y stock restaurado.');
+    }
+
+    // Cancelar automáticamente pedidos expirados (ejecutar con cron)
+    public static function expireOldOrders()
+    {
+        $expiredOrders = Order::where('ord_estado', 'pendiente')
+                             ->where('ord_fechaExpiracion', '<', now())
+                             ->get();
+
+        foreach ($expiredOrders as $order) {
+            // Devolver stock
+            foreach ($order->items as $item) {
+                $product = $item->product;
+                $product->update(['prod_cantidad' => $product->prod_cantidad + $item->oit_cantidad]);
+            }
+            $order->update(['ord_estado' => 'cancelado']);
+        }
+    }
 }
