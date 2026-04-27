@@ -101,7 +101,15 @@ class PasswordResetController extends Controller
     public function reset(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'password' => 'required|string|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=(?:.*\d){5})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\-_#]).{8,}$/',
+            ],
+        ], [
+            'password.regex' => 'La contraseña debe tener mínimo 8 caracteres, al menos 5 números, 1 mayúscula, 1 minúscula y 1 carácter especial (@$!%*?&-_#).',
         ]);
 
         if ($validator->fails()) {
