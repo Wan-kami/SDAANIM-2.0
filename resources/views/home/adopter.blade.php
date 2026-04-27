@@ -144,6 +144,19 @@
             <a href="{{ route('adopter.requests') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center;">Ver Solicitudes</a>
         </div>
 
+        <div class="premium-card" style="text-align: center;">
+            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">🛍️</span>
+            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Tienda Animal</h3>
+            <p style="color: #64748b; margin-bottom: 30px;">Compra accesorios, comida y juguetes. Las ganancias salvan vidas.</p>
+            <a href="{{ route('products.public') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center;">Ver Productos</a>
+        </div>
+
+        <div class="premium-card" style="text-align: center;">
+            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">🏢</span>
+            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Quiénes Somos</h3>
+            <p style="color: #64748b; margin-bottom: 30px;">Conoce nuestra misión, visión y edita nuestra historia.</p>
+            <a href="{{ route('adopter.history.edit') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center;">Editar Historia</a>
+        </div>
     </div>
 
     <!-- MODAL -->

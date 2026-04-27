@@ -174,7 +174,13 @@ Route::middleware(['auth'])->group(function () {
         return view('profile.show');
     })->name('profile.show');
 
-    // ADMIN PANEL
+    Route::get('/redes-sociales', [ReviewController::class, 'publicIndex'])->name('social');
+    Route::get('/modelo-negocio', function () {
+        return view('public.business'); })->name('business');
+    Route::get('/concientizacion', function () {
+        return view('public.awareness'); })->name('awareness');
+
+    // ADMIN PANEL0
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 

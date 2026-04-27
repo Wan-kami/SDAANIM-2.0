@@ -28,7 +28,7 @@
     <div class="admin-card">
         <div class="icon">📝</div>
         <h3>Mis Tareas</h3>
-        <p>Revisa y registra tus tareas como completadas.</p>
+        <p>Revisa las tareas asignadas por el administrador y regístralas como completadas.</p>
         <a href="{{ route('vet.tasks') }}">Ver Tareas</a>
     </div>
     <div class="admin-card">

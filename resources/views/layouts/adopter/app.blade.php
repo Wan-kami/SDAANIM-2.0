@@ -21,16 +21,24 @@
             </div>
 
             <nav class="nav-menu">
-                <a href="{{ url('/dashboard') }}">Inicio</a>
+                <a href="{{ auth()->check() ? route('dashboard') : url('/') }}">Inicio</a>
                 <a href="{{ route('about') }}">Quienes somos</a>
                 <a href="{{ route('adopta') }}">Adopta</a>
                 <a href="{{ route('products.public') }}">Productos</a>
                 <a href="{{ route('adopter.requests') }}">Solicitudes</a>
                 <div class="dropdown">
-                    <a href="#" class="dropbtn">Apóyanos ▾</a>
+                    <a href="#" class="dropbtn">Comunidad</a>
+                    <div class="dropdown-content">
+                        <a href="{{ route('social') }}">📱 Redes Sociales</a>
+                        <a href="{{ route('awareness') }}">🐾 Concientización</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">Apóyanos</a>
                     <div class="dropdown-content">
                         <a href="{{ route('inscriptions.volunteer') }}">Voluntario</a>
                         <a href="{{ route('inscriptions.veterinarian') }}">Veterinario</a>
+                        <a href="{{ route('business') }}">Modelo de Negocio</a>
                     </div>
                 </div>
             </nav>
@@ -125,6 +133,7 @@
         function toggleSidebar() {
             const sidebar = document.getElementById("notifSidebar");
             sidebar.classList.toggle("active");
+            @auth
             if (sidebar.classList.contains("active")) {
                 const badge = document.getElementById("notifBadge");
                 if (badge) {
@@ -141,6 +150,7 @@
                     }).catch(error => console.error('Error:', error));
                 }
             }
+            @endauth
         }
 
         // Notification removal on click
