@@ -144,7 +144,7 @@
                                 ->first();
                         @endphp
                         @if($adoptionRequest && !$adoptionRequest->reporte_voluntario)
-                            <form action="{{ route('admin.requests.submitReport', $adoptionRequest->Soli_id) }}" method="POST" style="width: 100%; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <form action="{{ route('admin.adoptions.report', $adoptionRequest->Soli_id) }}" method="POST" style="width: 100%; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
                                 @csrf
                                 <label style="font-size:0.9em; font-weight: bold; color: #333; display: block; margin-bottom: 5px;">Reporte de Visita de Adopción</label>
                                 <textarea name="reporte" rows="4" placeholder="Describe lo que observaste en el hogar del adoptante, condiciones, etc." required style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin-bottom: 10px;"></textarea>

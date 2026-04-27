@@ -26,13 +26,13 @@
         <a href="{{ route('volunteer.availability') }}">Gestionar Horario</a>
     </div>
     <div class="admin-card">
-        <div class="icon">�</div>
+        <div class="icon">🔔</div>
         <h3>Notificaciones</h3>
         <p>Mantente informado sobre todas tus actividades y cambios asignados.</p>
         <a href="{{ route('notifications') }}">Ver Notificaciones</a>
     </div>
     <div class="admin-card">
-        <div class="icon">�📊</div>
+        <div class="icon">📈</div>
         <h3>Mi Progreso</h3>
         <p>Consulta las actividades que has realizado recientemente.</p>
         <a href="{{ route('volunteer.progress') }}">Ver Mi Progreso</a>

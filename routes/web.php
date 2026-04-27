@@ -47,6 +47,14 @@ Route::get('/voluntario', [InscriptionController::class, 'createVolunteer'])->na
 Route::get('/veterinario', [InscriptionController::class, 'createVeterinarian'])->name('inscriptions.veterinarian');
 Route::post('/inscripciones', [InscriptionController::class, 'store'])->name('inscriptions.store');
 
+Route::get('/comunidad', [App\Http\Controllers\ReviewController::class, 'publicIndex'])->name('social');
+Route::get('/modelo-negocio', function () {
+    return view('public.business'); 
+})->name('business');
+Route::get('/concientizacion', function () {
+    return view('public.awareness'); 
+})->name('awareness');
+
 // --- AUTHENTICATION ---
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -92,6 +100,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/mis-solicitudes', [AdoptionController::class, 'userRequests'])->name('requests');
         Route::get('/solicitar-adopcion/{animal_id}', [AdoptionController::class, 'create'])->name('adoption.create');
         Route::post('/solicitar-adopcion', [AdoptionController::class, 'store'])->name('adoption.store');
+        Route::post('/mis-solicitudes/{soli_id}/calificar', [App\Http\Controllers\ReviewController::class, 'store'])->name('adoptions.review');
+        
+        // Historia (About) editing for adopter
+        Route::get('/historia', [App\Http\Controllers\AboutController::class, 'adopterEdit'])->name('history.edit');
+        Route::post('/historia', [App\Http\Controllers\AboutController::class, 'adopterUpdate'])->name('history.update');
     });
 
     // CART ROUTES (all authenticated users)
@@ -174,11 +187,7 @@ Route::middleware(['auth'])->group(function () {
         return view('profile.show');
     })->name('profile.show');
 
-    Route::get('/redes-sociales', [ReviewController::class, 'publicIndex'])->name('social');
-    Route::get('/modelo-negocio', function () {
-        return view('public.business'); })->name('business');
-    Route::get('/concientizacion', function () {
-        return view('public.awareness'); })->name('awareness');
+    // Public listing routes removed from here as they are now public
 
     // ADMIN PANEL0
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -231,6 +240,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/adoptions/assign', [AdminController::class, 'assignVolunteer'])->name('adoptions.assign.store');
         Route::get('/adoptions/{id}/approve', [AdminController::class, 'approveAdoption'])->name('adoptions.approve');
         Route::get('/adoptions/{id}/reject', [AdminController::class, 'rejectAdoption'])->name('adoptions.reject');
+        Route::post('/adoptions/{id}/report', [AdoptionController::class, 'submitReport'])->name('adoptions.report');
 
         // Followups
         Route::get('/adoptions/{soliId}/followup', [AdminController::class, 'createFollowup'])->name('adoptions.followup.create');

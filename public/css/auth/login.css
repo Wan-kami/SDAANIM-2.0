@@ -16,10 +16,9 @@ body {
 
 .header-top {
   max-width: 1200px;
-  /* Control del ancho máximo */
   margin: 0 auto;
-  /* Centrado en pantalla */
   width: 100%;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -43,9 +42,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 40px;
   flex-wrap: wrap;
-  top: 105px;
 }
 
 .nav-right .filtro {

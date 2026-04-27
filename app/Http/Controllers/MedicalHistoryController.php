@@ -55,7 +55,7 @@ class MedicalHistoryController extends Controller
                     'Usu_documento' => $admin->Usu_documento,
                     'Noti_mensaje' => "Nueva {$data['His_tipo']} registrada para {$animal->Anim_nombre} por Dr. " . Auth::user()->name,
                     'Noti_fecha' => now(),
-                    'Noti_link' => route('admin.animals.index'),
+                    'Noti_link' => route('admin.animals'),
                 ]);
             }
         }

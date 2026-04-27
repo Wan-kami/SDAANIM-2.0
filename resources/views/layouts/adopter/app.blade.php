@@ -25,7 +25,9 @@
                 <a href="{{ route('about') }}">Quienes somos</a>
                 <a href="{{ route('adopta') }}">Adopta</a>
                 <a href="{{ route('products.public') }}">Productos</a>
+                @auth
                 <a href="{{ route('adopter.requests') }}">Solicitudes</a>
+                @endauth
                 <div class="dropdown">
                     <a href="#" class="dropbtn">Comunidad</a>
                     <div class="dropdown-content">

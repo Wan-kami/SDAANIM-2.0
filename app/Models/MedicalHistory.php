@@ -18,4 +18,9 @@ class MedicalHistory extends Model
     {
         return $this->belongsTo(User::class, 'Usu_documento', 'Usu_documento');
     }
+
+    public function vet()
+    {
+        return $this->belongsTo(User::class, 'Usu_documento', 'Usu_documento');
+    }
 }
