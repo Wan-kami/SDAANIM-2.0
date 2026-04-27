@@ -74,86 +74,138 @@
     to {opacity: 1; transform: translateY(0);}
 }
 
-/* Quienes Somos Page */
+/* Quienes Somos Page — Paleta Khaki/Tierra */
 .quienes-somos {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 20px;
+    max-width: 980px;
+    margin: 36px auto;
+    padding: 0 20px 40px;
     font-family: 'Open Sans', sans-serif;
 }
 
 .banner-quienes {
-    background: linear-gradient(135deg, #2d7d46, #4caf50);
-    color: white;
-    padding: 60px 20px;
+    background: linear-gradient(135deg, #8b7355 0%, #c8ad7f 60%, #a08858 100%);
+    color: #fff;
+    padding: 38px 30px;
     text-align: center;
     border-radius: 20px;
-    margin-bottom: 50px;
-    box-shadow: 0 10px 30px rgba(45, 125, 70, 0.2);
+    margin-bottom: 36px;
+    box-shadow: 0 8px 28px rgba(139, 115, 85, 0.25);
 }
 
 .banner-quienes h2 {
     font-family: 'Pacifico', cursive;
-    font-size: 3em;
-    margin-bottom: 15px;
+    font-size: 2.6em;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.18);
 }
 
 .banner-quienes p {
-    font-size: 1.2em;
-    opacity: 0.9;
+    font-size: 1.05em;
+    opacity: 0.95;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+/* Grid de 2 columnas para misión y visión */
+.quienes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-bottom: 22px;
+}
+
+@media (max-width: 680px) {
+    .quienes-grid { grid-template-columns: 1fr; }
 }
 
 .seccion {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
-    border-left: 8px solid #2d7d46;
-    transition: 0.3s;
+    background: #faf7f2;
+    padding: 28px 30px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(139,115,85,0.10);
+    border-left: 6px solid #c8ad7f;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .seccion:hover {
-    transform: translateX(10px);
+    box-shadow: 0 8px 28px rgba(139,115,85,0.18);
+    transform: translateY(-3px);
 }
 
 .seccion h3 {
-    color: #2d7d46;
-    font-size: 1.8em;
-    margin-bottom: 20px;
+    color: #6b4f2a;
+    font-size: 1.45em;
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .seccion p {
-    color: #555;
-    line-height: 1.8;
-    font-size: 1.1em;
+    color: #5a4535;
+    line-height: 1.85;
+    font-size: 1em;
+    margin: 0;
 }
 
-.valores ul {
-    list-style: none;
-    padding: 0;
+/* Sección valores — ocupa todo el ancho */
+.seccion.valores {
+    padding: 28px 30px;
+    margin-bottom: 0;
+}
+
+.valores h3 {
+    color: #6b4f2a;
+    font-size: 1.45em;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.valores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 14px;
 }
 
-.valores li {
-    background: #e9f7ef;
-    color: #2d7d46;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: bold;
+.valor-card {
+    background: linear-gradient(145deg, #fff8ee, #f5edd9);
+    border: 1px solid #e0c99a;
+    border-radius: 14px;
+    padding: 18px 16px;
     text-align: center;
-    transition: 0.3s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    cursor: default;
 }
 
-.valores li:hover {
-    background: #2d7d46;
-    color: white;
-    transform: scale(1.05);
+.valor-card:hover {
+    background: linear-gradient(145deg, #c8ad7f, #8b7355);
+    border-color: #8b7355;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(139,115,85,0.3);
+}
+
+.valor-card:hover .valor-titulo,
+.valor-card:hover .valor-desc {
+    color: #fff;
+}
+
+.valor-titulo {
+    font-weight: 800;
+    font-size: 0.95em;
+    color: #6b4f2a;
+    margin-bottom: 6px;
+    display: block;
+    transition: color 0.25s;
+}
+
+.valor-desc {
+    font-size: 0.82em;
+    color: #8b7355;
+    line-height: 1.5;
+    transition: color 0.25s;
 }
 
 /* Public Role Pages (Volunteer, Veterinarian) */
@@ -324,10 +376,7 @@
     color: #2f4f60;
 }
 
-.role-form.vet button {
-    background: #0f4f6f;
-}
-
+.role-form.vet button[type="button"].btn-abrir-form,
 .role-form.vet button:hover {
     background: #0a3b54;
 }
@@ -336,4 +385,130 @@
     background: #dfefff;
     color: #0f4f6f;
     border: 1px solid #bed6ed;
+}
+
+/* ===== MODAL DE FORMULARIO DE INSCRIPCIÓN ===== */
+
+/* Botón trigger visible en la página */
+.btn-inscribirse {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    padding: 15px 32px;
+    border: none;
+    border-radius: 999px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.btn-inscribirse.vol {
+    background: linear-gradient(135deg, #2d7d46, #4caf50);
+    color: #fff;
+}
+
+.btn-inscribirse.vol:hover {
+    background: linear-gradient(135deg, #256038, #3a9c42);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(45,125,70,0.4);
+}
+
+.btn-inscribirse.vet {
+    background: linear-gradient(135deg, #0f4f6f, #1a7da8);
+    color: #fff;
+}
+
+.btn-inscribirse.vet:hover {
+    background: linear-gradient(135deg, #0a3b54, #14618a);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(15,79,111,0.4);
+}
+
+/* Overlay del modal */
+.form-modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1200;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    animation: fadeIn 0.25s ease;
+}
+
+.form-modal-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tarjeta del modal */
+.form-modal-card {
+    background: #fff;
+    border-radius: 22px;
+    padding: 36px 38px;
+    width: 95%;
+    max-width: 580px;
+    max-height: 88vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: slideUp 0.3s ease;
+}
+
+.form-modal-card.vet {
+    border-top: 5px solid #1a7da8;
+}
+
+.form-modal-card.vol {
+    border-top: 5px solid #2d7d46;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Botón cerrar dentro del modal */
+.form-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    transition: color 0.2s;
+    padding: 4px;
+}
+
+.form-modal-close:hover {
+    color: #333;
+}
+
+/* Título dentro del modal */
+.form-modal-card h2 {
+    margin: 0 0 22px;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.form-modal-card.vet h2 { color: #0f4f6f; }
+.form-modal-card.vol h2 { color: #1f4d28; }
+
+/* Scrollbar elegante */
+.form-modal-card::-webkit-scrollbar {
+    width: 6px;
+}
+.form-modal-card::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+.form-modal-card::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
 }
