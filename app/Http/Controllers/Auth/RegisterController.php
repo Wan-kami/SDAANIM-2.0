@@ -22,12 +22,22 @@ class RegisterController extends Controller
     {
 
         $data = $request->validate([
-            'Usu_documento' => ['required', 'integer', 'unique:users,Usu_documento'],
-            'name' => ['required', 'string', 'max:255'],
+            'Usu_documento' => ['required', 'regex:/^[0-9]+$/', 'unique:users,Usu_documento'],
+            'name' => ['required', 'string', 'max:150', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'Usu_telefono' => ['required', 'string', 'max:20'],
             'Usu_direccion' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=(?:.*\d){5})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\-_#]).{8,}$/',
+            ],
+        ], [
+            'password.regex' => 'La contraseña debe tener mínimo 8 caracteres, al menos 5 números, 1 mayúscula, 1 minúscula y 1 carácter especial (@$!%*?&-_#).',
+            'Usu_documento.regex' => 'El documento no puede tener puntos ni letras, solo números.',
+            'name.regex' => 'El nombre solo puede contener letras y espacios, sin números ni caracteres especiales.',
         ]);
 
         // 🔢 Generar código
