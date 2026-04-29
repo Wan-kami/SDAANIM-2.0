@@ -26,10 +26,15 @@
                     <span id="notifBadge" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; font-weight: bold;">{{ $notifCount }}</span>
                 @endif
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <a href="{{ route('profile.edit') }}" style="display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none;" title="Ir a mi perfil">
                 <img src="{{ Auth::user()->Usu_foto ? asset('img/profiles/' . Auth::user()->Usu_foto) : asset('img/usuario.png') }}" alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
                 <span style="font-weight:bold;">{{ Auth::user()->name }}</span>
-            </div>
+            </a>
+            <div style="width: 1px; height: 30px; background: rgba(0,0,0,0.1); margin: 0 5px;"></div>
+            <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                @csrf
+                <button type="submit" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Salir</button>
+            </form>
         </div>
     </header>
 
@@ -70,8 +75,6 @@
             </div>
         @endif
 
-        
-        {{-- ✅ Bloque para mostrar notificación de bienvenida --}}
         @if(session('welcome'))
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
@@ -113,7 +116,6 @@
             }
         }
 
-        // Notification removal on click
         document.addEventListener('DOMContentLoaded', function() {
             const notificationLinks = document.querySelectorAll('.notification-link');
             notificationLinks.forEach(link => {
@@ -123,7 +125,6 @@
                     const href = this.getAttribute('href');
                     const linkElement = this;
                     
-                    // Delete from database
                     fetch(`/notifications/${notificationId}`, {
                         method: 'DELETE',
                         headers: {
@@ -133,7 +134,6 @@
                     })
                     .then(response => {
                         if(response.ok) {
-                            // Remove from DOM with animation
                             linkElement.style.opacity = '0';
                             linkElement.style.transition = 'opacity 0.3s ease';
                             setTimeout(() => {
@@ -142,7 +142,6 @@
                                 }
                             }, 300);
                             
-                            // Navigate to link if valid
                             if (href && href !== '#') {
                                 setTimeout(() => {
                                     window.location.href = href;
@@ -152,7 +151,6 @@
                     })
                     .catch(error => {
                         console.error('Error al eliminar notificación:', error);
-                        // Still navigate even if delete fails
                         if (href && href !== '#') {
                             window.location.href = href;
                         }

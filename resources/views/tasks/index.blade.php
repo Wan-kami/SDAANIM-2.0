@@ -11,6 +11,9 @@
 
     <h2>Mis Tareas Asignadas</h2>
     <p>Lista de actividades pendientes para el refugio.</p>
+    <a href="{{ route('dashboard') }}" style="display:inline-block; margin-top:10px; margin-bottom:15px; background:#6c757d; color:#fff; padding:6px 15px; border-radius:6px; text-decoration:none; font-weight:bold;">
+        ← Volver
+    </a>
 
     {{-- Mensaje de éxito --}}
     @if(session('success'))
@@ -208,10 +211,6 @@
                 <a href="{{ route(Auth::user()->role == 'Veterinario' ? 'vet.progress' : 'volunteer.progress') }}" style="display:inline-block; margin-top:10px; background:#0ea5e9; color:white; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:bold;">📈 Ver Mi Progreso</a>
             </div>
         @endforelse
-
-        <a href="{{ route('dashboard') }}" style="display:inline-block;margin-top:20px;background:#6c757d;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;">
-            ← Volver
-        </a>
 
     </div>
 </div>

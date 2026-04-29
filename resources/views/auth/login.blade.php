@@ -44,7 +44,7 @@
         </div>
     </header>
 
-    <br><br><br><br>
+    <br><br><br>
 
     @if(session('success'))
         <div style="background: #d4edda; color: #155724; padding: 15px; margin: 0 auto 20px; max-width: 400px; border-radius: 8px; text-align: center; font-weight: bold;">
@@ -58,8 +58,7 @@
     @endif
 
     <!-- LOGIN -->
-    <div class="login-wrapper">
-        <div class="login-container">
+    <div class="login-container">
             <h2>Inicia Sesión</h2>
 
             <form action="{{ route('login') }}" method="POST">
@@ -102,8 +101,8 @@
 
         <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
 
+        <br>
         <a href="{{ url('/') }}" class="btn volver-btn">Regresar</a>
-        </div>
     </div>
 
     <div id="forgotModal" class="modal-overlay">

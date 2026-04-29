@@ -9,6 +9,7 @@
 @section('content')
 <div style="max-width: 1000px; margin: 30px auto; padding: 20px;">
     
+    <a href="{{ route('dashboard') }}" style="display:inline-block; margin-bottom:15px; color:#64748b; text-decoration:none; font-weight:bold;">← Volver al Tablero Principal</a>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <div>
             <h1 style="margin: 0; color: #2e8b57; font-family: 'Pacifico', cursive;">Mi Impacto y Progreso 🏆</h1>
@@ -82,8 +83,6 @@
             </div>
         @endforelse
     </div>
-
-    <a href="{{ route('dashboard') }}" style="display:inline-block; margin-top:30px; color:#64748b; text-decoration:none; font-weight:bold;">← Volver al Tablero Principal</a>
 
 </div>
 @endsection
