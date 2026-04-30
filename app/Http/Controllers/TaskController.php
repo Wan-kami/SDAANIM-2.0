@@ -18,10 +18,22 @@ class TaskController extends Controller
     {
         $tasks = Task::where('Usu_documento', Auth::user()->Usu_documento)
             ->where('Tar_estado', '!=', 'Completado') // Solo pendientes en la vista de gestión
+            ->with(['adoptionRequest.user', 'adoptionRequest.animal'])
             ->latest()
             ->get();
 
-        return view('tasks.index', compact('tasks'));
+        // Para retrocompatibilidad con tareas antiguas de adopción que no tengan soli_id
+        foreach($tasks as $task) {
+            if (!$task->soli_id && (str_contains(strtolower($task->Tar_descripcion), 'seguimiento') || str_contains(strtolower($task->Tar_descripcion), 'adopción') || str_contains(strtolower($task->Tar_descripcion), 'visita'))) {
+                $task->setRelation('adoptionRequest', \App\Models\AdoptionRequest::where('Soli_voluntario', Auth::user()->Usu_documento)
+                    ->where('Soli_estado', 'En Revisión')
+                    ->with('user', 'animal')
+                    ->first());
+            }
+        }
+
+        $layout = Auth::user()->role == 'Veterinario' ? 'layouts.vet.app' : 'layouts.volunteer.app';
+        return view('tasks.index', compact('tasks', 'layout'));
     }
 
     /**
@@ -35,7 +47,8 @@ class TaskController extends Controller
         $pendingCount = $allTasks->where('Tar_estado', '!=', 'Completado')->count();
         $totalCount = $allTasks->count();
 
-        return view('tasks.progress', compact('allTasks', 'completedCount', 'pendingCount', 'totalCount'));
+        $layout = Auth::user()->role == 'Veterinario' ? 'layouts.vet.app' : 'layouts.volunteer.app';
+        return view('tasks.progress', compact('allTasks', 'completedCount', 'pendingCount', 'totalCount', 'layout'));
     }
 
     /**
