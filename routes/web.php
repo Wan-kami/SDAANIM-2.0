@@ -102,9 +102,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/solicitar-adopcion', [AdoptionController::class, 'store'])->name('adoption.store');
         Route::post('/mis-solicitudes/{soli_id}/calificar', [App\Http\Controllers\ReviewController::class, 'store'])->name('adoptions.review');
         
-        // Historia (About) editing for adopter
-        Route::get('/historia', [App\Http\Controllers\AboutController::class, 'adopterEdit'])->name('history.edit');
-        Route::post('/historia', [App\Http\Controllers\AboutController::class, 'adopterUpdate'])->name('history.update');
     });
 
     // CART ROUTES (all authenticated users)
