@@ -1,96 +1,140 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDAANIM - Login</title>
-    <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/auth/mm.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/auth/modal.css') }}">
-</head>
-<body>
-    <!-- HEADER COMPLETO -->
-    <header class="main-header">
-        <div class="header-top">
-            <div class="logo">
-                <img src="{{ asset('img/a.png') }}" alt="logo">
-                <span>Esperanza Animal BQ</span>
-            </div>
+@extends('layouts.adopter.app')
 
-            <nav class="nav-menu">
-                <a href="{{ url('/') }}">Inicio</a>
-                <a href="{{ route('about') }}">Quienes somos</a>
-                <a href="{{ route('adopta') }}">Adopta</a>
-                <a href="{{ route('products.public') }}">Productos</a>
+@section('title', 'Login | SDAANIM')
 
-                <div class="dropdown">
-                    <a href="#" class="dropbtn">Apóyanos ▾</a>
-                    <div class="dropdown-content">
-                        <a href="{{ route('inscriptions.volunteer') }}">Voluntario</a>
-                        <a href="{{ route('inscriptions.veterinarian') }}">Veterinario</a>
-                    </div>
-                </div>
-            </nav>
+@section('styles')
+    <style>
+        .login-container {
+            background: #ffffff;
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            margin: 40px auto;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .login-container h2 {
+            margin-bottom: 25px;
+            color: #2d7d46;
+            font-size: 1.8rem;
+        }
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .login-container input:focus {
+            border-color: #2d7d46;
+            outline: none;
+        }
+        .password-field { position: relative; width: 100%; box-sizing: border-box; }
+        .eye-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .btn {
+            background: #2d7d46;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn:hover { background: #246338; }
+        .forgot-password-link {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.85em;
+            cursor: pointer;
+            margin-top: 5px;
+            text-decoration: underline;
+        }
+        .social-login {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .google-btn, .facebook-btn {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .facebook-btn { background: #1877f2; color: white; border: none; }
+        .error-msg { color: #ef4444; font-size: 0.75em; text-align: left; margin-top: -10px; font-weight: 500; }
+    </style>
+@endsection
 
-            <div class="search-container">
-                <nav class="nav-right">
-                    <button onclick="window.location.href='{{ route('register') }}'" class="filtro">Registrarse</button>
-                </nav>
-                <div class="usuario">
-                    <a href="#"><img src="{{ asset('img/usuario.png') }}" alt="Usuario" id="usuario-icon"></a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <br><br><br>
-
-    @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 15px; margin: 0 auto 20px; max-width: 400px; border-radius: 8px; text-align: center; font-weight: bold;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div style="background: #fee2e2; color: #991b1b; padding: 15px; margin: 0 auto 20px; max-width: 400px; border-radius: 8px; text-align: center; font-weight: bold;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <!-- LOGIN -->
+@section('content')
     <div class="login-container">
-            <h2>Inicia Sesión</h2>
+        <h2>Inicia Sesión</h2>
 
-            <form action="{{ route('login') }}" method="POST">
-                @csrf
+        @if(session('success'))
+            <div style="background: #dcfce7; color: #166534; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <form action="{{ route('login') }}" method="POST">
+            @csrf
+            <input
+                type="text"
+                name="Usu_documento"
+                placeholder="Número de Documento"
+                value="{{ old('Usu_documento') }}"
+                required
+                autofocus
+            />
+            @error('Usu_documento')
+                <p class="error-msg">{{ $message }}</p>
+            @enderror
+
+            <div class="password-field">
                 <input
-                    type="text"
-                    name="Usu_documento"
-                    placeholder="Número de Documento"
-                    value="{{ old('Usu_documento') }}"
+                    type="password"
+                    name="password"
+                    id="login-password"
+                    placeholder="Contraseña"
                     required
-                    autofocus
                 />
-                @error('Usu_documento')
-                    <p class="input-error">{{ $message }}</p>
-                @enderror
+                <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="eye-toggle">👁️</button>
+            </div>
+            @error('password')
+                <p class="error-msg">{{ $message }}</p>
+            @enderror
 
-                <div class="password-field">
-                    <input
-                        type="password"
-                        name="password"
-                        id="login-password"
-                        placeholder="Contraseña"
-                        required
-                    />
-                    <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="eye-toggle">👁️</button>
-                </div>
-                @error('password')
-                    <p class="input-error">{{ $message }}</p>
-                @enderror
-
-                <button type="submit" class="btn" name="login">Ingresar</button>
-            </form>
+            <button type="submit" class="btn">Ingresar</button>
+        </form>
 
         <button type="button" class="forgot-password-link" onclick="openModal('forgot')">¿Has olvidado la contraseña?</button>
 
@@ -99,57 +143,50 @@
             <button class="facebook-btn">Continuar con Facebook</button>
         </div>
 
-        <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
-
-        <br>
-        <a href="{{ url('/') }}" class="btn volver-btn">Regresar</a>
+        <p style="margin-top:20px; font-size:0.85em;">¿No tienes cuenta? <a href="{{ route('register') }}" style="color:#2d7d46; font-weight:bold;">Regístrate</a></p>
     </div>
 
-    <div id="forgotModal" class="modal-overlay">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal('forgot')">✖</button>
+    <!-- Modales de Recuperación -->
+    <div id="forgotModal" class="form-modal-overlay" onclick="closeModalOutside(event, 'forgot')">
+        <div class="form-modal-card" style="max-width: 380px; text-align: center;">
+            <button class="form-modal-close" onclick="closeModal('forgot')">✖</button>
             <h3>Recuperar contraseña</h3>
-            <p>Ingresa tu correo o cédula y te enviaremos un código de verificación.</p>
-            <form action="{{ route('password.forgot') }}" method="POST">
+            <p style="margin-bottom:15px; font-size:0.9em;">Ingresa tu correo o cédula y te enviaremos un código.</p>
+            <form action="{{ route('password.forgot') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
                 @csrf
                 <input type="hidden" name="reset_action" value="forgot">
-                <input type="text" name="email_or_document" placeholder="Correo o cédula" value="{{ old('email_or_document') }}" required>
-                @error('email_or_document')<p class="modal-error">{{ $message }}</p>@enderror
-                <button type="submit">Recibir código</button>
+                <input type="text" name="email_or_document" placeholder="Correo o cédula" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:100%; box-sizing:border-box;" required>
+                <button type="submit" class="btn">Recibir código</button>
             </form>
         </div>
     </div>
-
-    <div id="verifyModal" class="modal-overlay">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal('verify')">✖</button>
+    
+    <div id="verifyModal" class="form-modal-overlay @if(session('showVerifyModal')) active @endif" onclick="closeModalOutside(event, 'verify')">
+        <div class="form-modal-card" style="max-width: 380px; text-align: center;">
+            <button class="form-modal-close" onclick="closeModal('verify')">✖</button>
             <h3>Verificar código</h3>
-            <p>Ingresa el código que te enviamos al correo registrado.</p>
-            <form action="{{ route('password.verify') }}" method="POST">
+            <form action="{{ route('password.verify') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
                 @csrf
                 <input type="hidden" name="reset_action" value="verify">
-                <input type="text" name="codigo" placeholder="Código de verificación" required>
-                @error('codigo')<p class="modal-error">{{ $message }}</p>@enderror
-                <button type="submit">Verificar código</button>
+                <input type="text" name="codigo" placeholder="Código de 6 dígitos" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:100%; box-sizing:border-box;" required>
+                <button type="submit" class="btn">Verificar</button>
             </form>
         </div>
     </div>
 
-    <div id="resetModal" class="modal-overlay">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal('reset')">✖</button>
+    <div id="resetModal" class="form-modal-overlay @if(session('showResetModal')) active @endif" onclick="closeModalOutside(event, 'reset')">
+        <div class="form-modal-card" style="max-width: 380px; text-align: center;">
+            <button class="form-modal-close" onclick="closeModal('reset')">✖</button>
             <h3>Nueva contraseña</h3>
-            <p>Escribe tu nueva contraseña y confirma para actualizarla.</p>
-            <form action="{{ route('password.reset') }}" method="POST">
+            <form action="{{ route('password.reset') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
                 @csrf
                 <input type="hidden" name="reset_action" value="reset">
                 <input type="hidden" name="password_reset_user_id" value="{{ old('password_reset_user_id', session('password_reset_user_id')) }}">
                 <input type="hidden" name="password_reset_user_email" value="{{ old('password_reset_user_email', session('password_reset_user_email')) }}">
                 <input type="hidden" name="password_reset_verified" value="{{ old('password_reset_verified', session('password_reset_verified') ? '1' : '') }}">
-                <input type="password" name="password" placeholder="Contraseña nueva" required>
-                @error('password')<p class="modal-error">{{ $message }}</p>@enderror
-                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required>
-                <button type="submit">Actualizar contraseña</button>
+                <input type="password" name="password" placeholder="Contraseña nueva" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:100%; box-sizing:border-box;" required>
+                <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:100%; box-sizing:border-box;" required>
+                <button type="submit" class="btn">Actualizar</button>
             </form>
         </div>
     </div>
@@ -168,38 +205,24 @@
         }
 
         function openModal(modalId) {
-            document.getElementById(modalId + 'Modal').classList.add('active');
+            const m = document.getElementById(modalId + 'Modal');
+            if(m) m.classList.add('active');
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId + 'Modal').classList.remove('active');
+            const m = document.getElementById(modalId + 'Modal');
+            if(m) m.classList.remove('active');
         }
 
-        window.addEventListener('click', function(event) {
-            ['forgotModal', 'verifyModal', 'resetModal'].forEach(id => {
-                const modal = document.getElementById(id);
-                if (modal && event.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
+        function closeModalOutside(event, modalId) {
+            const modal = document.getElementById(modalId + 'Modal');
+            if (event.target === modal) closeModal(modalId);
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
-            @if(session('showForgotModal'))
-                openModal('forgot');
-            @endif
-            @if(session('showVerifyModal'))
-                openModal('verify');
-            @endif
-            @if(session('showResetModal'))
-                openModal('reset');
-            @endif
-
-            const resetAction = '{{ old('reset_action') }}';
-            if (resetAction === 'forgot') openModal('forgot');
-            if (resetAction === 'verify') openModal('verify');
-            if (resetAction === 'reset') openModal('reset');
+            @if(session('showForgotModal')) openModal('forgot'); @endif
+            @if(session('showVerifyModal')) openModal('verify'); @endif
+            @if(session('showResetModal')) openModal('reset'); @endif
         });
     </script>
-</body>
-</html>
+@endsection
