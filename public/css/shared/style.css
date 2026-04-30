@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #f7f7f7;
     color: #333;
 }
@@ -312,7 +312,7 @@ footer {
     align-items: center;
     gap: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .match-card h2 {
