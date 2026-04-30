@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="{{ asset('css/shared/premium.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adopter/dashboard.css') }}">
     @yield('styles')
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Pacifico&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -62,9 +64,9 @@
                         <span style="font-weight: bold;">{{ Auth::user()->name }}</span>
                     </a>
                     <div style="width: 1px; height: 30px; background: rgba(0,0,0,0.1); margin: 0 5px;"></div>
-                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    <form id="logoutForm-header" action="{{ route('logout') }}" method="POST" style="margin: 0;">
                         @csrf
-                        <button type="submit" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Salir</button>
+                        <button type="button" onclick="confirmarLogout(event, 'logoutForm-header')" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Cerrar sesión</button>
                     </form>
                     @else
                     <button onclick="window.location.href='{{ route('login') }}'" class="filtro">Iniciar Sesión</button>
@@ -99,15 +101,15 @@
 
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         <a href="#" style="color: #666; font-weight: bold;">❓ Ayuda y Soporte</a>
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
+        <form id="logoutForm-sidebar" action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
             @csrf
-            <button type="submit" style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffe6e6'" onmouseout="this.style.backgroundColor='transparent'">
+            <button type="button" onclick="confirmarLogout(event, 'logoutForm-sidebar')" style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffe6e6'" onmouseout="this.style.backgroundColor='transparent'">
                 🚪 Cerrar sesión
             </button>
         </form>
     </div>
 
-    <main>
+    <main style="min-height: 70vh; padding-top: 20px;">
         @if(session('success'))
         <div style="background: #d4edda; color: #155724; padding: 15px; margin: 20px auto; max-width: 1100px; border-radius: 8px; text-align: center; font-weight: bold;">
             {{ session('success') }}
@@ -201,6 +203,7 @@
             });
         });
     </script>
-</body>
 
+    @include('partials.logout_modal')
+</body>
 </html>

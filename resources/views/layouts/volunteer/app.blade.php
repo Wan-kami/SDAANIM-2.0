@@ -31,9 +31,9 @@
                 <span style="font-weight:bold;">{{ Auth::user()->name }}</span>
             </a>
             <div style="width: 1px; height: 30px; background: rgba(0,0,0,0.1); margin: 0 5px;"></div>
-            <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+            <form id="logoutForm-volunteer-header" action="{{ route('logout') }}" method="POST" style="margin: 0;">
                 @csrf
-                <button type="submit" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Salir</button>
+                <button type="button" onclick="confirmarLogout(event, 'logoutForm-volunteer-header')" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Cerrar sesión</button>
             </form>
         </div>
     </header>
@@ -60,9 +60,9 @@
 
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         <a href="#" style="color: #666; font-weight: bold;">❓ Ayuda y Soporte</a>
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
+        <form id="logoutForm-volunteer-sidebar" action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
             @csrf
-            <button type="submit" style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffe6e6'" onmouseout="this.style.backgroundColor='transparent'">
+            <button type="button" onclick="confirmarLogout(event, 'logoutForm-volunteer-sidebar')" style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffe6e6'" onmouseout="this.style.backgroundColor='transparent'">
                 🚪 Cerrar sesión
             </button>
         </form>
@@ -159,5 +159,6 @@
             });
         });
     </script>
+    @include('partials.logout_modal')
 </body>
 </html>

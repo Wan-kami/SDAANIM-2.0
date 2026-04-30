@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') | SDAANIM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Open+Sans:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('css/admin/styles.css') }}">
@@ -34,9 +36,9 @@
                         <img src="{{ Auth::user()->Usu_foto ? asset('img/profiles/' . Auth::user()->Usu_foto) . '?v=' . time() : asset('img/default-avatar.png') }}" class="header-avatar" alt="Profile">
                     </a>
                 </div>
-                <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                <form id="logoutForm-admin" action="{{ route('logout') }}" method="POST" class="logout-form">
                     @csrf
-                    <button type="submit" class="header-logout-btn" title="Cerrar sesión">Cerrar sesión</button>
+                    <button type="button" class="header-logout-btn" title="Cerrar sesión" onclick="confirmarLogout(event, 'logoutForm-admin')">Cerrar sesión</button>
                 </form>
             @else
                 <a href="{{ route('login') }}" class="header-login-btn">Iniciar sesión</a>
@@ -92,7 +94,7 @@
         body.admin-unified-layout {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', 'Open Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
@@ -127,11 +129,11 @@
         }
 
         .header-title {
-            font-family: 'Pacifico', cursive;
+            font-family: 'Merriweather', serif;
             font-size: 1.6rem;
             margin: 0;
             color: white;
-            font-weight: 400;
+            font-weight: 700;
             letter-spacing: 0.5px;
         }
 
@@ -338,6 +340,7 @@
             }
         }
     </script>
+    @include('partials.logout_modal')
 </body>
 
 </html>
