@@ -101,6 +101,13 @@
                 <label for="vol_comentario">Contanos un poco sobre ti</label>
                 <textarea id="vol_comentario" name="ins_comentario" placeholder="¿Tienes experiencia con animales? ¿También puedes apoyar con logística?">{{ old('ins_comentario') }}</textarea>
 
+                <div style="margin-bottom: 15px; margin-top: 10px; text-align: left;">
+                    <label style="font-size: 0.9em; display: flex; align-items: center; gap: 8px; cursor: pointer; color: #475569;">
+                        <input type="checkbox" name="accept_data_policy" required style="width: 16px; height: 16px; margin: 0; flex-shrink: 0;">
+                        <span>Acepto la <a href="javascript:void(0)" onclick="abrirModalPolitica()" style="color: #0ea5e9; text-decoration: underline;">Política de Tratamiento de Datos Personales</a></span>
+                    </label>
+                </div>
+
                 <button type="submit" style="margin-top: 8px;">Enviar inscripción</button>
             </div>
         </form>
@@ -133,5 +140,7 @@
         });
     @endif
 </script>
+
+@include('partials.data_policy_modal')
 
 @endsection
