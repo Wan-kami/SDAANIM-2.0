@@ -52,7 +52,9 @@ class TaskController extends Controller
     }
 
     /**
-     * MARCAR tarea como completada por voluntario/veterinario.
+     * El voluntario/veterinario envía su reporte de tarea.
+     * El estado pasa a 'En Proceso' para que aparezca en procesos del admin,
+     * pero NO se marca como 'Completado' directamente.
      */
     public function complete(Request $request, $id)
     {
@@ -63,11 +65,11 @@ class TaskController extends Controller
         }
 
         $task->update([
-            'Tar_estado' => 'Completado',
+            'Tar_estado'     => 'En Proceso',
             'Tar_comentario' => $request->get('comentario'),
         ]);
 
-        return back()->with('success', 'Tarea completada exitosamente.');
+        return back()->with('success', 'Reporte enviado. La tarea ahora aparece en procesos para revisión del administrador.');
     }
 
     /**

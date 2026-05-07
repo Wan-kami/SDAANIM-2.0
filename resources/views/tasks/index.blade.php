@@ -110,10 +110,10 @@
                     @else
                         <form action="{{ route($routePrefix . '.tasks.complete', $task->Tar_id) }}" method="POST" class="task-form-box">
                             @csrf
-                            <label class="task-form-label">Completar Tarea (Observaciones)</label>
+                            <label class="task-form-label">📤 Enviar Reporte al Administrador</label>
                             <div style="display:flex; gap:10px; flex-direction: column;">
-                                <textarea name="comentario" rows="2" class="task-form-textarea" placeholder="Describe lo que observaste o realizaste (opcional)">{{ $task->Tar_comentario }}</textarea>
-                                <button class="task-btn btn-success" style="align-self: flex-start;">✓ Completar Tarea</button>
+                                <textarea name="comentario" rows="2" class="task-form-textarea" placeholder="Describe lo que realizaste o observaste (el admin revisará y aprobará la tarea)">{{ $task->Tar_comentario }}</textarea>
+                                <button class="task-btn btn-success" style="align-self: flex-start;">📤 Enviar Reporte</button>
                             </div>
                         </form>
                     @endif
