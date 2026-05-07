@@ -6,11 +6,19 @@
         <h1>Mi Perfil</h1>
 
         <div class="perfil-header">
-            <img src="{{ asset('img/usuario.png') }}" alt="Foto de perfil" class="perfil-foto">
+            <img src="{{ asset('img/usuario.png') }}" alt="Foto de perfil" class="perfil-foto" onclick="abrirModalFoto(this)">
             <div>
                 <h2>{{ Auth::user()->name }}</h2>
                 <p>{{ Auth::user()->email }}</p>
                 <a href="{{ route('profile.edit') }}" class="editar-link">✏️ Editar perfil</a>
+            </div>
+        </div>
+
+        <!-- Modal para foto de perfil -->
+        <div id="modalFoto" class="modal-foto" onclick="cerrarModalFoto(event)">
+            <div class="modal-foto-contenido" onclick="event.stopPropagation()">
+                <img id="modalFotoImg" src="{{ asset('img/usuario.png') }}" alt="Foto de perfil ampliada">
+                <button class="cerrar-modal-foto" onclick="cerrarModalFoto()">&times;</button>
             </div>
         </div>
 

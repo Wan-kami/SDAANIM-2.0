@@ -7,6 +7,7 @@
     <title>@yield('title') | JKD</title>
     <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/premium.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/shared/modal-foto.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adopter/dashboard.css') }}">
     @yield('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -159,6 +160,34 @@
             }
             @endauth
         }
+
+        // Funciones para modal de foto de perfil
+        function abrirModalFoto(img) {
+            const modal = document.getElementById('modalFoto');
+            const modalImg = document.getElementById('modalFotoImg');
+            if (modal && img) {
+                modalImg.src = img.src;
+                modal.classList.add('activo');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function cerrarModalFoto(event) {
+            const modal = document.getElementById('modalFoto');
+            if (modal) {
+                if (!event || event.target === modal || event.target.classList.contains('cerrar-modal-foto')) {
+                    modal.classList.remove('activo');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        }
+
+        // Cerrar modal con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalFoto();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             const notificationLinks = document.querySelectorAll('.notification-link');

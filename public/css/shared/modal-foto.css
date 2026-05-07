@@ -1,97 +1,8 @@
-/* Editar perfil */
-.perfil-foto-editar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.perfil-foto-editar img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 10px;
-    border: 3px solid #4CAF50;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.perfil-foto-editar img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-}
-
-.btn-subir {
-    background: #007BFF;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.form-perfil {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.form-perfil label {
-    font-weight: bold;
-    color: #333;
-}
-
-.form-perfil input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-}
-
-.form-perfil input:focus {
-    border-color: #4CAF50;
-}
-
-.acciones-form {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.btn-guardar {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-cancelar {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-guardar:hover {
-    background-color: #45a049;
-}
-
-.btn-cancelar:hover {
-    background-color: #910200;
-}
-
 /* Modal para foto de perfil */
 .modal-foto {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
@@ -181,5 +92,3 @@
         right: -10px;
     }
 }
-
-/* Fin Editar perfil */

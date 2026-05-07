@@ -37,6 +37,13 @@
     border-radius: 50%;
     border: 3px solid #4CAF50;
     object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.perfil-foto:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
 }
 
 .perfil-header h2 {

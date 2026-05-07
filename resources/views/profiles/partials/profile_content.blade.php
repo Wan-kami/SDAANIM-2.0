@@ -10,7 +10,7 @@
     <!-- Header / Avatar Section -->
     <div class="profile-header-main">
         <div class="avatar-container">
-            <img src="{{ $user->Usu_foto ? asset('img/profiles/' . $user->Usu_foto) . '?v=' . time() : asset('img/default-avatar.png') }}" class="main-avatar">
+            <img src="{{ $user->Usu_foto ? asset('img/profiles/' . $user->Usu_foto) . '?v=' . time() : asset('img/default-avatar.png') }}" class="main-avatar" onclick="abrirModalFoto(this)" title="Haz clic para ampliar">
             <button onclick="togglePhotoSection()" class="btn-edit-avatar" title="Cambiar foto de perfil">
                 <span class="icon">📷</span>
             </button>
@@ -167,6 +167,14 @@
 
 </div>
 
+<!-- Modal para foto de perfil -->
+<div id="modalFoto" class="modal-foto" onclick="cerrarModalFoto(event)">
+    <div class="modal-foto-contenido" onclick="event.stopPropagation()">
+        <img id="modalFotoImg" src="" alt="Foto de perfil ampliada">
+        <button class="cerrar-modal-foto" onclick="cerrarModalFoto()">&times;</button>
+    </div>
+</div>
+
 <style>
     /* Premium Profile Styles */
     .profile-premium-card {
@@ -230,6 +238,13 @@
         object-fit: cover;
         border: 4px solid white;
         box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .main-avatar:hover {
+        transform: scale(1.08);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
 
     .btn-edit-avatar {
@@ -648,4 +663,32 @@
         document.getElementById('file-name-display').innerText = fileName;
         document.getElementById('file-name-display').style.color = "#1e293b";
     }
+
+    // Funciones para modal de foto de perfil
+    function abrirModalFoto(img) {
+        const modal = document.getElementById('modalFoto');
+        const modalImg = document.getElementById('modalFotoImg');
+        if (modal && img) {
+            modalImg.src = img.src;
+            modal.classList.add('activo');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function cerrarModalFoto(event) {
+        const modal = document.getElementById('modalFoto');
+        if (modal) {
+            if (!event || event.target === modal || event.target.classList.contains('cerrar-modal-foto')) {
+                modal.classList.remove('activo');
+                document.body.style.overflow = 'auto';
+            }
+        }
+    }
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            cerrarModalFoto();
+        }
+    });
 </script>
