@@ -26,12 +26,12 @@
                         <option value="">-- Seleccionar usuario --</option>
                         <optgroup label="👥 Voluntarios">
                             @foreach($users->where('role', 'Voluntario') as $user)
-                            <option value="{{ $user->Usu_documento }}">{{ $user->name }}</option>
+                            <option value="{{ $user->Usu_documento }}" data-role="Voluntario">{{ $user->name }}</option>
                             @endforeach
                         </optgroup>
                         <optgroup label="⚕️ Veterinarios">
                             @foreach($users->where('role', 'Veterinario') as $user)
-                            <option value="{{ $user->Usu_documento }}">{{ $user->name }}</option>
+                            <option value="{{ $user->Usu_documento }}" data-role="Veterinario">{{ $user->name }}</option>
                             @endforeach
                         </optgroup>
                     </select>
@@ -43,6 +43,82 @@
                         Título
                     </label>
                     <input type="text" name="Tar_titulo" id="Tar_titulo" class="form-input" required placeholder="Ej. Seguimiento de adopción">
+                </div>
+            </div>
+
+            <!-- Role Specific Fields (Dynamic) -->
+            <div id="role-specific-container" style="display: none;">
+                <!-- Animal Selection (Common for reviews) -->
+                <div class="form-group mb-4">
+                    <label for="Anim_id" class="form-label">
+                        <span class="icon">🐾</span>
+                        Animal para revisión
+                    </label>
+                    <select name="Anim_id" id="Anim_id" class="form-input form-select">
+                        <option value="">-- Seleccionar animal --</option>
+                        @foreach($animals as $animal)
+                        <option value="{{ $animal->Anim_id }}" data-name="{{ $animal->Anim_nombre }}">{{ $animal->Anim_nombre }} ({{ $animal->Anim_raza }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Vet Section -->
+                <div id="vet-fields" class="role-fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tipo_atencion" class="form-label">
+                                <span class="icon">🩺</span>
+                                Tipo de Atención
+                            </label>
+                            <select name="tipo_atencion" id="tipo_atencion" class="form-input form-select">
+                                <option value="">-- Seleccionar tipo --</option>
+                                <option value="Consulta General">Consulta General</option>
+                                <option value="Vacunación">Vacunación</option>
+                                <option value="Desparasitación">Desparasitación</option>
+                                <option value="Cirugía">Cirugía</option>
+                                <option value="Revisión de Herida">Revisión de Herida</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prioridad" class="form-label">
+                                <span class="icon">⚡</span>
+                                Prioridad
+                            </label>
+                            <select name="prioridad" id="prioridad" class="form-input form-select">
+                                <option value="Normal">Normal</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Volunteer Section -->
+                <div id="volunteer-fields" class="role-fields" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="actividad_voluntario" class="form-label">
+                                <span class="icon">🎾</span>
+                                Actividad
+                            </label>
+                            <select name="actividad_voluntario" id="actividad_voluntario" class="form-input form-select">
+                                <option value="">-- Seleccionar actividad --</option>
+                                <option value="Paseo">Paseo</option>
+                                <option value="Baño y Peluquería">Baño y Peluquería</option>
+                                <option value="Limpieza de Hábitat">Limpieza de Hábitat</option>
+                                <option value="Alimentación">Alimentación</option>
+                                <option value="Socialización">Socialización</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sector" class="form-label">
+                                <span class="icon">🏢</span>
+                                Sector/Área
+                            </label>
+                            <input type="text" name="sector" id="sector" class="form-input" placeholder="Ej. Patio A, Caniles 1-5">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -393,4 +469,68 @@
         }
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userSelect = document.getElementById('Usu_documento');
+        const roleContainer = document.getElementById('role-specific-container');
+        const vetFields = document.getElementById('vet-fields');
+        const volFields = document.getElementById('volunteer-fields');
+        const titleInput = document.getElementById('Tar_titulo');
+        const animalSelect = document.getElementById('Anim_id');
+        const vetTypeSelect = document.getElementById('tipo_atencion');
+        const volActSelect = document.getElementById('actividad_voluntario');
+
+        function updateFields() {
+            const selectedOption = userSelect.options[userSelect.selectedIndex];
+            const role = selectedOption.getAttribute('data-role');
+
+            if (role === 'Veterinario') {
+                roleContainer.style.display = 'block';
+                vetFields.style.display = 'block';
+                volFields.style.display = 'none';
+            } else if (role === 'Voluntario') {
+                roleContainer.style.display = 'block';
+                vetFields.style.display = 'none';
+                volFields.style.display = 'block';
+            } else {
+                roleContainer.style.display = 'none';
+                vetFields.style.display = 'none';
+                volFields.style.display = 'none';
+            }
+        }
+
+        function autoGenerateTitle() {
+            const selectedOption = userSelect.options[userSelect.selectedIndex];
+            const role = selectedOption.getAttribute('data-role');
+            const animalName = animalSelect.options[animalSelect.selectedIndex].getAttribute('data-name') || '';
+            
+            let activity = '';
+            if (role === 'Veterinario') {
+                activity = vetTypeSelect.value;
+            } else if (role === 'Voluntario') {
+                activity = volActSelect.value;
+            }
+
+            if (activity && animalName) {
+                titleInput.value = `${activity}: ${animalName}`;
+            } else if (activity) {
+                titleInput.value = activity;
+            } else if (animalName) {
+                titleInput.value = `Revisión: ${animalName}`;
+            }
+        }
+
+        userSelect.addEventListener('change', function() {
+            updateFields();
+            autoGenerateTitle();
+        });
+
+        animalSelect.addEventListener('change', autoGenerateTitle);
+        vetTypeSelect.addEventListener('change', autoGenerateTitle);
+        volActSelect.addEventListener('change', autoGenerateTitle);
+
+        // Run on load in case of validation errors returning data
+        updateFields();
+    });
+</script>
 @endsection

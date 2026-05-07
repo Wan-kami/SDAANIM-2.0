@@ -580,8 +580,9 @@ class AdminController extends Controller
     {
         $users = User::whereIn('role', ['Voluntario', 'Veterinario'])->get();
         $adoptions = AdoptionRequest::whereIn('Soli_estado', ['Pendiente', 'En Revisión'])->get();
+        $animals = Animal::all();
 
-        return view('admin.tasks.create', compact('users', 'adoptions'));
+        return view('admin.tasks.create', compact('users', 'adoptions', 'animals'));
     }
 
     public function storeTask(Request $request)
@@ -595,9 +596,37 @@ class AdminController extends Controller
             'Tar_fecha_limite' => 'required|date',
             'Tar_hora' => 'nullable',
             'Soli_id' => 'nullable|exists:adoption_requests,Soli_id',
+            // Nuevos campos
+            'Anim_id' => 'nullable|exists:animals,Anim_id',
+            'tipo_atencion' => 'nullable|string',
+            'prioridad' => 'nullable|string',
+            'actividad_voluntario' => 'nullable|string',
+            'sector' => 'nullable|string',
         ]);
 
-        Task::create($request->all());
+        $data = $request->all();
+        $user = User::where('Usu_documento', $request->Usu_documento)->first();
+        $animal = $request->Anim_id ? Animal::find($request->Anim_id) : null;
+
+        // Construir descripción enriquecida
+        $extraInfo = "";
+        if ($animal) {
+            $extraInfo .= "🐾 Animal: {$animal->Anim_nombre} ({$animal->Anim_raza})\n";
+        }
+
+        if ($user->role === 'Veterinario') {
+            if ($request->tipo_atencion) $extraInfo .= "🩺 Tipo de Atención: {$request->tipo_atencion}\n";
+            if ($request->prioridad) $extraInfo .= "⚡ Prioridad: {$request->prioridad}\n";
+        } elseif ($user->role === 'Voluntario') {
+            if ($request->actividad_voluntario) $extraInfo .= "🎾 Actividad: {$request->actividad_voluntario}\n";
+            if ($request->sector) $extraInfo .= "🏢 Sector/Área: {$request->sector}\n";
+        }
+
+        if ($extraInfo) {
+            $data['Tar_descripcion'] = "--- DETALLES ESPECÍFICOS ---\n" . $extraInfo . "\n--- INSTRUCCIONES ADICIONALES ---\n" . $request->Tar_descripcion;
+        }
+
+        Task::create($data);
 
         return redirect()->route('admin.tasks')->with('success', 'Tarea creada correctamente.');
     }

@@ -75,9 +75,17 @@
                         </form>
                     </td>
                     <td class="col-actions">
-                        <a href="{{ route('admin.tasks') }}" class="btn-action btn-view" title="Ver detalles">
+                        <button type="button" class="btn-action btn-view btn-view-task" 
+                                data-id="{{ $task->Tar_id }}"
+                                data-title="{{ $task->Tar_titulo }}"
+                                data-desc="{{ $task->Tar_descripcion }}"
+                                data-user="{{ $task->user->name ?? 'N/A' }}"
+                                data-date="{{ \Carbon\Carbon::parse($task->Tar_fecha_limite)->format('d/m/Y') }}"
+                                data-status="{{ $task->Tar_estado }}"
+                                data-comment="{{ $task->Tar_comentario ?? 'Sin comentarios' }}"
+                                title="Ver detalles">
                             <span>👁️</span> Ver
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -492,4 +500,231 @@
         }
     }
 </style>
+<!-- Details Modal -->
+<div id="taskModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Detalles de la Tarea</h2>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="detail-group">
+                <label>📋 Título</label>
+                <p id="detailTitle" class="detail-value"></p>
+            </div>
+            <div class="detail-row">
+                <div class="detail-group">
+                    <label>👤 Asignado a</label>
+                    <p id="detailUser" class="detail-value"></p>
+                </div>
+                <div class="detail-group">
+                    <label>📅 Fecha Límite</label>
+                    <p id="detailDate" class="detail-value"></p>
+                </div>
+            </div>
+            <div class="detail-group">
+                <label>📌 Estado Actual</label>
+                <p id="detailStatus" class="detail-value"></p>
+            </div>
+            <div class="detail-group">
+                <label>📄 Descripción Completa</label>
+                <div id="detailDesc" class="detail-text-box"></div>
+            </div>
+            <div class="detail-group" id="commentGroup">
+                <label>💬 Comentario/Reporte</label>
+                <div id="detailComment" class="detail-text-box comment-box"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary-modal" onclick="closeModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        background: white;
+        width: 90%;
+        max-width: 600px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        overflow: hidden;
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-header {
+        padding: 1.5rem 2rem;
+        background: #4CAF50;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .modal-close:hover {
+        transform: rotate(90deg);
+    }
+
+    .modal-body {
+        padding: 2rem;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .detail-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        font-size: 1.1rem;
+        color: #1a1a1a;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .detail-text-box {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #444;
+        white-space: pre-wrap;
+    }
+
+    .comment-box {
+        background: #fff8e1;
+        border-color: #ffe082;
+        color: #795548;
+    }
+
+    .modal-footer {
+        padding: 1.5rem 2rem;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-primary-modal {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-modal:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(40px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<script>
+    function openModal(data) {
+        document.getElementById('detailTitle').innerText = data.title;
+        document.getElementById('detailUser').innerText = data.user;
+        document.getElementById('detailDate').innerText = data.date;
+        document.getElementById('detailStatus').innerText = data.status;
+        document.getElementById('detailDesc').innerText = data.desc;
+        document.getElementById('detailComment').innerText = data.comment;
+        
+        document.getElementById('taskModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        document.getElementById('taskModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewButtons = document.querySelectorAll('.btn-view-task');
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const data = {
+                    id: this.dataset.id,
+                    title: this.dataset.title,
+                    desc: this.dataset.desc,
+                    user: this.dataset.user,
+                    date: this.dataset.date,
+                    status: this.dataset.status,
+                    comment: this.dataset.comment
+                };
+                openModal(data);
+            });
+        });
+
+        // Close on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close on outside click
+        document.getElementById('taskModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    });
+</script>
 @endsection
