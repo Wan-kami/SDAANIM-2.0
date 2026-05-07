@@ -170,20 +170,7 @@
                 </div>
             </div>
 
-            <!-- Row 5: Optional Adoption -->
-            <div class="form-group">
-                <label for="Soli_id" class="form-label">
-                    <span class="icon">🐾</span>
-                    Solicitud de Adopción (opcional)
-                </label>
-                <p class="field-description">Vincula esta tarea a una solicitud de adopción si corresponde</p>
-                <select name="Soli_id" id="Soli_id" class="form-input form-select">
-                    <option value="">-- Sin vinculación --</option>
-                    @foreach($adoptions as $adoption)
-                    <option value="{{ $adoption->Soli_id }}">#{{ $adoption->Soli_id }} - {{ $adoption->animal->Anim_nombre ?? 'N/A' }}</option>
-                    @endforeach
-                </select>
-            </div>
+
 
             <!-- Action Buttons -->
             <div class="form-actions">

@@ -28,6 +28,9 @@
                 <button class="header-notif-btn" onclick="toggleSidebar()" title="Notificaciones">
                     <span class="notif-icon">🔔</span>
                     <span class="notif-text">Notificaciones</span>
+                    @if(($pendingVolunteersCount ?? 0) + ($pendingVetsCount ?? 0) + ($pendingAdoptionsCount ?? 0) > 0)
+                        <span class="notif-badge-dot"></span>
+                    @endif
                 </button>
                 <div class="header-divider"></div>
                 <div class="header-profile-container">
@@ -72,10 +75,25 @@
         <button class="close-btn" onclick="toggleSidebar()">✖</button>
         <h3>Notificaciones</h3>
         <a href="{{ route('admin.notifications') }}">📋 Ver todas</a>
-        <a href="{{ route('admin.volunteers') }}">📋 Nuevos voluntarios postulados</a>
+        <a href="{{ route('admin.volunteers') }}" class="sidebar-item-with-badge">
+            📋 Nuevos voluntarios postulados
+            @if(($pendingVolunteersCount ?? 0) > 0)
+                <span class="sidebar-badge">{{ $pendingVolunteersCount }}</span>
+            @endif
+        </a>
         <a href="{{ route('admin.adoptants') }}">🐾 Adoptantes registrados</a>
-        <a href="{{ route('admin.veterinarians') }}">⚕️ Veterinarios postulados</a>
-        <a href="{{ route('admin.adoptions') }}">Adopciones enviadas</a>
+        <a href="{{ route('admin.veterinarians') }}" class="sidebar-item-with-badge">
+            ⚕️ Veterinarios postulados
+            @if(($pendingVetsCount ?? 0) > 0)
+                <span class="sidebar-badge">{{ $pendingVetsCount }}</span>
+            @endif
+        </a>
+        <a href="{{ route('admin.adoptions') }}" class="sidebar-item-with-badge">
+            Adopciones enviadas
+            @if(($pendingAdoptionsCount ?? 0) > 0)
+                <span class="sidebar-badge">{{ $pendingAdoptionsCount }}</span>
+            @endif
+        </a>
     </div>
 
     <style>
@@ -318,6 +336,35 @@
             font-size: 1.5rem;
             color: var(--text-muted);
             cursor: pointer;
+        }
+
+        /* Notification Badges */
+        .header-notif-btn { position: relative; }
+        .notif-badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff4444;
+            border-radius: 50%;
+            border: 2px solid var(--admin-green);
+        }
+
+        .sidebar-item-with-badge {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-badge {
+            background: #ff4444;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 800;
+            box-shadow: 0 2px 5px rgba(255,68,68,0.3);
         }
 
         @media (max-width: 992px) {

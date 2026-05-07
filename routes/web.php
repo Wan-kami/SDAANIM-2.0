@@ -246,6 +246,7 @@ Route::middleware(['auth'])->group(function () {
         // Tasks
         Route::get('/tasks', [AdminController::class, 'tasks'])->name('tasks');
         Route::get('/tasks/create', [AdminController::class, 'createTask'])->name('tasks.create');
+        Route::get('/tasks/create-adoption', [AdminController::class, 'createAdoptionTask'])->name('tasks.createAdoption');
         Route::post('/tasks', [AdminController::class, 'storeTask'])->name('tasks.store');
         Route::put('/tasks/{id}/status', [AdminController::class, 'updateTaskStatus'])->name('tasks.updateStatus');
 

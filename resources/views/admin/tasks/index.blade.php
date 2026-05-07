@@ -14,9 +14,14 @@
                     <p class="subtitle">Crea, organiza y monitorea las tareas del sistema</p>
                 </div>
             </div>
-            <a href="{{ route('admin.tasks.create') }}" class="btn-create">
-                <span class="btn-icon">+</span> Nueva Tarea
-            </a>
+            <div class="header-actions">
+                <a href="{{ route('admin.tasks.create') }}" class="btn-create">
+                    <span class="btn-icon">+</span> Nueva Tarea
+                </a>
+                <a href="{{ route('admin.tasks.createAdoption') }}" class="btn-create btn-adoption">
+                    <span class="btn-icon">🐕</span> Tarea de Adopción
+                </a>
+            </div>
         </div>
     </div>
 
@@ -64,15 +69,9 @@
                         <span class="date-badge">{{ \Carbon\Carbon::parse($task->Tar_fecha_limite)->format('d/m/Y') }}</span>
                     </td>
                     <td class="col-status">
-                        <form action="{{ route('admin.tasks.updateStatus', $task->Tar_id) }}" method="POST" class="status-form">
-                            @csrf
-                            <select name="Tar_estado" class="status-select status-{{ strtolower(str_replace(' ', '-', $task->Tar_estado)) }}" onchange="this.form.submit()">
-                                <option value="Pendiente" {{ $task->Tar_estado == 'Pendiente' ? 'selected' : '' }}>Pendiente</option>
-                                <option value="Observación" {{ $task->Tar_estado == 'Observación' ? 'selected' : '' }}>Observación</option>
-                                <option value="En Proceso" {{ $task->Tar_estado == 'En Proceso' ? 'selected' : '' }}>En Proceso</option>
-                                <option value="Completado" {{ $task->Tar_estado == 'Completado' ? 'selected' : '' }}>Completado</option>
-                            </select>
-                        </form>
+                        <span class="status-badge status-{{ strtolower(str_replace(' ', '-', $task->Tar_estado)) }}">
+                            {{ $task->Tar_estado }}
+                        </span>
                     </td>
                     <td class="col-actions">
                         <button type="button" class="btn-action btn-view btn-view-task" 
@@ -142,6 +141,11 @@
     }
 
     /* Create Button */
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
     .btn-create {
         display: inline-flex;
         align-items: center;
@@ -157,6 +161,15 @@
         border: none;
         cursor: pointer;
         font-size: 0.95rem;
+    }
+
+    .btn-adoption {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+    }
+
+    .btn-adoption:hover {
+        box-shadow: 0 6px 25px rgba(33, 150, 243, 0.3);
     }
 
     .btn-create:hover {
@@ -376,29 +389,20 @@
         box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     }
 
-    .status-select.status-pendiente {
-        background-color: #fff8e1;
-        color: #f57c00;
-        border-color: #f9a825;
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-block;
+        text-align: center;
+        min-width: 100px;
     }
 
-    .status-select.status-en-proceso {
-        background-color: #e1f5fe;
-        color: #0277bd;
-        border-color: #0277bd;
-    }
-
-    .status-select.status-observación {
-        background-color: #fce4ec;
-        color: #c2185b;
-        border-color: #c2185b;
-    }
-
-    .status-select.status-completado {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-        border-color: #4CAF50;
-    }
+    .status-pendiente { background-color: #fff8e1; color: #f57c00; border: 1px solid #ffe082; }
+    .status-en-proceso { background-color: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+    .status-observación { background-color: #fce4ec; color: #c2185b; border: 1px solid #f8bbd0; }
+    .status-completado { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
 
     /* Action Buttons */
     .btn-action {
@@ -536,7 +540,17 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-primary-modal" onclick="closeModal()">Cerrar</button>
+            <div class="modal-actions-review" id="reviewActions" style="display: none;">
+                <form id="completeTaskForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="Tar_estado" value="Completado">
+                    <button type="submit" class="btn-complete-task">
+                        ✅ Marcar como Completado
+                    </button>
+                </form>
+            </div>
+            <button class="btn-secondary-modal" onclick="closeModal()">Cerrar</button>
         </div>
     </div>
 </div>
@@ -650,24 +664,37 @@
         padding: 1.5rem 2rem;
         background: #f8f9fa;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
     }
 
-    .btn-primary-modal {
-        background: #4CAF50;
+    .btn-complete-task {
+        background: #2e7d32;
         color: white;
         border: none;
-        padding: 0.75rem 2rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    }
+
+    .btn-complete-task:hover {
+        background: #1b5e20;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-secondary-modal {
+        background: #e0e0e0;
+        color: #333;
+        border: none;
+        padding: 0.75rem 1.5rem;
         border-radius: 10px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary-modal:hover {
-        background: #45a049;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
     }
 
     @keyframes fadeIn {
@@ -689,6 +716,17 @@
         document.getElementById('detailStatus').innerText = data.status;
         document.getElementById('detailDesc').innerText = data.desc;
         document.getElementById('detailComment').innerText = data.comment;
+
+        // Mostrar acciones de revisión solo si no está completada
+        const reviewActions = document.getElementById('reviewActions');
+        if (data.status !== 'Completado') {
+            reviewActions.style.display = 'block';
+            // Configurar la URL del formulario dinámicamente
+            const form = document.getElementById('completeTaskForm');
+            form.action = `/admin/tasks/${data.id}/status`;
+        } else {
+            reviewActions.style.display = 'none';
+        }
         
         document.getElementById('taskModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';

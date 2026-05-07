@@ -366,11 +366,15 @@ class AdminController extends Controller
         if ($request->accion === 'aceptar') {
             $inscription->update(['ins_estado' => 'Aprobada']);
 
-            $user = User::where('Usu_documento', $inscription->ins_documento)->first();
+            $user = User::where('Usu_documento', $inscription->ins_documento)
+                        ->orWhere('email', $inscription->ins_email)
+                        ->first();
             if ($user) {
-                // Actualizar rol explícitamente
-                $user->role = 'Veterinario';
-                $user->save();
+                // Actualizar rol y otros datos si el usuario ya existe
+                $user->update([
+                    'role' => 'Veterinario',
+                    'status' => 'Activo'
+                ]);
                 
                 // Forzar recarga de la instancia
                 $user->refresh();
@@ -382,6 +386,7 @@ class AdminController extends Controller
                     'name' => $inscription->ins_nombre,
                     'email' => $inscription->ins_email,
                     'Usu_telefono' => $inscription->ins_telefono,
+                    'Usu_direccion' => $inscription->ins_direccion,
                     'role' => 'Veterinario',
                     'password' => Hash::make($password),
                     'status' => 'Activo',
@@ -413,11 +418,15 @@ class AdminController extends Controller
         if ($request->accion === 'aceptar') {
             $inscription->update(['ins_estado' => 'Aprobada']);
 
-            $user = User::where('Usu_documento', $inscription->ins_documento)->first();
+            $user = User::where('Usu_documento', $inscription->ins_documento)
+                        ->orWhere('email', $inscription->ins_email)
+                        ->first();
             if ($user) {
-                // Actualizar rol explícitamente
-                $user->role = 'Voluntario';
-                $user->save();
+                // Actualizar rol y otros datos si el usuario ya existe
+                $user->update([
+                    'role' => 'Voluntario',
+                    'status' => 'Activo'
+                ]);
                 
                 // Forzar recarga de la instancia
                 $user->refresh();
@@ -429,6 +438,7 @@ class AdminController extends Controller
                     'name' => $inscription->ins_nombre,
                     'email' => $inscription->ins_email,
                     'Usu_telefono' => $inscription->ins_telefono,
+                    'Usu_direccion' => $inscription->ins_direccion,
                     'role' => 'Voluntario',
                     'password' => Hash::make($password),
                     'status' => 'Activo',
@@ -583,6 +593,15 @@ class AdminController extends Controller
         $animals = Animal::all();
 
         return view('admin.tasks.create', compact('users', 'adoptions', 'animals'));
+    }
+
+    public function createAdoptionTask()
+    {
+        $users = User::whereIn('role', ['Voluntario', 'Veterinario'])->get();
+        $adoptions = AdoptionRequest::whereIn('Soli_estado', ['Pendiente', 'En Revisión'])->get();
+        $animals = Animal::all();
+
+        return view('admin.tasks.create_adoption', compact('users', 'adoptions', 'animals'));
     }
 
     public function storeTask(Request $request)
