@@ -59,8 +59,18 @@
                            class="premium-btn-adopter" style="flex: 1; text-align: center;">
                             ¡Quiero Adoptarlo! ❤️
                         </a>
-                        <button onclick="openAnimalMedicalHistory({{ $animal->Anim_id }}, '{{ $animal->Anim_nombre }}')" 
-                                style="background: #e8f5e9; color: #1e7e34; border: 2px solid #1e7e34; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; white-space: nowrap;">
+                        <button
+                            onclick="openAnimalMedicalHistory({{ $animal->Anim_id }}, this.dataset.animal)"
+                            data-animal="{{ json_encode([
+                                'Anim_nombre' => $animal->Anim_nombre,
+                                'Anim_foto' => $animal->Anim_foto ?? 'placeholder.jpg',
+                                'Anim_raza' => $animal->Anim_raza,
+                                'Anim_sexo' => $animal->Anim_sexo,
+                                'Anim_edad' => $animal->Anim_edad,
+                                'Anim_estado' => $animal->Anim_estado,
+                                'Anim_historia' => $animal->Anim_historia,
+                            ]) }}"
+                            style="background: #e8f5e9; color: #1e7e34; border: 2px solid #1e7e34; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; white-space: nowrap;">
                             📋 Historial
                         </button>
                     </div>
@@ -91,67 +101,160 @@
     </div>
 </div>
 
+<style>
+    .animal-info-grid {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 22px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .animal-info-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        text-align: left;
+    }
+
+    .animal-photo {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+        border-radius: 18px;
+        border: 2px solid #d9f2e4;
+        box-shadow: 0 14px 35px rgba(15, 81, 55, 0.08);
+    }
+
+    .animal-meta h3 {
+        margin: 0;
+        font-size: 1.65rem;
+        color: #13432c;
+    }
+
+    .animal-meta p,
+    .animal-meta .animal-status {
+        margin: 0;
+        color: #475569;
+        line-height: 1.5;
+    }
+
+    .animal-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 10px;
+        background: #e8f7ed;
+        color: #166644;
+        font-weight: 600;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+    }
+
+    .animal-story {
+        margin-top: 12px;
+        color: #334155;
+        line-height: 1.75;
+    }
+
+    .history-section {
+        margin-top: 1.5rem;
+        text-align: left;
+    }
+
+    .history-section h3 {
+        margin: 0 0 16px;
+        color: #0f5132;
+        font-size: 1.3rem;
+    }
+
+    .history-card {
+        background: #f8faf8;
+        padding: 18px;
+        border-radius: 16px;
+        border-left: 4px solid #1e7e34;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 22px rgba(15, 81, 55, 0.06);
+    }
+
+    .history-card p {
+        margin: 8px 0;
+        color: #27303b;
+        line-height: 1.7;
+    }
+
+    .history-card p span {
+        font-weight: 700;
+        color: #0f5132;
+    }
+
+    @media (max-width: 720px) {
+        .animal-info-grid {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .animal-info-grid img {
+            margin: 0 auto;
+        }
+
+        .animal-meta {
+            align-items: center;
+        }
+    }
+</style>
+
 <script>
-function openAnimalMedicalHistory(animalId, animalName) {
+function openAnimalMedicalHistory(animalId, animalJson) {
     const modal = document.getElementById('animalMedicalHistoryModal');
     const titleEl = document.getElementById('animalModalTitle');
     const contentEl = document.getElementById('animalMedicalHistoryContent');
+    const assetBase = '{{ asset('img/') }}';
+    const animal = typeof animalJson === 'string' ? JSON.parse(animalJson) : animalJson;
 
-    titleEl.textContent = '📋 Historial Médico - ' + animalName;
-    contentEl.innerHTML = '<p style="color: #64748b;">Cargando historial médico...</p>';
+    titleEl.textContent = '📋 Historial Médico - ' + animal.Anim_nombre;
+    contentEl.innerHTML = `
+        <div class="history-section" style="margin-top: 0;">
+            <h3 style="margin-top: 0;">Registros del historial</h3>
+            <div id="animalHistoryRecords">
+                <p style="color: #64748b;">Cargando historial médico...</p>
+            </div>
+        </div>
+    `;
 
-    // Simular carga de datos (en producción sería una llamada AJAX)
     fetch(`/api/animal/${animalId}/medical-history`)
         .then(response => response.json())
         .then(data => {
+            const historyRecords = document.getElementById('animalHistoryRecords');
             if (data.histories && data.histories.length > 0) {
                 let html = '';
                 data.histories.forEach(history => {
                     html += `
-                        <div style="background: #f9fafb; padding: 15px; margin-bottom: 15px; border-left: 4px solid #1e7e34; border-radius: 8px; text-align: left;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                                <div>
-                                    <p style="margin: 5px 0; font-size: 13px; color: #64748b;"><strong>Fecha:</strong></p>
-                                    <p style="margin: 5px 0; color: #1e293b;">${history.fecha}</p>
-                                </div>
-                                <div>
-                                    <p style="margin: 5px 0; font-size: 13px; color: #64748b;"><strong>Veterinario:</strong></p>
-                                    <p style="margin: 5px 0; color: #1e293b;">${history.vet}</p>
-                                </div>
-                            </div>
-
-                            <div style="margin-top: 10px;">
-                                <p style="margin: 5px 0; font-size: 13px; color: #64748b;"><strong>Diagnóstico:</strong></p>
-                                <p style="margin: 5px 0; color: #1e293b;">${history.diagnostico || 'No especificado'}</p>
-                            </div>
-
-                            <div style="margin-top: 10px;">
-                                <p style="margin: 5px 0; font-size: 13px; color: #64748b;"><strong>Tratamiento:</strong></p>
-                                <p style="margin: 5px 0; color: #1e293b;">${history.tratamiento || 'No especificado'}</p>
-                            </div>
-
-                            ${history.observaciones ? `
-                                <div style="margin-top: 10px;">
-                                    <p style="margin: 5px 0; font-size: 13px; color: #64748b;"><strong>Observaciones:</strong></p>
-                                    <p style="margin: 5px 0; color: #1e293b;">${history.observaciones}</p>
-                                </div>
-                            ` : ''}
+                        <div class="history-card">
+                            <p><span>Fecha:</span> ${history.fecha}</p>
+                            <p><span>Veterinario:</span> ${history.vet}</p>
+                            <p><span>Diagnóstico:</span> ${history.diagnostico || 'No especificado'}</p>
+                            <p><span>Tratamiento:</span> ${history.tratamiento || 'No especificado'}</p>
+                            ${history.observaciones ? `<p><span>Observaciones:</span> ${history.observaciones}</p>` : ''}
                         </div>
                     `;
                 });
-                contentEl.innerHTML = html;
+                historyRecords.innerHTML = html;
             } else {
-                contentEl.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px; color: #64748b;">
-                        <p style="font-size: 16px;">No hay registros de historial médico disponibles.</p>
-                        <p style="font-size: 14px;">El animal está en perfecto estado de salud. ✓</p>
+                historyRecords.innerHTML = `
+                    <div style="text-align: center; padding: 30px 20px; color: #64748b;">
+                        <p style="font-size: 16px; margin-bottom: 10px;">No hay registros de historial médico disponibles.</p>
+                        <p style="font-size: 14px;">Este animal aún no tiene historial clínico registrado.</p>
                     </div>
                 `;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            contentEl.innerHTML = '<p style="color: #e53e3e; text-align: center;">Error al cargar el historial médico. Por favor, intenta nuevamente.</p>';
+            document.getElementById('animalHistoryRecords').innerHTML = '<p style="color: #e53e3e; text-align: center;">Error al cargar el historial médico. Por favor, intenta nuevamente.</p>';
         });
 
     modal.style.display = 'flex';

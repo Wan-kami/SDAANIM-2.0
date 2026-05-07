@@ -18,12 +18,12 @@
 
         <section class="seccion">
             <h3>🐶 Nuestra Misión</h3>
-            <p>Promover la adopción responsable de animales rescatados, ofreciendo un sistema digital que optimice la gestión del refugio, facilite el acceso a la información de los animales en espera y agilice el proceso de adopción. Buscamos mejorar la calidad de vida de los peluditos y fomentar hogares responsables que les brinden amor y cuidado.</p>
+            <p>{{ $about->mision ?? 'Nuestra misión se verá aquí una vez que la administre el equipo.' }}</p>
         </section>
 
         <section class="seccion">
             <h3>🌟 Nuestra Visión</h3>
-            <p>Para el año 2040 seremos una plataforma líder en adopción responsable de animales en Colombia, reconocida por su innovación tecnológica y su impacto social, expandiendo nuestra solución a múltiples refugios y convirtiéndonos en un referente en la protección animal y el bienestar comunitario.</p>
+            <p>{{ $about->vision ?? 'Nuestra visión se verá aquí una vez que la administre el equipo.' }}</p>
         </section>
 
     </div>
@@ -32,28 +32,34 @@
     <section class="seccion valores">
         <h3>💡 Nuestros Valores</h3>
         <div class="valores-grid">
+            @php
+                $valores = $about->valores;
+                if (!is_array($valores)) {
+                    $decoded = json_decode($valores, true);
+                    $valores = is_array($decoded) ? $decoded : preg_split('/\r\n|\r|\n/', $about->valores ?? '');
+                }
+            @endphp
 
-            <div class="valor-card">
-                <span class="valor-titulo">🤝 Compromiso</span>
-                <span class="valor-desc">Nos dedicamos con constancia al bienestar de cada animal, sin importar las dificultades del camino.</span>
-            </div>
-
-            <div class="valor-card">
-                <span class="valor-titulo">🔍 Transparencia</span>
-                <span class="valor-desc">Gestionamos cada proceso de adopción de forma abierta, clara y honesta para adoptantes y voluntarios.</span>
-            </div>
-
-            <div class="valor-card">
-                <span class="valor-titulo">💻 Innovación</span>
-                <span class="valor-desc">Usamos tecnología para transformar la forma en que los refugios operan y conectan con la comunidad.</span>
-            </div>
-
-            <div class="valor-card">
-                <span class="valor-titulo">📋 Responsabilidad</span>
-                <span class="valor-desc">Hacemos seguimiento a cada animal adoptado para asegurar que viva en un hogar digno y amoroso.</span>
-            </div>
-
-
+            @forelse($valores as $valor)
+                @if(trim($valor) !== '')
+                    <div class="valor-card">
+                        <span class="valor-titulo">{{ trim($valor) }}</span>
+                    </div>
+                @endif
+            @empty
+                <div class="valor-card">
+                    <span class="valor-titulo">🤝 Compromiso</span>
+                </div>
+                <div class="valor-card">
+                    <span class="valor-titulo">🔍 Transparencia</span>
+                </div>
+                <div class="valor-card">
+                    <span class="valor-titulo">💻 Innovación</span>
+                </div>
+                <div class="valor-card">
+                    <span class="valor-titulo">📋 Responsabilidad</span>
+                </div>
+            @endforelse
         </div>
     </section>
 
