@@ -107,6 +107,22 @@
                 <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Voluntario asignado</label>
                 <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->volunteer->name ?? 'N/A' }}</p>
             </div>
+
+            @if($adoption->reporte_voluntario)
+                @php
+                    $evalBorderColor = $adoption->apto ? '#4CAF50' : '#f44336';
+                    $evalBgColor = $adoption->apto ? '#e8f5e9' : '#ffebee';
+                    $evalTextColor = $adoption->apto ? '#2e7d32' : '#c62828';
+                    $evalBadge = $adoption->apto ? '✓ Apto' : '✕ No Apto';
+                @endphp
+                <div style="margin-top: 20px; padding: 15px; border-left: 5px solid {{ $evalBorderColor }}; background: {{ $evalBgColor }}; border-radius: 4px;">
+                    <h4 style="margin: 0 0 10px 0; color: {{ $evalTextColor }}; font-size: 15px; font-weight: 600;">
+                        Conclusión del Voluntario: <span style="font-weight: bold; text-transform: uppercase;">{{ $evalBadge }}</span>
+                    </h4>
+                    <label style="color: #666; font-size: 11px; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 5px;">Reporte Detallado</label>
+                    <p style="margin: 0; color: #333; font-size: 14px; line-height: 1.5; white-space: pre-line;">{{ $adoption->reporte_voluntario }}</p>
+                </div>
+            @endif
         </div>
         @endif
 

@@ -254,19 +254,11 @@ class AdoptionController extends Controller
         // Completar la tarea relacionada
         $task = \App\Models\Task::where('Usu_documento', $solicitud->Soli_voluntario)
             ->where('Tar_estado', '!=', 'Completado')
-            ->when($solicitud->Soli_id, function($q) use ($solicitud) {
-                return $q->where('soli_id', $solicitud->Soli_id);
-            }, function($q) {
-                return $q->where(function($q2) {
-                    $q2->where('Tar_descripcion', 'like', '%seguimiento%')
-                       ->orWhere('Tar_descripcion', 'like', '%adopción%')
-                       ->orWhere('Tar_descripcion', 'like', '%visita%');
-                });
-            })
+            ->where('soli_id', $solicitud->Soli_id)
             ->first();
         if ($task) {
             $task->update([
-                'Tar_estado' => 'Completado',
+                'Tar_estado' => 'En Proceso',
                 'Tar_comentario' => $request->reporte
             ]);
         }
@@ -277,7 +269,7 @@ class AdoptionController extends Controller
             'Usu_documento' => $admin->Usu_documento,
             'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción de {$solicitud->animal->Anim_nombre}.",
             'Noti_fecha' => now(),
-            'Noti_link' => route('admin.requests.index'),
+            'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
         ]);
 
         return back()->with('success', 'Reporte enviado correctamente.');

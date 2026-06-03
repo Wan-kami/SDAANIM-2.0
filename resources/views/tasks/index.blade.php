@@ -56,8 +56,8 @@
                 @if($estado !== 'Completado')
 
                     <div class="task-actions">
-                        {{-- Cambiar a Observación --}}
-                        @if($estado == 'Pendiente')
+                        {{-- Cambiar a Observación (solo tareas sin solicitud de adopción) --}}
+                        @if($estado == 'Pendiente' && !$task->adoptionRequest)
                             <form action="{{ route($routePrefix . '.tasks.updateStatus', $task->Tar_id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -66,8 +66,8 @@
                             </form>
                         @endif
 
-                        {{-- Cambiar a En Proceso --}}
-                        @if($estado == 'Pendiente' || $estado == 'Observación')
+                        {{-- Cambiar a En Proceso (solo tareas normales, no de adopción) --}}
+                        @if(($estado == 'Pendiente' || $estado == 'Observación') && !$task->adoptionRequest)
                             <form action="{{ route($routePrefix . '.tasks.updateStatus', $task->Tar_id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -95,24 +95,67 @@
                         </div>
                     @endif
 
-                    {{-- Formulario especial para adopciones --}}
-                    @if($task->adoptionRequest && !$task->adoptionRequest->reporte_voluntario)
+                    @php
+                        // Determinar si el voluntario ya envió un reporte
+                        $esAdopcion = (bool) $task->adoptionRequest;
+                        $reporteEnviado = $esAdopcion
+                            ? !empty($task->adoptionRequest->reporte_voluntario)
+                            : ($estado === 'En Proceso' && !empty($task->Tar_comentario));
+                    @endphp
+
+                    @if($reporteEnviado)
+                        {{-- ===================== BANNER: ya se envió el reporte ===================== --}}
+                        <div style="background: #e0f2fe; color: #0369a1; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-top: 15px;">
+                            <h4 style="margin: 0 0 8px 0; display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 1em;">
+                                ⏳ Reporte enviado — esperando revisión del Administrador
+                            </h4>
+                            <p style="margin: 0 0 4px 0; font-size: 0.93em;">
+                                <strong>Tu reporte:</strong>
+                                {{ $esAdopcion ? $task->adoptionRequest->reporte_voluntario : $task->Tar_comentario }}
+                            </p>
+                            @if($esAdopcion && isset($task->adoptionRequest->apto))
+                                <p style="margin: 6px 0 0 0; font-size: 0.93em;">
+                                    <strong>Evaluación:</strong>
+                                    <span style="font-weight: 700; color: {{ $task->adoptionRequest->apto ? '#15803d' : '#b91c1c' }};">
+                                        {{ $task->adoptionRequest->apto ? '✓ Apto para adopción' : '✕ No apto para adopción' }}
+                                    </span>
+                                </p>
+                            @endif
+                        </div>
+
+                    @elseif($esAdopcion)
+                        {{-- ===================== FORMULARIO de reporte de adopción ===================== --}}
                         <form action="{{ route('admin.adoptions.report', $task->adoptionRequest->Soli_id) }}" method="POST" class="task-form-box">
                             @csrf
-                            <label class="task-form-label">Reporte de Visita de Adopción</label>
-                            <textarea name="reporte" rows="4" class="task-form-textarea" placeholder="Describe lo que observaste en el hogar del adoptante, condiciones, etc." required></textarea>
-                            <div style="margin-bottom: 10px;">
-                                <label><input type="radio" name="apto" value="1" required> Apto para adopción</label>
-                                <label style="margin-left: 20px;"><input type="radio" name="apto" value="0" required> No apto para adopción</label>
+                            <label class="task-form-label">📋 Reporte de Visita de Adopción</label>
+                            <textarea name="reporte" rows="4" class="task-form-textarea"
+                                placeholder="Describe lo que observaste en el hogar del adoptante: condiciones del espacio, trato con animales, compromisos, etc."
+                                required></textarea>
+                            <div style="margin: 10px 0 14px 0; display: flex; gap: 24px;">
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <input type="radio" name="apto" value="1" required>
+                                    <span style="color:#15803d; font-weight:600;">✓ Apto para adopción</span>
+                                </label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <input type="radio" name="apto" value="0">
+                                    <span style="color:#b91c1c; font-weight:600;">✕ No apto para adopción</span>
+                                </label>
                             </div>
-                            <button class="task-btn btn-success">✓ Enviar Reporte</button>
+                            <button class="task-btn btn-success">✓ Enviar Reporte de Adopción</button>
                         </form>
+
                     @else
+                        {{-- ===================== FORMULARIO de tarea normal ===================== --}}
                         <form action="{{ route($routePrefix . '.tasks.complete', $task->Tar_id) }}" method="POST" class="task-form-box">
                             @csrf
                             <label class="task-form-label">📤 Enviar Reporte al Administrador</label>
+                            <p style="margin: 0 0 8px 0; font-size: 0.88em; color: #64748b;">
+                                Describe lo que realizaste. El administrador revisará y aprobará la tarea.
+                            </p>
                             <div style="display:flex; gap:10px; flex-direction: column;">
-                                <textarea name="comentario" rows="2" class="task-form-textarea" placeholder="Describe lo que realizaste o observaste (el admin revisará y aprobará la tarea)">{{ $task->Tar_comentario }}</textarea>
+                                <textarea name="comentario" rows="3" class="task-form-textarea"
+                                    placeholder="Escribe aquí tu reporte de actividad…"
+                                    required>{{ $task->Tar_comentario }}</textarea>
                                 <button class="task-btn btn-success" style="align-self: flex-start;">📤 Enviar Reporte</button>
                             </div>
                         </form>

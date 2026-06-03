@@ -538,6 +538,11 @@ class AdminController extends Controller
             $adoption->animal->update(['Anim_estado' => 'Adoptado']);
         }
 
+        // Completar tareas de seguimiento relacionadas
+        Task::where('soli_id', $id)
+            ->where('Tar_estado', '!=', 'Completado')
+            ->update(['Tar_estado' => 'Completado']);
+
         return redirect()->route('admin.adoptions')->with('success', 'Adopción aprobada.');
     }
 
@@ -545,6 +550,11 @@ class AdminController extends Controller
     {
         $adoption = AdoptionRequest::findOrFail($id);
         $adoption->update(['Soli_estado' => 'Rechazada']);
+
+        // Completar tareas de seguimiento relacionadas
+        Task::where('soli_id', $id)
+            ->where('Tar_estado', '!=', 'Completado')
+            ->update(['Tar_estado' => 'Completado']);
 
         return redirect()->route('admin.adoptions')->with('success', 'Adopción rechazada.');
     }
