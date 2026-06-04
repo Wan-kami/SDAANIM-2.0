@@ -154,6 +154,19 @@
             </div>
             <a href="{{ route('admin.about') }}" class="btn-card-action">Configurar</a>
         </div>
+
+        <div class="admin-card-premium">
+            <div class="card-icon">🔔</div>
+            <div class="card-body">
+                <h3>Notificaciones</h3>
+                <p>Revisa los avisos recientes del sistema y las alertas importantes.</p>
+                <div class="card-stat">
+                    <span class="stat-label">Acceso rápido:</span>
+                    <span class="stat-value">Mensajes</span>
+                </div>
+            </div>
+            <a href="{{ route('admin.notifications') }}" class="btn-card-action">Ver Notificaciones</a>
+        </div>
     </section>
 </div>
 

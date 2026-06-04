@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use App\Models\Product;
+use App\Models\ProductColor;
+use App\Models\ProductSize;
 use App\Models\User;
 use App\Models\Inscription;
 use App\Models\AdoptionRequest;
@@ -412,11 +414,11 @@ class AdminController extends Controller
                 ]);
             }
             
-            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Veterinario', $inscription->ins_nombre, $password));
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Veterinario', $inscription->ins_nombre, $inscription->ins_documento, $password));
 
         } elseif ($request->accion === 'rechazar') {
             $inscription->update(['ins_estado' => 'Rechazada']);
-            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Veterinario', $inscription->ins_nombre));
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Veterinario', $inscription->ins_nombre, $inscription->ins_documento));
         }
 
         return redirect()->back()->with('success', 'Veterinario procesado correctamente. El rol ha sido actualizado.');
@@ -464,11 +466,11 @@ class AdminController extends Controller
                 ]);
             }
 
-            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Voluntario', $inscription->ins_nombre, $password));
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Aprobada', 'Voluntario', $inscription->ins_nombre, $inscription->ins_documento, $password));
 
         } elseif ($request->accion === 'rechazar') {
             $inscription->update(['ins_estado' => 'Rechazada']);
-            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Voluntario', $inscription->ins_nombre));
+            Mail::to($inscription->ins_email)->send(new InscriptionStatusMail('Rechazada', 'Voluntario', $inscription->ins_nombre, $inscription->ins_documento));
         }
 
         return redirect()->back()->with('success', 'Voluntario procesado correctamente. El rol ha sido actualizado.');
@@ -839,5 +841,79 @@ class AdminController extends Controller
         $notification->delete();
 
         return redirect()->back()->with('success', 'Notificación eliminada.');
+    }
+
+    // ==================== PRODUCT COLORS ====================
+    public function addColor($productId, Request $request)
+    {
+        $request->validate([
+            'color_nombre' => 'required|string|max:50',
+            'color_hex' => 'required|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
+            'disponible' => 'required|boolean',
+        ]);
+
+        $product = Product::findOrFail($productId);
+
+        \App\Models\ProductColor::create([
+            'prod_id' => $productId,
+            'color_nombre' => $request->color_nombre,
+            'color_hex' => $request->color_hex,
+            'disponible' => $request->boolean('disponible'),
+        ]);
+
+        return redirect()->route('admin.products.edit', $productId)
+            ->with('success', 'Color agregado exitosamente.');
+    }
+
+    public function deleteColor($colorId)
+    {
+        $color = \App\Models\ProductColor::findOrFail($colorId);
+        $productId = $color->prod_id;
+        $color->delete();
+
+        return redirect()->route('admin.products.edit', $productId)
+            ->with('success', 'Color eliminado exitosamente.');
+    }
+
+    // ==================== PRODUCT SIZES ====================
+    public function addSize($productId, Request $request)
+    {
+        $request->validate([
+            'talla' => 'required|in:XS,S,M,L,XL,XXL',
+            'cantidad' => 'required|integer|min:1',
+            'disponible' => 'required|boolean',
+        ]);
+
+        $product = Product::findOrFail($productId);
+
+        // Check if size already exists
+        $existing = \App\Models\ProductSize::where('prod_id', $productId)
+            ->where('talla', $request->talla)
+            ->first();
+
+        if ($existing) {
+            return redirect()->route('admin.products.edit', $productId)
+                ->with('error', 'Esta talla ya existe para este producto.');
+        }
+
+        \App\Models\ProductSize::create([
+            'prod_id' => $productId,
+            'talla' => $request->talla,
+            'cantidad' => $request->cantidad,
+            'disponible' => $request->boolean('disponible'),
+        ]);
+
+        return redirect()->route('admin.products.edit', $productId)
+            ->with('success', 'Talla agregada exitosamente.');
+    }
+
+    public function deleteSize($sizeId)
+    {
+        $size = \App\Models\ProductSize::findOrFail($sizeId);
+        $productId = $size->prod_id;
+        $size->delete();
+
+        return redirect()->route('admin.products.edit', $productId)
+            ->with('success', 'Talla eliminada exitosamente.');
     }
 }

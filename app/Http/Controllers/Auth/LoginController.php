@@ -18,6 +18,10 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'Usu_documento' => ['required', 'integer'],
             'password' => ['required'],
+        ], [
+            'Usu_documento.required' => 'Debes ingresar tu número de documento.',
+            'Usu_documento.integer' => 'El número de documento solo puede contener dígitos.',
+            'password.required' => 'Debes ingresar tu contraseña.',
         ]);
 
         if (Auth::attempt(['Usu_documento' => $credentials['Usu_documento'], 'password' => $credentials['password']])) {

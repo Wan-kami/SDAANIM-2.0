@@ -94,17 +94,18 @@
             </div>
         @endif
 
-        <form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register.custom') }}" method="POST">
             @csrf
             <div class="form-grid">
                 <div class="form-group">
                     <label>Documento</label>
-                    <input type="text" name="Usu_documento" value="{{ old('Usu_documento') }}" placeholder="Sin puntos ni letras" required autofocus />
+                    <input type="text" name="Usu_documento" value="{{ old('Usu_documento') }}" placeholder="Sin puntos ni letras" required autofocus
+                        inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
                     @error('Usu_documento') <span class="error-msg">{{ $message }}</span> @enderror
                 </div>
                 <div class="form-group">
                     <label>Nombre Completo</label>
-                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Ej: Juan Pérez" required />
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Ej: Juan Pérez" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios" />
                     @error('name') <span class="error-msg">{{ $message }}</span> @enderror
                 </div>
                 <div class="form-group full-width">
@@ -114,12 +115,12 @@
                 </div>
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" name="Usu_telefono" value="{{ old('Usu_telefono') }}" required />
+                    <input type="text" name="Usu_telefono" value="{{ old('Usu_telefono') }}" placeholder="300 123 4567" required inputmode="tel" pattern="[0-9\s()+-]+" title="Solo números, espacios, paréntesis, guiones y +" />
                     @error('Usu_telefono') <span class="error-msg">{{ $message }}</span> @enderror
                 </div>
                 <div class="form-group">
                     <label>Dirección</label>
-                    <input type="text" name="Usu_direccion" value="{{ old('Usu_direccion') }}" required />
+                    <input type="text" name="Usu_direccion" value="{{ old('Usu_direccion') }}" placeholder="Calle 123 #45-67" required pattern="[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s#\-\.,]+" title="Solo letras, números y símbolos permitidos" />
                     @error('Usu_direccion') <span class="error-msg">{{ $message }}</span> @enderror
                 </div>
                 <div class="form-group password-field">

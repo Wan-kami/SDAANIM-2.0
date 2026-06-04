@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inscription;
 use App\Models\User;
+use App\Models\Notification;
 use App\Mail\InscriptionApprovedMail;
 use App\Mail\InscriptionRejectedMail;
 use Illuminate\Http\Request;
@@ -57,7 +58,19 @@ class InscriptionController extends Controller
             'ins_comentario' => 'nullable|string',
         ]);
 
-        Inscription::create($data);
+        $inscription = Inscription::create($data);
+
+        // Notify admin of new inscription
+        $admin = User::where('role', 'Administrador')->first();
+        if ($admin) {
+            $rolLabel = ucfirst($data['ins_tipo_rol']);
+            Notification::create([
+                'Usu_documento' => $admin->Usu_documento,
+                'Noti_mensaje' => "Nueva solicitud de {$rolLabel}: {$data['ins_nombre']} ({$data['ins_documento']})",
+                'Noti_fecha' => now(),
+                'Noti_link' => route('admin.inscriptions'),
+            ]);
+        }
 
         return back()->with('success', 'Gracias por tu interés. Tu inscripción se ha enviado correctamente y pronto estaremos en contacto.');
     }
@@ -80,7 +93,7 @@ class InscriptionController extends Controller
             'Usu_telefono' => $ins->ins_telefono,
             'Usu_direccion' => $ins->ins_direccion,
             'role' => ucfirst($ins->ins_tipo_rol), // 'Voluntario' or 'Veterinario'
-            'password' => $passwordTemporal,
+            'password' => Hash::make($passwordTemporal),
             'status' => 'Activo',
         ]);
 

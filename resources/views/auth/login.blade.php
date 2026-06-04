@@ -109,11 +109,14 @@
             @csrf
             <input
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 name="Usu_documento"
                 placeholder="Número de Documento"
                 value="{{ old('Usu_documento') }}"
                 required
                 autofocus
+                oninput="this.value = this.value.replace(/[^0-9]/g, '');"
             />
             @error('Usu_documento')
                 <p class="error-msg">{{ $message }}</p>

@@ -50,6 +50,17 @@ class AdoptionController extends Controller
             'Soli_estado' => 'Pendiente',
         ]);
 
+        // Notify admin of new adoption request
+        $admin = User::where('role', 'Administrador')->first();
+        if ($admin) {
+            Notification::create([
+                'Usu_documento' => $admin->Usu_documento,
+                'Noti_mensaje' => "Nueva solicitud de adopción: {$animal->Anim_nombre} por {$solicitud->user->name} ({$solicitud->user->Usu_documento})",
+                'Noti_fecha' => now(),
+                'Noti_link' => route('admin.adoptions'),
+            ]);
+        }
+
         try {
             Mail::to(Auth::user()->email)->send(new AdoptionRequestStatusMail(
                 subjectLine: 'Solicitud de adopción enviada correctamente',

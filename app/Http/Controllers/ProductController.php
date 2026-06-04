@@ -18,10 +18,28 @@ class ProductController extends Controller
     /**
      * Display products for the public.
      */
-    public function publicIndex()
+    public function publicIndex(Request $request)
     {
-        $products = Product::latest('prod_id')->get();
-        return view('products.public_index', compact('products'));
+        $search = $request->query('search');
+        $category = $request->query('category');
+
+        $query = Product::query();
+
+        if ($search) {
+            $query->where(function ($sub) use ($search) {
+                $sub->where('prod_nombre', 'like', "%{$search}%")
+                    ->orWhere('prod_descripcion', 'like', "%{$search}%");
+            });
+        }
+
+        if ($category) {
+            $query->where('prod_categoria', $category);
+        }
+
+        $products = $query->with(['colors', 'sizes'])->latest('prod_id')->get();
+        $categories = Product::select('prod_categoria')->distinct()->pluck('prod_categoria');
+
+        return view('products.public_index', compact('products', 'categories'));
     }
 
     /**
