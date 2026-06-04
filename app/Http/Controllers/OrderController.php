@@ -25,7 +25,7 @@ class OrderController extends Controller
             'Usu_documento' => Auth::user()->Usu_documento,
             'ord_estado' => 'pendiente',
             'ord_fechaCreacion' => now(),
-            'ord_fechaExpiracion' => now()->addDays(3), // 3 días para recoger
+            'ord_fechaExpiracion' => now()->addHours(5), // 5 horas para recoger
             'ord_total' => 0,
         ]);
 
@@ -60,7 +60,7 @@ class OrderController extends Controller
             'Noti_link' => route('orders.history'),
         ]);
 
-        return redirect()->route('orders.show', $order->ord_id)->with('success', 'Pedido creado exitosamente. Tienes 3 días para recogerlo.');
+        return redirect()->route('orders.show', $order->ord_id)->with('success', 'Pedido creado exitosamente. Tienes hasta 5 horas para recogerlo.');
     }
 
     public function show($ord_id)

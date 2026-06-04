@@ -33,6 +33,11 @@
                     @endif
                 </div>
 
+                <div style="margin-bottom: 25px;">
+                    <label for="visita_fecha" style="display: block; color: #333; font-weight: 600; margin-bottom: 10px; font-size: 14px;">Fecha de visita *</label>
+                    <input type="date" name="visita_fecha" id="visita_fecha" required min="{{ date('Y-m-d') }}" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; font-family: inherit; transition: all 0.3s;" onfocus="this.style.borderColor='#2e8b57'; this.style.boxShadow='0 0 0 3px rgba(46, 139, 87, 0.1)';" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+                </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <a href="{{ route('admin.adoptions') }}" style="background: #e0e0e0; color: #333; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s;" onmouseover="this.style.background='#d0d0d0'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#e0e0e0'; this.style.transform='translateY(0)';">Cancelar</a>
                     <button type="submit" style="background: #2e8b57; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1e6a3e'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(46, 139, 87, 0.3)';" onmouseout="this.style.background='#2e8b57'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">✓ Asignar Voluntario</button>

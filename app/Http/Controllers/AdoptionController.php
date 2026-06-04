@@ -9,6 +9,7 @@ use App\Models\Notification;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AdoptionController extends Controller
@@ -49,16 +50,20 @@ class AdoptionController extends Controller
             'Soli_estado' => 'Pendiente',
         ]);
 
-        Mail::to(Auth::user()->email)->send(new AdoptionRequestStatusMail(
-            subjectLine: 'Solicitud de adopción enviada correctamente',
-            name: Auth::user()->name,
-            animalName: $animal->Anim_nombre,
-            status: 'Pendiente',
-            emailMessage: "Hemos recibido tu solicitud de adopción para {$animal->Anim_nombre}. Un voluntario la revisará pronto y te avisaremos cuando programemos la visita a tu hogar.",
-            visitDate: null,
-            volunteerName: null,
-            actionUrl: route('adopter.requests')
-        ));
+        try {
+            Mail::to(Auth::user()->email)->send(new AdoptionRequestStatusMail(
+                subjectLine: 'Solicitud de adopción enviada correctamente',
+                name: Auth::user()->name,
+                animalName: $animal->Anim_nombre,
+                status: 'Pendiente',
+                emailMessage: "Hemos recibido tu solicitud de adopción para {$animal->Anim_nombre}. Un voluntario la revisará pronto y te avisaremos cuando programemos la visita a tu hogar.",
+                visitDate: null,
+                volunteerName: null,
+                actionUrl: route('adopter.requests')
+            ));
+        } catch (\Exception $e) {
+            Log::error('Error al enviar email de solicitud de adopción: ' . $e->getMessage());
+        }
 
         return redirect()->route('adopter.requests')
             ->with('success', 'Solicitud enviada correctamente.');
@@ -71,7 +76,8 @@ class AdoptionController extends Controller
     {
         $requests = AdoptionRequest::where('Usu_documento', Auth::user()->Usu_documento)
             ->with('animal')
-            ->latest()
+            ->orderByDesc('Soli_fecha')
+            ->orderByDesc('Soli_id')
             ->get();
 
         return view('adoptions.user_index', compact('requests'));
@@ -229,7 +235,8 @@ class AdoptionController extends Controller
             'Tu solicitud de adopción está en revisión',
             "Un voluntario revisará tu solicitud y visitará tu hogar el {$request->visita_fecha}.",
             $request->visita_fecha,
-            $solicitud->volunteer?->name
+            $solicitud->volunteer?->name,
+            route('adopter.requests')
         );
 
         return back()->with('success', 'Voluntario asignado y visita programada correctamente.');
@@ -265,12 +272,23 @@ class AdoptionController extends Controller
 
         // Notificar al admin
         $admin = \App\Models\User::where('role', 'Administrador')->first();
+<<<<<<< HEAD
         Notification::create([
             'Usu_documento' => $admin->Usu_documento,
             'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción de {$solicitud->animal->Anim_nombre}.",
             'Noti_fecha' => now(),
             'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
         ]);
+=======
+        if ($admin) {
+            Notification::create([
+                'Usu_documento' => $admin->Usu_documento,
+                'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción #{$solicitud->Soli_id} de {$solicitud->animal->Anim_nombre}.",
+                'Noti_fecha' => now(),
+                'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
+            ]);
+        }
+>>>>>>> fccf706 (Arregle muchos errores)
 
         return back()->with('success', 'Reporte enviado correctamente.');
     }

@@ -31,8 +31,31 @@
                      style="width:90px; height:90px; border-radius:12px; object-fit:cover; flex-shrink:0;">
 
                 <div style="flex: 1;">
-                    <h3 style="margin:0 0 6px; color:#1a3a2a;">{{ $req->animal->Anim_nombre }}</h3>
-                    <p style="margin:0 0 4px; color:#64748b; font-size:0.9em;"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($req->Soli_fecha ?? $req->created_at)->format('d/m/Y') }}</p>
+                    <h3 style="margin:0 0 6px; color:#1a3a2a;">{{ $req->animal->Anim_nombre ?? 'Animal no disponible' }}</h3>
+                    @if($req->reporte_voluntario)
+                        <p style="margin:0 0 8px; color:#0f172a; font-size:0.92em; font-weight:700;">📌 Reporte recibido del voluntario</p>
+                    @endif
+                    @php
+                        $fechaSolicitud = $req->Soli_fecha;
+                        if ($fechaSolicitud && ! ($fechaSolicitud instanceof \Carbon\Carbon)) {
+                            try {
+                                $fechaSolicitud = \Carbon\Carbon::parse($fechaSolicitud);
+                            } catch (\Exception $e) {
+                                $fechaSolicitud = null;
+                            }
+                        }
+                    @endphp
+                    @php
+                        $fechaVisita = $req->visita_fecha;
+                        if ($fechaVisita && ! ($fechaVisita instanceof \Carbon\Carbon)) {
+                            try {
+                                $fechaVisita = \Carbon\Carbon::parse($fechaVisita);
+                            } catch (\Exception $e) {
+                                $fechaVisita = null;
+                            }
+                        }
+                    @endphp
+                    <p style="margin:0 0 4px; color:#64748b; font-size:0.9em;"><strong>Fecha:</strong> {{ $fechaSolicitud ? $fechaSolicitud->format('d/m/Y') : (optional($req->created_at)->format('d/m/Y') ?? 'Sin fecha') }}</p>
                     <p style="margin:0;">
                         <strong>Estado:</strong>
                         <span style="padding: 4px 12px; border-radius: 20px; font-size: 0.82em; font-weight: 700; background: {{ $c['bg'] }}; color: {{ $c['color'] }};">
@@ -42,7 +65,10 @@
 
                     {{-- Calificación estrellada si el proceso terminó y aún no calificó --}}
                     @if($decidido && !$yaCalificó)
-                        <button onclick="abrirModalReview({{ $req->Soli_id }}, '{{ $req->animal->Anim_nombre }}')"
+                        <button type="button"
+                                class="review-button"
+                                data-soli-id="{{ $req->Soli_id }}"
+                                data-animal-nombre="{{ e($req->animal->Anim_nombre ?? 'Animal no disponible') }}"
                                 style="margin-top:10px; padding:7px 16px; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border:none; border-radius:999px; font-size:0.82em; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.3); transition:.2s;"
                                 onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform=''">
                             ⭐ Calificar mi experiencia
@@ -52,11 +78,17 @@
                     @endif
                 </div>
 
-                <a href="javascript:void(0);"
-                   onclick="abrirModal('{{ $req->animal->Anim_nombre }}', '{{ $req->animal->Anim_edad }}', '{{ $req->animal->Anim_raza }}', '{{ addslashes($req->animal->Anim_historia ?? 'Sin historia disponible') }}', '{{ asset('img/' . ($req->animal->Anim_foto ?? 'placeholder.jpg')) }}')"
-                   style="text-decoration:none; color:#2d7d46; font-weight:700; font-size:0.9em; white-space:nowrap;">
+                <button type="button"
+                        class="detail-button"
+                        data-estado="{{ e($req->Soli_estado) }}"
+                        data-comentario="{{ e($req->Soli_comentarios ?? 'No hay comentarios adicionales.') }}"
+                        data-reporte="{{ e($req->reporte_voluntario ?? 'Aún no se ha recibido un reporte.') }}"
+                        data-visita="{{ e($fechaVisita ? $fechaVisita->format('d/m/Y') : 'Fecha de visita no programada') }}"
+                        data-volunteer="{{ e($req->volunteer?->name ?? 'No hay voluntario asignado') }}"
+                        data-animal-nombre="{{ e($req->animal->Anim_nombre ?? 'Animal no disponible') }}"
+                        style="background:none; border:none; padding:0; text-decoration:none; color:#2d7d46; font-weight:700; font-size:0.9em; white-space:nowrap; cursor:pointer;">
                     🔍 Ver detalles
-                </a>
+                </button>
             </div>
         @empty
             <div style="text-align:center; padding:60px 20px; color:#9ca3af;">
@@ -107,60 +139,150 @@
 
 @include('partials.animal_modal')
 
+{{-- MODAL: estado de la solicitud --}}
+<div id="statusModal" style="display:none; position:fixed; inset:0; z-index:1400; background:rgba(0,0,0,0.55); backdrop-filter:blur(3px); align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:22px; padding:32px 36px; width:95%; max-width:520px; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.25); animation:slideUp .3s ease; border-top:5px solid #2e8b57;">
+        <button onclick="cerrarModalEstado()" style="position:absolute;top:14px;right:18px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;">✕</button>
+        <h2 id="statusModalTitle" style="margin:0 0 10px; color:#2e8b57; font-size:1.4em;"></h2>
+        <p id="statusModalMessage" style="color:#4b5563; line-height:1.7; margin-bottom:24px;"></p>
+        <div style="background:#f8fafc; border:1px solid #d1e8ee; border-radius:16px; padding:18px;">
+            <p style="margin:0 0 8px; font-weight:700; color:#0f172a;">Información de la solicitud</p>
+            <p style="margin:0 0 6px; color:#374151;"><strong>Estado:</strong> <span id="statusModalState" style="font-weight:700;"></span></p>
+            <p style="margin:0 0 6px; color:#374151;"><strong>Voluntario asignado:</strong> <span id="statusModalVolunteer"></span></p>
+            <p style="margin:0 0 6px; color:#374151;"><strong>Fecha de visita:</strong> <span id="statusModalVisit"></span></p>
+            <p style="margin:0 0 6px; color:#374151;"><strong>Comentario del solicitante:</strong> <span id="statusModalRequestComment"></span></p>
+            <p style="margin:0; color:#374151;"><strong>Reporte del voluntario:</strong> <span id="statusModalVolunteerReport"></span></p>
+        </div>
+    </div>
+</div>
+
 <script>
-    let estrellasSeleccionadas = 0;
+    document.addEventListener('DOMContentLoaded', function() {
+        let estrellasSeleccionadas = 0;
 
-    function abrirModalReview(soliId, animalNombre) {
-        document.getElementById('reviewForm').action = '/adopter/mis-solicitudes/' + soliId + '/calificar';
-        document.getElementById('reviewSubtitle').innerText = 'Adoptaste a ' + animalNombre + '. Tu opinión nos ayuda a mejorar 🐾';
-        document.getElementById('reviewModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        estrellasSeleccionadas = 0;
-        document.getElementById('inputEstrellas').value = '';
-        resetHover();
-    }
+        window.abrirModalEstado = function(estado, comentario, reporte, visita, voluntario, animalNombre) {
+            const title = estado === 'Aceptada' ? '¡Solicitud aceptada!' : estado === 'Rechazada' ? 'Solicitud rechazada' : 'Estado de tu solicitud';
+            const statusModal = document.getElementById('statusModal');
+            const reviewModal = document.getElementById('reviewModal');
 
-    function cerrarModalReview() {
-        document.getElementById('reviewModal').style.display = 'none';
-        document.body.style.overflow = '';
-    }
+            document.getElementById('statusModalTitle').innerText = title;
 
-    function seleccionarEstrella(val) {
-        estrellasSeleccionadas = val;
-        document.getElementById('inputEstrellas').value = val;
-        colorEstrellas(val, '#f59e0b');
-    }
+            let message = '';
+            if (estado === 'Aceptada') {
+                message = `Tu solicitud para ${animalNombre} fue aceptada. Gracias por confiar en nosotros. Revisa los detalles y prepárate para el próximo paso.`;
+            } else if (estado === 'Rechazada') {
+                message = `Lo sentimos, tu solicitud para ${animalNombre} fue rechazada. Puedes revisar más abajo los motivos disponibles o contactarnos para mayor información.`;
+            } else if (estado === 'Aprobada') {
+                message = `Tu solicitud para ${animalNombre} está aprobada y lista para continuar. Revisa los detalles de la visita y el seguimiento.`;
+            } else if (estado === 'No Apta') {
+                message = `Tu solicitud para ${animalNombre} no fue considerada apta en este momento. Revisa más abajo los comentarios de la revisión.`;
+            } else if (estado === 'En Revisión' || estado === 'Asignada' || estado === 'En Entrevista' || estado === 'En Proceso') {
+                message = `Tu solicitud para ${animalNombre} está en revisión. Pronto recibirás novedades del voluntario asignado y la visita programada.`;
+            } else {
+                message = `Tu solicitud para ${animalNombre} está en estado "${estado}". Revisa más detalles a continuación.`;
+            }
 
-    function hoverEstrella(val) {
-        colorEstrellas(val, '#fbbf24');
-    }
+            document.getElementById('statusModalMessage').innerText = message;
+            document.getElementById('statusModalState').innerText = estado;
+            document.getElementById('statusModalVolunteer').innerText = voluntario;
+            document.getElementById('statusModalVisit').innerText = visita;
+            document.getElementById('statusModalRequestComment').innerText = comentario || 'No hay comentarios adicionales.';
+            document.getElementById('statusModalVolunteerReport').innerText = reporte || 'Aún no se ha recibido un reporte.';
+            statusModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
 
-    function resetHover() {
-        colorEstrellas(estrellasSeleccionadas, '#f59e0b');
-        const spans = document.querySelectorAll('#starContainer span');
-        spans.forEach((s, i) => {
-            if (i >= estrellasSeleccionadas) s.style.color = '#d1d5db';
+        window.cerrarModalEstado = function() {
+            const statusModal = document.getElementById('statusModal');
+            if (statusModal) {
+                statusModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.abrirModalReview = function(soliId, animalNombre) {
+            const reviewForm = document.getElementById('reviewForm');
+            if (!reviewForm) return;
+
+            reviewForm.action = '/adopter/mis-solicitudes/' + soliId + '/calificar';
+            document.getElementById('reviewSubtitle').innerText = 'Adoptaste a ' + animalNombre + '. Tu opinión nos ayuda a mejorar 🐾';
+            document.getElementById('reviewModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            estrellasSeleccionadas = 0;
+            document.getElementById('inputEstrellas').value = '';
+            resetHover();
+        };
+
+        window.cerrarModalReview = function() {
+            const reviewModal = document.getElementById('reviewModal');
+            if (reviewModal) {
+                reviewModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.seleccionarEstrella = function(val) {
+            estrellasSeleccionadas = val;
+            document.getElementById('inputEstrellas').value = val;
+            colorEstrellas(val, '#f59e0b');
+        };
+
+        window.hoverEstrella = function(val) {
+            colorEstrellas(val, '#fbbf24');
+        };
+
+        const reviewButtons = document.querySelectorAll('.review-button');
+        reviewButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                window.abrirModalReview(this.dataset.soliId, this.dataset.animalNombre);
+            });
         });
-    }
 
-    function colorEstrellas(val, color) {
-        const spans = document.querySelectorAll('#starContainer span');
-        spans.forEach((s, i) => {
-            s.style.color = i < val ? color : '#d1d5db';
+        const detailButtons = document.querySelectorAll('.detail-button');
+        detailButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                window.abrirModalEstado(
+                    this.dataset.estado,
+                    this.dataset.comentario,
+                    this.dataset.reporte,
+                    this.dataset.visita,
+                    this.dataset.volunteer,
+                    this.dataset.animalNombre
+                );
+            });
         });
-    }
 
-    // Validar que se haya seleccionado una estrella
-    document.getElementById('reviewForm').addEventListener('submit', function(e) {
-        if (!document.getElementById('inputEstrellas').value) {
-            e.preventDefault();
-            alert('Por favor selecciona al menos una estrella ⭐');
+        function resetHover() {
+            colorEstrellas(estrellasSeleccionadas, '#f59e0b');
+            const spans = document.querySelectorAll('#starContainer span');
+            spans.forEach((s, i) => {
+                if (i >= estrellasSeleccionadas) s.style.color = '#d1d5db';
+            });
         }
-    });
 
-    // Cerrar modal de reseña al hacer click afuera
-    document.getElementById('reviewModal').addEventListener('click', function(e) {
-        if (e.target === this) cerrarModalReview();
+        function colorEstrellas(val, color) {
+            const spans = document.querySelectorAll('#starContainer span');
+            spans.forEach((s, i) => {
+                s.style.color = i < val ? color : '#d1d5db';
+            });
+        }
+
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                if (!document.getElementById('inputEstrellas').value) {
+                    e.preventDefault();
+                    alert('Por favor selecciona al menos una estrella ⭐');
+                }
+            });
+        }
+
+        const reviewModal = document.getElementById('reviewModal');
+        if (reviewModal) {
+            reviewModal.addEventListener('click', function(e) {
+                if (e.target === this) cerrarModalReview();
+            });
+        }
     });
 </script>
 @endsection

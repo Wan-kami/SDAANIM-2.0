@@ -104,6 +104,19 @@
         </div>
 
         <div class="admin-card-premium">
+            <div class="card-icon">📦</div>
+            <div class="card-body">
+                <h3>Pedidos</h3>
+                <p>Revisa los pedidos realizados por los usuarios y su estado.</p>
+                <div class="card-stat">
+                    <span class="stat-label">Total pedidos:</span>
+                    <span class="stat-value">{{ $stats['orders'] ?? 0 }}</span>
+                </div>
+            </div>
+            <a href="{{ route('admin.orders') }}" class="btn-card-action">Ver Pedidos</a>
+        </div>
+
+        <div class="admin-card-premium">
             <div class="card-icon">📊</div>
             <div class="card-body">
                 <h3>Tareas</h3>

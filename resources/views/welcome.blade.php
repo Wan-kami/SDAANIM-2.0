@@ -70,7 +70,16 @@
 
 <!-- Ubicación -->
 <h2>📍 Nuestra ubicación</h2>
-<div id="map" style="height: 400px; width: 100%; border-radius: 10px;"></div>
+<div style="height: 400px; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 30px;">
+    <iframe
+        width="100%"
+        height="100%"
+        style="border:0;"
+        loading="lazy"
+        allowfullscreen
+        src="https://www.google.com/maps?q=10.920758332832074,-74.824875070815&output=embed">
+    </iframe>
+</div>
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -103,29 +112,6 @@
                 1024: { slidesPerView: 3 }
             }
         });
-
-        // Google Maps
-        function initMap() {
-            const ubicacion = {
-                lat: 10.920758332832074,
-                lng: -74.824875070815
-            };
-
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 15,
-                center: ubicacion,
-            });
-
-            new google.maps.Marker({
-                position: ubicacion,
-                map: map,
-                title: "Esperanza Animal BQ 🐾"
-            });
-        }
-    </script>
-
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSxjXAhrgyp8ytXfE_3WEjiFvGUz61woM&callback=initMap">
     </script>
 
     <!-- Estilos -->

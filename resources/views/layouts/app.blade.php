@@ -26,14 +26,6 @@
 
         <div class="header-right">
             @auth
-                <button class="header-notif-btn" onclick="toggleSidebar()" title="Notificaciones">
-                    <span class="notif-icon">🔔</span>
-                    <span class="notif-text">Notificaciones</span>
-                    @if(($pendingVolunteersCount ?? 0) + ($pendingVetsCount ?? 0) + ($pendingAdoptionsCount ?? 0) > 0)
-                        <span class="notif-badge-dot"></span>
-                    @endif
-                </button>
-                <div class="header-divider"></div>
                 <div class="header-profile-container">
                     <a href="{{ route('profile.edit') }}" class="header-username" title="Ver mi perfil">
                         <span class="user-name-text">{{ Auth::user()->name }}</span>
@@ -71,31 +63,7 @@
         </div>
     </footer>
 
-    <!-- Sidebar de Notificaciones (Global) -->
-    <div id="notifSidebar" class="notif-sidebar">
-        <button class="close-btn" onclick="toggleSidebar()">✖</button>
-        <h3>Notificaciones</h3>
-        <a href="{{ route('admin.notifications') }}">📋 Ver todas</a>
-        <a href="{{ route('admin.volunteers') }}" class="sidebar-item-with-badge">
-            📋 Nuevos voluntarios postulados
-            @if(($pendingVolunteersCount ?? 0) > 0)
-                <span class="sidebar-badge">{{ $pendingVolunteersCount }}</span>
-            @endif
-        </a>
-        <a href="{{ route('admin.adoptants') }}">🐾 Adoptantes registrados</a>
-        <a href="{{ route('admin.veterinarians') }}" class="sidebar-item-with-badge">
-            ⚕️ Veterinarios postulados
-            @if(($pendingVetsCount ?? 0) > 0)
-                <span class="sidebar-badge">{{ $pendingVetsCount }}</span>
-            @endif
-        </a>
-        <a href="{{ route('admin.adoptions') }}" class="sidebar-item-with-badge">
-            Adopciones enviadas
-            @if(($pendingAdoptionsCount ?? 0) > 0)
-                <span class="sidebar-badge">{{ $pendingAdoptionsCount }}</span>
-            @endif
-        </a>
-    </div>
+
 
     <style>
         :root {

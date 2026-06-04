@@ -295,7 +295,11 @@
                             <th style="padding: 16px; text-align: left; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Fecha</th>
                             <th style="padding: 16px; text-align: left; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Estado</th>
                             <th style="padding: 16px; text-align: left; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Voluntario</th>
+<<<<<<< HEAD
                             <th style="padding: 16px; text-align: left; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Evaluación</th>
+=======
+                            <th style="padding: 16px; text-align: left; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Reporte</th>
+>>>>>>> fccf706 (Arregle muchos errores)
                             <th style="padding: 16px; text-align: center; font-weight: 600; color: #2e8b57; font-size: 12px; text-transform: uppercase;">Acciones</th>
                         </tr>
                     </thead>
@@ -325,6 +329,7 @@
                                 <span style="display: inline-block; background: {{ $statusColor }}; color: white; padding: 6px 12px; border-radius: 4px; font-weight: 600; font-size: 12px;">{{ $adoption->Soli_estado }}</span>
                             </td>
                             <td style="padding: 16px; color: #333; font-size: 14px;">{{ $adoption->volunteer->name ?? 'Sin asignar' }}</td>
+<<<<<<< HEAD
                             <td style="padding: 16px;">
                                 @if($adoption->reporte_voluntario)
                                     @if($adoption->apto)
@@ -334,6 +339,13 @@
                                     @endif
                                 @else
                                     <span style="color: #888; font-size: 13px; font-style: italic;">Pendiente</span>
+=======
+                            <td style="padding: 16px; color: #333; font-size: 14px;">
+                                @if($adoption->reporte_voluntario)
+                                    <span style="display: inline-block; background: #d1fae5; color: #166534; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">Enviado</span>
+                                @else
+                                    <span style="display: inline-block; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;">Pendiente</span>
+>>>>>>> fccf706 (Arregle muchos errores)
                                 @endif
                             </td>
                             <td style="padding: 16px; text-align: center;">

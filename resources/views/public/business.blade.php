@@ -63,12 +63,7 @@
     {{-- CTA --}}
     <section class="seccion" style="text-align:center; border-left:none; border-top:6px solid #2563eb; background:linear-gradient(135deg,#eff6ff,#dbeafe);">
         <h3 style="color:#1e40af; justify-content:center;">🚀 ¿Quieres ser parte?</h3>
-        <p style="max-width:560px; margin:0 auto 20px; color:#1e3a8a;">Si tienes una empresa, marca o eres profesional del sector y quieres colaborar con nuestra fundación, contáctanos.</p>
-        <a href="{{ route('contact') }}" style="display:inline-block; background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; padding:14px 36px; border-radius:999px; text-decoration:none; font-weight:800; font-size:1em; box-shadow:0 6px 20px rgba(37,99,235,0.35); transition:.2s;"
-           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 28px rgba(37,99,235,0.5)'"
-           onmouseout="this.style.transform=''; this.style.boxShadow='0 6px 20px rgba(37,99,235,0.35)'">
-            📩 Contáctanos
-        </a>
+        <p style="max-width:560px; margin:0 auto 20px; color:#1e3a8a;">Si tienes una empresa, marca o eres profesional del sector y quieres colaborar con nuestra fundación, podemos avanzar juntos en la alianza.</p>
     </section>
 
 </main>

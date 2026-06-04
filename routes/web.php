@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Models\Animal;
@@ -25,6 +26,16 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/quienes-somos', function () {
+    if (!Schema::hasTable('quienes_somos')) {
+        $about = (object) [
+            'mision' => 'Proteger y cuidar animales en situación de vulnerabilidad.',
+            'vision' => 'Ser un refugio modelo en la protección animal.',
+            'valores' => ['Compasión', 'Responsabilidad', 'Dedicación'],
+        ];
+
+        return view('public.about', compact('about'));
+    }
+
     $about = \App\Models\AboutPage::first();
     if (!$about) {
         $about = \App\Models\AboutPage::create([
@@ -134,11 +145,6 @@ Route::middleware(['auth'])->group(function () {
         // Completar tarea (con comentario)
         Route::post('/tareas/{id}/completar', [TaskController::class, 'complete'])->name('tasks.complete');
         Route::post('/tareas/{id}/comentar', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
-
-        // Availability
-        Route::get('/disponibilidad', [AvailabilityController::class, 'index'])->name('availability');
-        Route::post('/disponibilidad', [AvailabilityController::class, 'store'])->name('availability.store');
-        Route::delete('/disponibilidad/{id}', [AvailabilityController::class, 'destroy'])->name('availability.destroy');
     });
 
     // VET PANEL
@@ -156,11 +162,6 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/tareas/{id}/estado', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
         Route::post('/tareas/{id}/completar', [TaskController::class, 'complete'])->name('tasks.complete');
         Route::post('/tareas/{id}/comentar', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
-
-        // Availability
-        Route::get('/disponibilidad', [AvailabilityController::class, 'index'])->name('availability');
-        Route::post('/disponibilidad', [AvailabilityController::class, 'store'])->name('availability.store');
-        Route::delete('/disponibilidad/{id}', [AvailabilityController::class, 'destroy'])->name('availability.destroy');
     });
 
     Route::post('/notificaciones/leer', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notificaciones.leer');
@@ -242,6 +243,12 @@ Route::middleware(['auth'])->group(function () {
         // Followups
         Route::get('/adoptions/{soliId}/followup', [AdminController::class, 'createFollowup'])->name('adoptions.followup.create');
         Route::post('/adoptions/{soliId}/followup', [AdminController::class, 'storeFollowup'])->name('adoptions.followup.store');
+
+        // Orders
+        Route::get('/pedidos', [AdminController::class, 'orders'])->name('orders');
+        Route::get('/pedidos/{id}', [AdminController::class, 'showOrder'])->name('orders.show');
+        Route::post('/pedidos/{id}/recogido', [AdminController::class, 'markOrderPickedUp'])->name('orders.pickup');
+        Route::post('/pedidos/{id}/cancelar', [AdminController::class, 'cancelOrder'])->name('orders.cancel');
 
         // Tasks
         Route::get('/tasks', [AdminController::class, 'tasks'])->name('tasks');

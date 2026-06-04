@@ -107,7 +107,7 @@
         <div style="margin-top: 30px; background: #fffbeb; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
             <strong style="color: #b45309;">⏰ Importante:</strong>
             <p style="color: #92400e; margin-top: 8px;">
-                Tienes <strong>3 días</strong> para recoger tu pedido en el refugio. Si no lo recoges en ese tiempo, será automáticamente cancelado y los productos regresarán al inventario.
+                Tienes <strong>5 horas</strong> para recoger tu pedido en el refugio. Si no lo recoges en ese tiempo, será automáticamente cancelado y los productos regresarán al inventario.
             </p>
         </div>
     @endif

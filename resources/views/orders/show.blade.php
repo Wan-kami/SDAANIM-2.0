@@ -32,7 +32,7 @@
                     <span style="background: {{ $color['bg'] }}; color: {{ $color['text'] }}; padding: 4px 8px; border-radius: 4px; font-weight: bold;">{{ ucfirst($order->ord_estado) }}</span>
                 </li>
                 <li style="margin-bottom: 10px;"><strong>Fecha Creación:</strong> {{ $order->ord_fechaCreacion->format('d/m/Y H:i') }}</li>
-                <li style="margin-bottom: 10px;"><strong>Fecha Vencimiento:</strong> {{ $order->ord_fechaExpiracion->format('d/m/Y') }}</li>
+                <li style="margin-bottom: 10px;"><strong>Fecha Vencimiento:</strong> {{ $order->ord_fechaExpiracion->format('d/m/Y H:i') }}</li>
                 @if($order->ord_fechaRecogida)
                     <li style="margin-bottom: 10px;"><strong>Fecha Recogida:</strong> {{ $order->ord_fechaRecogida->format('d/m/Y H:i') }}</li>
                 @endif
@@ -75,8 +75,8 @@
         <div style="background: #fffbeb; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 20px;">
             <strong style="color: #b45309;">⏰ Recordatorio:</strong>
             <p style="color: #92400e; margin-top: 8px;">
-                Tu pedido vence el <strong>{{ $order->ord_fechaExpiracion->format('d/m/Y') }}</strong>. 
-                Debes recogerlo en el refugio antes de esa fecha, de lo contrario será automáticamente cancelado.
+                Tu pedido vence el <strong>{{ $order->ord_fechaExpiracion->format('d/m/Y H:i') }}</strong>. 
+                Debes recogerlo en el refugio antes de esa fecha y hora, de lo contrario será automáticamente cancelado.
             </p>
         </div>
     @endif

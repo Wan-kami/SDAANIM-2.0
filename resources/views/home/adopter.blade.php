@@ -78,7 +78,16 @@
 
     <!-- Ubicación -->
     <h2 style="margin-top: 50px; margin-bottom: 20px;">📍 Nuestra ubicación</h2>
-    <div id="map" style="height: 400px; width: 100%; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></div>
+    <div style="height: 400px; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px;">
+        <iframe
+            width="100%"
+            height="100%"
+            style="border:0;"
+            loading="lazy"
+            allowfullscreen
+            src="https://www.google.com/maps?q=10.920758332832074,-74.824875070815&output=embed">
+        </iframe>
+    </div>
 
     <div class="adopter-grid">
         <div class="premium-card" style="text-align: center;">
@@ -91,6 +100,7 @@
         <div class="premium-card" style="text-align: center;">
             <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">📋</span>
             <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Mis Solicitudes</h3>
+            <p style="color: #64748b; margin-bottom: 8px;">Has enviado <strong>{{ $requestsCount ?? 0 }}</strong> solicitud{{ ($requestsCount ?? 0) === 1 ? '' : 'es' }}.</p>
             <p style="color: #64748b; margin-bottom: 30px;">Sigue el estado de tus procesos de adopción en tiempo real.</p>
             <a href="{{ route('adopter.requests') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center; box-sizing: border-box;">Ver Solicitudes</a>
         </div>
@@ -127,13 +137,7 @@
             }
         });
 
-        function initMap() {
-            const ubicacion = { lat: 10.920758332832074, lng: -74.824875070815 };
-            const map = new google.maps.Map(document.getElementById("map"), { zoom: 15, center: ubicacion });
-            new google.maps.Marker({ position: ubicacion, map: map, title: "Esperanza Animal BQ 🐾" });
-        }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBSxjXAhrgyp8ytXfE_3WEjiFvGUz61woM&callback=initMap"></script>
 
     <!-- MODAL -->
     <div id="animalModal" class="modal">

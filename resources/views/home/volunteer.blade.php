@@ -20,13 +20,7 @@
         <a href="{{ route('volunteer.tasks') }}">Mis Tareas</a>
     </div>
     <div class="admin-card">
-        <div class="icon">📅</div>
-        <h3>Mi Disponibilidad</h3>
-        <p>Define los días y horas en los que puedes apoyar en el refugio.</p>
-        <a href="{{ route('volunteer.availability') }}">Gestionar Horario</a>
-    </div>
-    <div class="admin-card">
-        <div class="icon">🔔</div>
+        <div class="icon"></div>
         <h3>Notificaciones</h3>
         <p>Mantente informado sobre todas tus actividades y cambios asignados.</p>
         <a href="{{ route('notifications') }}">Ver Notificaciones</a>

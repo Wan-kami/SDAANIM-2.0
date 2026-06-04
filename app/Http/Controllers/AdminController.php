@@ -13,13 +13,17 @@ use App\Models\AboutPage;
 use App\Models\MedicalHistory;
 use App\Models\Task;
 use App\Models\Notification;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Mail\InscriptionStatusMail;
+use App\Mail\AdoptionRequestStatusMail;
 
 class AdminController extends Controller
 {
@@ -28,6 +32,7 @@ class AdminController extends Controller
         $stats = [
             'animals' => Animal::count(),
             'products' => Product::count(),
+            'orders' => Order::count(),
             'adoptions' => AdoptionRequest::where('Soli_estado', 'Pendiente')->count(),
             'volunteers' => User::where('role', 'Voluntario')->count(),
             'veterinarians' => User::where('role', 'Veterinario')->count(),
@@ -287,6 +292,16 @@ class AdminController extends Controller
     // ==================== ABOUT PAGE ====================
     public function about()
     {
+        if (!Schema::hasTable('quienes_somos')) {
+            $about = (object) [
+                'mision' => 'Proteger y cuidar animales en situación de vulnerabilidad.',
+                'vision' => 'Ser un refugio modelo en la protección animal.',
+                'valores' => ['Compasión', 'Responsabilidad', 'Dedicación'],
+            ];
+
+            return view('admin.about', compact('about'));
+        }
+
         $about = AboutPage::first();
         if (!$about) {
             $about = AboutPage::create([
@@ -305,6 +320,10 @@ class AdminController extends Controller
             'vision' => 'required|string',
             'valores' => 'required|string',
         ]);
+
+        if (!Schema::hasTable('quienes_somos')) {
+            return back()->with('error', 'La tabla de Quiénes Somos no existe en la base de datos. Ejecuta las migraciones.');
+        }
 
         $data = $request->all();
         $data['valores'] = json_encode(array_filter(explode("\n", $request->valores)));
@@ -494,39 +513,81 @@ class AdminController extends Controller
         $request->validate([
             'Soli_id' => 'required|exists:adoption_requests,Soli_id',
             'vol_id' => 'required|exists:users,Usu_documento',
+            'visita_fecha' => 'required|date|after_or_equal:today',
         ]);
 
         $adoption = AdoptionRequest::findOrFail($request->Soli_id);
         $adoption->update([
             'Soli_estado' => 'En Revisión',
             'Soli_voluntario' => $request->vol_id,
+            'visita_fecha' => $request->visita_fecha,
         ]);
 
-        // Crear tarea automáticamente para el voluntario
         $animal = $adoption->animal;
         $user = $adoption->user;
-        
+        $volunteer = User::where('Usu_documento', $request->vol_id)->first();
+
         Task::create([
             'Usu_documento' => $request->vol_id,
             'Tar_titulo' => 'Seguimiento de Adopción: ' . ($animal->Anim_nombre ?? 'Animal'),
-            'Tar_descripcion' => 'Realizar seguimiento de la solicitud de adopción de ' . ($user->name ?? 'Usuario') . ' para ' . ($animal->Anim_nombre ?? 'el animal') . '. Incluye entrevista, visita a domicilio y evaluación del hogar.',
+            'Tar_descripcion' => 'Realizar visita al hogar de ' . ($user->name ?? 'Usuario') . ' el ' . $request->visita_fecha . ' como parte del seguimiento de adopción de ' . ($animal->Anim_nombre ?? 'el animal') . '.',
             'Tar_fecha_asignacion' => now(),
-            'Tar_fecha_limite' => now()->addDays(7),
+            'Tar_fecha_limite' => $request->visita_fecha,
             'Tar_estado' => 'Pendiente',
             'soli_id' => $request->Soli_id,
         ]);
 
-        // Crear notificación para el voluntario
         Notification::create([
             'Usu_documento' => $request->vol_id,
             'Noti_titulo' => 'Nueva solicitud de seguimiento de adopción',
-            'Noti_mensaje' => 'Se te ha asignado el seguimiento de la solicitud de adopción de ' . ($user->name ?? 'un usuario') . ' para ' . ($animal->Anim_nombre ?? 'un animal') . '. Accede a tus tareas asignadas.',
+            'Noti_mensaje' => 'Se te ha asignado la visita de seguimiento para la adopción de ' . ($animal->Anim_nombre ?? 'un animal') . ' el ' . $request->visita_fecha . '.',
             'Noti_tipo' => 'Adopción',
             'Noti_fecha' => now(),
             'Noti_leido' => false,
         ]);
 
-        return redirect()->route('admin.adoptions')->with('success', 'Voluntario asignado correctamente y tarea de seguimiento creada.');
+        Notification::create([
+            'Usu_documento' => $adoption->Usu_documento,
+            'Noti_mensaje' => 'Se ha asignado a ' . ($volunteer->name ?? 'un voluntario') . ' para visitar tu hogar el ' . $request->visita_fecha . '.',
+            'Noti_fecha' => now(),
+            'Noti_link' => route('adopter.requests'),
+        ]);
+
+        $this->sendAdopterStatusEmail(
+            $adoption,
+            'Tu solicitud de adopción tiene visita programada',
+            'Se ha asignado a ' . ($volunteer->name ?? 'un voluntario') . ' para visitar tu hogar el ' . $request->visita_fecha . '. Por favor, mantente pendiente.',
+            $request->visita_fecha,
+            $volunteer->name ?? null,
+            route('adopter.requests')
+        );
+
+        return redirect()->route('admin.adoptions')->with('success', 'Voluntario asignado correctamente, tarea creada y adoptante notificado.');
+    }
+
+    private function sendAdopterStatusEmail(AdoptionRequest $adoption, string $subjectLine, string $emailMessage, ?string $visitDate = null, ?string $volunteerName = null, ?string $actionUrl = null)
+    {
+        $user = $adoption->user ?? User::find($adoption->Usu_documento);
+
+        if (!$user || empty($user->email)) {
+            Log::warning("No se pudo enviar correo al adoptante para la solicitud {$adoption->Soli_id}: usuario o correo no definido.");
+            return;
+        }
+
+        try {
+            Mail::to($user->email)->send(new AdoptionRequestStatusMail(
+                subjectLine: $subjectLine,
+                name: $user->name,
+                animalName: $adoption->animal->Anim_nombre ?? 'tu adopción',
+                status: $adoption->Soli_estado,
+                emailMessage: $emailMessage,
+                visitDate: $visitDate,
+                volunteerName: $volunteerName,
+                actionUrl: $actionUrl
+            ));
+        } catch (\Exception $e) {
+            Log::error("Error al enviar email al adoptante ({$user->email}) para la solicitud {$adoption->Soli_id}: {$e->getMessage()}");
+        }
     }
 
     public function approveAdoption($id)
@@ -538,10 +599,28 @@ class AdminController extends Controller
             $adoption->animal->update(['Anim_estado' => 'Adoptado']);
         }
 
+<<<<<<< HEAD
         // Completar tareas de seguimiento relacionadas
         Task::where('soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
+=======
+        Notification::create([
+            'Usu_documento' => $adoption->Usu_documento,
+            'Noti_mensaje' => "Tu solicitud de adopción para {$adoption->animal->Anim_nombre} ha sido aceptada.",
+            'Noti_fecha' => now(),
+            'Noti_link' => route('adopter.requests'),
+        ]);
+
+        $this->sendAdopterStatusEmail(
+            $adoption,
+            'Solicitud de adopción aceptada',
+            '¡Felicidades! Tu solicitud de adopción ha sido aceptada. Ya puedes venir a recoger a tu nueva mascota cuando gustes.',
+            $adoption->visita_fecha,
+            $adoption->volunteer?->name,
+            route('adopter.requests')
+        );
+>>>>>>> fccf706 (Arregle muchos errores)
 
         return redirect()->route('admin.adoptions')->with('success', 'Adopción aprobada.');
     }
@@ -551,10 +630,28 @@ class AdminController extends Controller
         $adoption = AdoptionRequest::findOrFail($id);
         $adoption->update(['Soli_estado' => 'Rechazada']);
 
+<<<<<<< HEAD
         // Completar tareas de seguimiento relacionadas
         Task::where('soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
+=======
+        Notification::create([
+            'Usu_documento' => $adoption->Usu_documento,
+            'Noti_mensaje' => "Tu solicitud de adopción para {$adoption->animal->Anim_nombre} ha sido rechazada.",
+            'Noti_fecha' => now(),
+            'Noti_link' => route('adopter.requests'),
+        ]);
+
+        $this->sendAdopterStatusEmail(
+            $adoption,
+            'Solicitud de adopción rechazada',
+            'Lamentablemente tu solicitud de adopción ha sido rechazada. Te invitamos a intentarlo de nuevo próximamente.',
+            $adoption->visita_fecha,
+            $adoption->volunteer?->name,
+            route('adopter.requests')
+        );
+>>>>>>> fccf706 (Arregle muchos errores)
 
         return redirect()->route('admin.adoptions')->with('success', 'Adopción rechazada.');
     }
@@ -680,10 +777,63 @@ class AdminController extends Controller
         return view('admin.medical.index', compact('histories'));
     }
 
+    // ==================== ORDERS ====================
+    public function orders()
+    {
+        $orders = Order::with('user')
+            ->orderBy('ord_fechaCreacion', 'DESC')
+            ->get();
+
+        $confirmedOrdersCount = $orders->where('ord_estado', 'recogido')->count();
+        $pendingOrdersCount = $orders->where('ord_estado', 'pendiente')->count();
+        $cancelledOrdersCount = $orders->where('ord_estado', 'cancelado')->count();
+
+        return view('admin.orders.index', compact('orders', 'confirmedOrdersCount', 'pendingOrdersCount', 'cancelledOrdersCount'));
+    }
+
+    public function showOrder($ord_id)
+    {
+        $order = Order::with(['user', 'items.product'])
+            ->findOrFail($ord_id);
+
+        return view('admin.orders.show', compact('order'));
+    }
+
+    public function markOrderPickedUp($ord_id)
+    {
+        $order = Order::findOrFail($ord_id);
+        $order->update([
+            'ord_estado' => 'recogido',
+            'ord_fechaRecogida' => now(),
+        ]);
+
+        return redirect()->back()->with('success', 'Pedido marcado como recogido.');
+    }
+
+    public function cancelOrder($ord_id)
+    {
+        $order = Order::findOrFail($ord_id);
+
+        if ($order->ord_estado === 'recogido') {
+            return redirect()->back()->with('error', 'No se puede cancelar un pedido ya recogido.');
+        }
+
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            $product->update(['prod_cantidad' => $product->prod_cantidad + $item->oit_cantidad]);
+        }
+
+        $order->update(['ord_estado' => 'cancelado']);
+
+        return redirect()->back()->with('success', 'Pedido cancelado y stock restaurado.');
+    }
+
     // ==================== NOTIFICATIONS ====================
     public function notifications()
     {
-        $notifications = \App\Models\Notification::orderBy('created_at', 'DESC')->get();
+        $notifications = \App\Models\Notification::where('Usu_documento', Auth::user()->Usu_documento)
+            ->orderBy('created_at', 'DESC')
+            ->get();
         return view('admin.notifications.index', compact('notifications'));
     }
 

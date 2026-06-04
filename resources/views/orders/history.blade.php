@@ -47,7 +47,7 @@
                             <td style="padding: 15px; text-align: center;">
                                 @if($order->ord_estado === 'pendiente')
                                     <span style="color: {{ Carbon\Carbon::parse($order->ord_fechaExpiracion)->isPast() ? '#991b1b' : '#166534' }};">
-                                        {{ $order->ord_fechaExpiracion->format('d/m/Y') }}
+                                        {{ $order->ord_fechaExpiracion->format('d/m/Y H:i') }}
                                     </span>
                                 @else
                                     -

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdoptionRequest;
 use App\Models\Animal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnimalController extends Controller
 {
@@ -166,7 +168,9 @@ class AnimalController extends Controller
         $aboutController = new AboutController();
         $about = $aboutController->getAboutDataPublic();
 
-        return view('home.adopter', compact('animals', 'about'));
+        $requestsCount = AdoptionRequest::where('Usu_documento', Auth::user()->Usu_documento)->count();
+
+        return view('home.adopter', compact('animals', 'about', 'requestsCount'));
     }
 
     /**

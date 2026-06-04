@@ -20,13 +20,7 @@
         <a href="{{ route('vet.animals') }}">Gestionar Historiales</a>
     </div>
     <div class="admin-card">
-        <div class="icon">💉</div>
-        <h3>Mi Disponibilidad</h3>
-        <p>Registra y gestiona tu horario de atención y disponibilidad médica.</p>
-        <a href="{{ route('vet.availability') }}">Gestionar Horario</a>
-    </div>
-    <div class="admin-card">
-        <div class="icon">📝</div>
+        <div class="icon"></div>
         <h3>Mis Tareas</h3>
         <p>Revisa las tareas asignadas por el administrador y regístralas como completadas.</p>
         <a href="{{ route('vet.tasks') }}">Ver Tareas</a>

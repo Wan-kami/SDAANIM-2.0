@@ -45,6 +45,10 @@
                         <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Email</label>
                         <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->user->email ?? 'N/A' }}</p>
                     </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Dirección</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->user->Usu_direccion ?? 'No especificada' }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -94,6 +98,10 @@
                 <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->Soli_tiempo_disponible ?? 'No especificado' }}</p>
             </div>
             <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+                <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Fecha de visita</label>
+                <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->visita_fecha ? \Carbon\Carbon::parse($adoption->visita_fecha)->format('d/m/Y') : 'No programada' }}</p>
+            </div>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
                 <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Comentarios</label>
                 <p style="margin: 5px 0 0 0; color: #333; font-size: 14px; line-height: 1.6;">{{ $adoption->Soli_comentarios ?? 'Sin comentarios' }}</p>
             </div>
@@ -125,6 +133,24 @@
             @endif
         </div>
         @endif
+
+        <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #2e8b57; font-size: 16px; font-weight: 600; margin-bottom: 15px;">📝 Reporte del Voluntario</h3>
+            @if($adoption->reporte_voluntario)
+                <div style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">Reporte</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px; line-height: 1.6; white-space: pre-line;">{{ $adoption->reporte_voluntario }}</p>
+                    </div>
+                    <div>
+                        <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">¿Apto para adopción?</label>
+                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->apto !== null ? ($adoption->apto ? 'Sí' : 'No') : 'Pendiente' }}</p>
+                    </div>
+                </div>
+            @else
+                <p style="margin: 0; color: #666; font-size: 14px;">Aún no se ha recibido el reporte del voluntario. El administrador debe revisar esta solicitud cuando el voluntario lo envíe.</p>
+            @endif
+        </div>
 
         <!-- Actions Card -->
         <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
