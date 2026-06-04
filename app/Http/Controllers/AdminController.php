@@ -599,12 +599,11 @@ class AdminController extends Controller
             $adoption->animal->update(['Anim_estado' => 'Adoptado']);
         }
 
-<<<<<<< HEAD
-        // Completar tareas de seguimiento relacionadas
+// Completar tareas de seguimiento relacionadas
         Task::where('soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
-=======
+
         Notification::create([
             'Usu_documento' => $adoption->Usu_documento,
             'Noti_mensaje' => "Tu solicitud de adopción para {$adoption->animal->Anim_nombre} ha sido aceptada.",
@@ -620,7 +619,6 @@ class AdminController extends Controller
             $adoption->volunteer?->name,
             route('adopter.requests')
         );
->>>>>>> fccf706 (Arregle muchos errores)
 
         return redirect()->route('admin.adoptions')->with('success', 'Adopción aprobada.');
     }
@@ -630,12 +628,11 @@ class AdminController extends Controller
         $adoption = AdoptionRequest::findOrFail($id);
         $adoption->update(['Soli_estado' => 'Rechazada']);
 
-<<<<<<< HEAD
-        // Completar tareas de seguimiento relacionadas
+// Completar tareas de seguimiento relacionadas
         Task::where('soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
-=======
+
         Notification::create([
             'Usu_documento' => $adoption->Usu_documento,
             'Noti_mensaje' => "Tu solicitud de adopción para {$adoption->animal->Anim_nombre} ha sido rechazada.",
@@ -651,7 +648,6 @@ class AdminController extends Controller
             $adoption->volunteer?->name,
             route('adopter.requests')
         );
->>>>>>> fccf706 (Arregle muchos errores)
 
         return redirect()->route('admin.adoptions')->with('success', 'Adopción rechazada.');
     }
