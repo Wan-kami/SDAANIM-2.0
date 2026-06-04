@@ -34,8 +34,8 @@ class ProfileController extends Controller
         $user = Auth::user();
         
         $data = $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|string|email|max:255|unique:users,email,' . $user->Usu_documento . ',Usu_documento',
+            'name' => ['nullable', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'email' => ['nullable','string','email','max:255','unique:users,email,' . $user->Usu_documento . ',Usu_documento'],
             'password' => [
                 'nullable',
                 'string',
@@ -43,9 +43,16 @@ class ProfileController extends Controller
                 'confirmed',
                 'regex:/^(?=(?:.*\d){5})(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&\-_#]).{8,}$/',
             ],
-            'Usu_telefono' => 'nullable|string|max:15',
-            'Usu_direccion' => 'nullable|string|max:255',
+            'Usu_telefono' => ['nullable','string','max:15','regex:/^[\d\s()+-]+$/'],
+            'Usu_direccion' => ['nullable','string','max:255','regex:/^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ\s#\-\.,]+$/'],
             'Usu_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+        ], [
+            'name.regex' => 'El nombre solo puede contener letras y espacios, sin números ni caracteres especiales.',
+            'email.email' => 'Debes ingresar un correo electrónico válido.',
+            'email.unique' => 'Ese correo ya está en uso.',
+            'password.regex' => 'La contraseña debe tener mínimo 8 caracteres, al menos 5 números, 1 mayúscula, 1 minúscula y 1 carácter especial (@$!%*?&-_#).',
+            'Usu_telefono.regex' => 'El teléfono solo puede contener números, espacios, paréntesis, guiones y el símbolo +.',
+            'Usu_direccion.regex' => 'La dirección solo puede contener letras, números, espacios y estos símbolos: # - , .',
         ]);
 
         // Update only provided fields
