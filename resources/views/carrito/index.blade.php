@@ -55,6 +55,9 @@
                                 <div>
                                     <strong style="display: block; margin-bottom: 5px;">{{ $item->product->prod_nombre }}</strong>
                                     <small style="color: #666;">{{ $item->product->prod_categoria }}</small>
+                                    @if($item->talla)
+                                        <small style="display: block; color: #2d7d46; font-weight: bold; margin-top: 2px;">Talla: {{ $item->talla }}</small>
+                                    @endif
                                 </div>
                             </td>
                             <td style="padding: 15px; text-align: center; font-weight: bold;">${{ number_format($item->product->prod_precio, 0) }}</td>

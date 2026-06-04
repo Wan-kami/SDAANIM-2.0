@@ -8,10 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Drop old unique constraint if it exists
+        if (Schema::hasIndex('cart_items', 'cart_items_usu_documento_prod_id_unique')) {
+            Schema::table('cart_items', function (Blueprint $table) {
+                $table->dropUnique('cart_items_usu_documento_prod_id_unique');
+            });
+        }
+
         Schema::table('cart_items', function (Blueprint $table) {
-            // Drop the old unique constraint
-            $table->dropUnique(['Usu_documento', 'prod_id']);
-            
             // Add color and size columns
             $table->unsignedBigInteger('color_id')->nullable()->after('prod_id');
             $table->unsignedBigInteger('size_id')->nullable()->after('color_id');

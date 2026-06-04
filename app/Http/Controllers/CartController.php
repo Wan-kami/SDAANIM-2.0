@@ -23,13 +23,23 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($prod_id);
         $cantidad = $request->input('cantidad', 1);
-        
+        $talla = $request->input('talla');
+
+        if ($product->talla && !$talla) {
+            return back()->with('error', 'Debes seleccionar una talla');
+        }
+
+        if ($talla && !in_array($talla, ['XS', 'S', 'M', 'L'])) {
+            return back()->with('error', 'Talla no válida');
+        }
+
         if ($cantidad <= 0 || $cantidad > $product->prod_cantidad) {
             return back()->with('error', 'Cantidad inválida o no disponible');
         }
 
         $cartItem = CartItem::where('Usu_documento', Auth::user()->Usu_documento)
                             ->where('prod_id', $prod_id)
+                            ->where('talla', $talla)
                             ->first();
 
         if ($cartItem) {
@@ -44,6 +54,7 @@ class CartController extends Controller
                 'Usu_documento' => Auth::user()->Usu_documento,
                 'prod_id' => $prod_id,
                 'cart_cantidad' => $cantidad,
+                'talla' => $talla,
             ]);
         }
 

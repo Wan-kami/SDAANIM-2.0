@@ -70,6 +70,7 @@
             <thead>
                 <tr>
                     <th>Producto</th>
+                    <th>Talla</th>
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
                     <th>Subtotal</th>
@@ -80,6 +81,13 @@
                     <tr class="detail-row">
                         <td>
                             <span class="product-name">{{ optional($item->product)->prod_nombre ?? 'Producto no disponible' }}</span>
+                        </td>
+                        <td>
+                            @if($item->talla)
+                                <span class="quantity-badge" style="background:#2d7d46; color:white;">{{ $item->talla }}</span>
+                            @else
+                                <span class="quantity-badge">—</span>
+                            @endif
                         </td>
                         <td>
                             <span class="quantity-badge">{{ $item->oit_cantidad }}</span>

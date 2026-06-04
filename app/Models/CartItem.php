@@ -12,6 +12,7 @@ class CartItem extends Model
         'Usu_documento',
         'prod_id',
         'cart_cantidad',
+        'talla',
     ];
 
     public function product()

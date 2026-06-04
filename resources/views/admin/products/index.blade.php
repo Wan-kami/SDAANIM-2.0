@@ -25,6 +25,7 @@
             @endif
             <h3>{{ $product->prod_nombre }}</h3>
             <p>Categoria: {{ $product->prod_categoria }}</p>
+            @if($product->talla)<p>Talla: <strong>{{ $product->talla }}</strong></p>@endif
             <p>Precio: ${{ number_format($product->prod_precio, 2) }}</p>
             <p>Cantidad: {{ $product->prod_cantidad }}</p>
             <div style="display: flex; gap: 5px; justify-content: center;">

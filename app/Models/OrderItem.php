@@ -13,6 +13,7 @@ class OrderItem extends Model
         'oit_cantidad',
         'oit_precio_unitario',
         'oit_subtotal',
+        'talla',
     ];
 
     public function order()

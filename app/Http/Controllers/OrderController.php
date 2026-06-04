@@ -43,6 +43,7 @@ class OrderController extends Controller
                 'oit_cantidad' => $cartItem->cart_cantidad,
                 'oit_precio_unitario' => $product->prod_precio,
                 'oit_subtotal' => $product->prod_precio * $cartItem->cart_cantidad,
+                'talla' => $cartItem->talla,
             ]);
 
             $total += $product->prod_precio * $cartItem->cart_cantidad;

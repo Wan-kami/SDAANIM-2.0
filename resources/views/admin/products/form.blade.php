@@ -63,7 +63,22 @@
                 </div>
             </div>
 
-            <!-- Row 3: Descripción -->
+            <!-- Row 3: Talla (visible solo para Ropa) -->
+            <div class="form-row" id="talla-row" style="{{ (isset($product) && in_array($product->prod_categoria, ['Ropa', 'Accesorios'])) || old('prod_categoria') === 'Ropa' || old('prod_categoria') === 'Accesorios' ? '' : 'display: none;' }}">
+                <div class="form-group">
+                    <label for="talla">📐 Talla</label>
+                    <p class="field-description">Selecciona la talla del producto</p>
+                    <select id="talla" name="talla">
+                        <option value="">Sin talla</option>
+                        <option value="XS" {{ (isset($product) && $product->talla == 'XS') || old('talla') == 'XS' ? 'selected' : '' }}>XS</option>
+                        <option value="S" {{ (isset($product) && $product->talla == 'S') || old('talla') == 'S' ? 'selected' : '' }}>S</option>
+                        <option value="M" {{ (isset($product) && $product->talla == 'M') || old('talla') == 'M' ? 'selected' : '' }}>M</option>
+                        <option value="L" {{ (isset($product) && $product->talla == 'L') || old('talla') == 'L' ? 'selected' : '' }}>L</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 4: Descripción -->
             <div class="form-row full-width">
                 <div class="form-group">
                     <label for="prod_descripcion">📄 Descripción</label>
@@ -403,6 +418,22 @@
                     labelText.textContent = 'Selecciona una imagen';
                 }
             });
+        }
+
+        var categoriaSelect = document.getElementById('prod_categoria');
+        var tallaRow = document.getElementById('talla-row');
+
+        if (categoriaSelect && tallaRow) {
+            function toggleTalla() {
+                var val = categoriaSelect.value;
+                if (val === 'Ropa' || val === 'Accesorios') {
+                    tallaRow.style.display = '';
+                } else {
+                    tallaRow.style.display = 'none';
+                }
+            }
+            categoriaSelect.addEventListener('change', toggleTalla);
+            toggleTalla();
         }
     });
 </script>

@@ -53,6 +53,7 @@
             <thead style="background: #f3f4f6;">
                 <tr>
                     <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">Producto</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Talla</th>
                     <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Cantidad</th>
                     <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Precio Unitario</th>
                     <th style="padding: 12px; text-align: center; border-bottom: 2px solid #ddd;">Subtotal</th>
@@ -61,7 +62,16 @@
             <tbody>
                 @foreach($order->items as $item)
                     <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px;">{{ $item->product->prod_nombre }}</td>
+                        <td style="padding: 12px;">
+                            {{ $item->product->prod_nombre }}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            @if($item->talla)
+                                <span style="background: #2d7d46; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold;">{{ $item->talla }}</span>
+                            @else
+                                —
+                            @endif
+                        </td>
                         <td style="padding: 12px; text-align: center;">{{ $item->oit_cantidad }}</td>
                         <td style="padding: 12px; text-align: center;">${{ number_format($item->oit_precio_unitario, 0) }}</td>
                         <td style="padding: 12px; text-align: center; font-weight: bold;">${{ number_format($item->oit_subtotal, 0) }}</td>

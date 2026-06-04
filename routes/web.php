@@ -227,6 +227,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/users/{id}/deactivate', [AdminController::class, 'deactivateUser'])->name('users.deactivate');
         Route::put('/users/{id}/activate', [AdminController::class, 'activateUser'])->name('users.activate');
 
+        // Inscriptions (unified list)
+        Route::get('/inscriptions', [InscriptionController::class, 'adminIndex'])->name('inscriptions');
+
         // Veterinarians (inscriptions)
         Route::get('/veterinarians', [AdminController::class, 'veterinarians'])->name('veterinarians');
         Route::post('/veterinarians/process', [AdminController::class, 'processVeterinarian'])->name('veterinarians.process');

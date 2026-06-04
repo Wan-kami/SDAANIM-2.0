@@ -65,11 +65,22 @@
                         </p>
 
                         @if($product->prod_cantidad > 0)
-                            <form action="{{ route('cart.add', $product->prod_id) }}" method="POST" style="display: flex; gap: 10px;">
+                            <form action="{{ route('cart.add', $product->prod_id) }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
                                 @csrf
-                                <input type="number" name="cantidad" value="1" min="1" max="{{ $product->prod_cantidad }}" 
-                                    style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                                <button type="submit" style="flex: 1; background: #2d7d46; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s;">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    @if($product->talla)
+                                        <select name="talla" required style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                                            <option value="">Talla</option>
+                                            <option value="XS">XS</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                        </select>
+                                    @endif
+                                    <input type="number" name="cantidad" value="1" min="1" max="{{ $product->prod_cantidad }}" 
+                                        style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
+                                </div>
+                                <button type="submit" style="width: 100%; background: #2d7d46; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s;">
                                     Agregar al Carrito
                                 </button>
                             </form>

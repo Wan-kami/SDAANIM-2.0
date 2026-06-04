@@ -176,6 +176,7 @@ class AdminController extends Controller
             'prod_categoria' => 'required|in:Alimentos,Juguetes,Camas,Accesorios,Ropa',
             'prod_precio' => 'required|numeric|min:0',
             'prod_cantidad' => 'required|integer|min:0',
+            'talla' => 'nullable|in:XS,S,M,L',
             'prod_imagen' => 'nullable|image|max:5120',
         ]);
 
@@ -208,12 +209,13 @@ class AdminController extends Controller
             'prod_categoria' => 'required|in:Alimentos,Juguetes,Camas,Accesorios,Ropa',
             'prod_precio' => 'required|numeric|min:0',
             'prod_cantidad' => 'required|integer|min:0',
+            'talla' => 'nullable|in:XS,S,M,L',
             'prod_imagen' => 'nullable|image|max:5120',
         ]);
 
         $product = Product::findOrFail($id);
         
-        $data = $request->only(['prod_nombre', 'prod_descripcion', 'prod_categoria', 'prod_precio', 'prod_cantidad']);
+        $data = $request->only(['prod_nombre', 'prod_descripcion', 'prod_categoria', 'prod_precio', 'prod_cantidad', 'talla']);
 
         if ($request->hasFile('prod_imagen')) {
             if ($product->prod_imagen && file_exists(public_path('img/' . $product->prod_imagen))) {
