@@ -272,15 +272,7 @@ class AdoptionController extends Controller
 
         // Notificar al admin
         $admin = \App\Models\User::where('role', 'Administrador')->first();
-<<<<<<< HEAD
-        Notification::create([
-            'Usu_documento' => $admin->Usu_documento,
-            'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción de {$solicitud->animal->Anim_nombre}.",
-            'Noti_fecha' => now(),
-            'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
-        ]);
-=======
-        if ($admin) {
+if ($admin) {
             Notification::create([
                 'Usu_documento' => $admin->Usu_documento,
                 'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción #{$solicitud->Soli_id} de {$solicitud->animal->Anim_nombre}.",
@@ -288,7 +280,6 @@ class AdoptionController extends Controller
                 'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
             ]);
         }
->>>>>>> fccf706 (Arregle muchos errores)
 
         return back()->with('success', 'Reporte enviado correctamente.');
     }
