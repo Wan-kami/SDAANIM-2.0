@@ -91,6 +91,147 @@
                 </div>
             </div>
 
+            @if(isset($product) && $product->hasVariants())
+                <!-- SECCIÓN DE GESTIÓN DE COLORES (Solo para Ropa) -->
+                @if($product->prod_categoria === 'Ropa')
+                <div class="form-row full-width">
+                    <div class="form-group">
+                        <div class="section-header">
+                            <h3>🎨 Gestión de Colores</h3>
+                            <p class="section-description">Administra los colores disponibles para este producto</p>
+                        </div>
+
+                        <!-- Colores Existentes -->
+                        @if($product->colors->count() > 0)
+                        <div class="variants-list">
+                            <h4>Colores Actuales:</h4>
+                            <div class="variants-grid">
+                                @foreach($product->colors as $color)
+                                <div class="variant-card">
+                                    <div class="variant-color-preview" style="background-color: {{ $color->color_hex }};" title="{{ $color->color_nombre }}"></div>
+                                    <div class="variant-info">
+                                        <span class="variant-name">{{ $color->color_nombre }}</span>
+                                        <span class="variant-status {{ $color->disponible ? 'disponible' : 'no-disponible' }}">
+                                            {{ $color->disponible ? '✓ Disponible' : '✗ No disponible' }}
+                                        </span>
+                                    </div>
+                                    <div class="variant-actions">
+                                        <form action="{{ route('admin.colors.delete', $color->id) }}" method="POST" style="display:inline;">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn-delete-variant" onclick="return confirm('¿Eliminar este color?');">🗑️</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Agregar Nuevo Color -->
+                        <div class="add-variant-form">
+                            <h4>Agregar Nuevo Color:</h4>
+                            <form id="addColorForm" action="{{ route('admin.colors.add', $product->prod_id) }}" method="POST">
+                                @csrf
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="color_nombre">Nombre del Color</label>
+                                        <input type="text" name="color_nombre" placeholder="Ej: Rojo Oscuro" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="color_hex">Código Hex</label>
+                                        <input type="color" name="color_hex" value="#000000" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="disponible">Disponible</label>
+                                        <select name="disponible" required>
+                                            <option value="1" selected>Sí</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-add-variant" style="margin-top: 1rem;">+ Agregar Color</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- SECCIÓN DE GESTIÓN DE TALLAS (Solo para Ropa) -->
+                @if($product->prod_categoria === 'Ropa')
+                <div class="form-row full-width">
+                    <div class="form-group">
+                        <div class="section-header">
+                            <h3>📏 Gestión de Tallas</h3>
+                            <p class="section-description">Administra las tallas disponibles para este producto</p>
+                        </div>
+
+                        <!-- Tallas Existentes -->
+                        @if($product->sizes->count() > 0)
+                        <div class="variants-list">
+                            <h4>Tallas Actuales:</h4>
+                            <div class="variants-grid">
+                                @foreach($product->sizes as $size)
+                                <div class="variant-card">
+                                    <div class="variant-size-badge">{{ $size->talla }}</div>
+                                    <div class="variant-info">
+                                        <span class="variant-name">{{ $size->talla }}</span>
+                                        <span class="variant-quantity">Cantidad: {{ $size->cantidad }}</span>
+                                        <span class="variant-status {{ $size->disponible ? 'disponible' : 'no-disponible' }}">
+                                            {{ $size->disponible ? '✓ Disponible' : '✗ No disponible' }}
+                                        </span>
+                                    </div>
+                                    <div class="variant-actions">
+                                        <form action="{{ route('admin.sizes.delete', $size->id) }}" method="POST" style="display:inline;">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn-delete-variant" onclick="return confirm('¿Eliminar esta talla?');">🗑️</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Agregar Nueva Talla -->
+                        <div class="add-variant-form">
+                            <h4>Agregar Nueva Talla:</h4>
+                            <form id="addSizeForm" action="{{ route('admin.sizes.add', $product->prod_id) }}" method="POST">
+                                @csrf
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="talla">Talla</label>
+                                        <select name="talla" required>
+                                            <option value="">Seleccionar</option>
+                                            <option value="XS">XS</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                            <option value="XXL">XXL</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="cantidad">Cantidad</label>
+                                        <input type="number" name="cantidad" min="1" placeholder="0" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="disponible">Disponible</label>
+                                        <select name="disponible" required>
+                                            <option value="1" selected>Sí</option>
+                                            <option value="0">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0; display: flex; align-items: flex-end;">
+                                        <button type="submit" class="btn-add-variant" style="width: 100%; margin-bottom: 0;">+ Agregar Talla</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            @endif
+
             <!-- Action Buttons -->
             <div class="form-actions">
                 <button type="submit" class="btn-submit">
@@ -364,6 +505,179 @@
         line-height: 1.5;
     }
 
+    /* Section Headers for Variants */
+    .section-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .section-header h3 {
+        font-size: 1.3rem;
+        color: #1a1a1a;
+        margin: 0 0 0.5rem 0;
+        font-weight: 700;
+    }
+
+    .section-description {
+        margin: 0;
+        color: #888;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    /* Variants List */
+    .variants-list {
+        margin-bottom: 2rem;
+    }
+
+    .variants-list h4 {
+        color: #333;
+        font-size: 1rem;
+        margin: 1rem 0 1rem 0;
+        font-weight: 600;
+    }
+
+    .variants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .variant-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .variant-card:hover {
+        border-color: #4CAF50;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+    }
+
+    .variant-color-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        border: 2px solid #ddd;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .variant-size-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        border: 2px solid #4CAF50;
+        background: #f0fdf4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #4CAF50;
+        font-size: 1.2rem;
+    }
+
+    .variant-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    .variant-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .variant-quantity {
+        font-size: 0.8rem;
+        color: #888;
+    }
+
+    .variant-status {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+    }
+
+    .variant-status.disponible {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .variant-status.no-disponible {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .variant-actions {
+        display: flex;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-delete-variant {
+        padding: 0.5rem 1rem;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-delete-variant:hover {
+        background: #fecaca;
+        border-color: #f87171;
+    }
+
+    /* Add Variant Form */
+    .add-variant-form {
+        background: #f9fafb;
+        border: 2px dashed #e0e0e0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .add-variant-form h4 {
+        color: #333;
+        font-size: 1rem;
+        margin: 0 0 1rem 0;
+        font-weight: 600;
+    }
+
+    .btn-add-variant {
+        padding: 0.9rem 1.5rem;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .btn-add-variant:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(76, 175, 80, 0.2);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
         .products-form-main {
@@ -386,6 +700,14 @@
         .product-preview {
             width: 100%;
             height: 300px;
+        }
+
+        .variants-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+
+        .add-variant-form > div {
+            grid-template-columns: 1fr !important;
         }
     }
 </style>
