@@ -266,6 +266,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Medical Histories
         Route::get('/medical', [AdminController::class, 'medicalHistories'])->name('medical');
+        Route::get('/vet/historial-ver/{animal_id}', [MedicalHistoryController::class, 'show'])
+            ->name('vet.history.show');
 
         // Notifications
         Route::get('/notifications', [AdminController::class, 'notifications'])->name('notifications');

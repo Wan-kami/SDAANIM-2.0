@@ -359,7 +359,9 @@
                     </p>
                     <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                         <span class="animal-badge">{{ $animal->Anim_estado }}</span>
-                        <a href="{{ route('animal.medical-history', $animal->Anim_id) }}" class="action-button" style="margin: 0;">Ver historial</a>
+                        <a href="{{ route('vet.history', $animal->Anim_id) }}"
+                            class="action-button"
+                            style="margin: 0;"> Ver historial</a>
                     </div>
                 </div>
                 @endforeach
