@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AvailabilityController;
 use App\Http\Controllers\InscriptionController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
 
 // --- GUEST / PUBLIC ROUTES ---
 Route::get('/', function () {
@@ -133,9 +134,7 @@ Route::middleware(['auth'])->group(function () {
 
     // VOLUNTEER PANEL
     Route::prefix('volunteer')->name('volunteer.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('home.volunteer');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'volunteerDashboard'])->name('dashboard');
         Route::get('/tareas', [TaskController::class, 'index'])->name('tasks');
         Route::get('/progreso', [TaskController::class, 'volunteerProgress'])->name('progress');
 
@@ -149,9 +148,7 @@ Route::middleware(['auth'])->group(function () {
 
     // VET PANEL
     Route::prefix('vet')->name('vet.')->group(function () {
-        Route::get('/dashboard', function () {
-            return view('home.vet');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'vetDashboard'])->name('dashboard');
         Route::get('/animales', [AnimalController::class, 'index'])->name('animals');
         Route::get('/historial/{animal_id}', [MedicalHistoryController::class, 'index'])->name('history');
         Route::post('/historial', [MedicalHistoryController::class, 'store'])->name('history.store');
@@ -206,6 +203,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/products', [AdminController::class, 'storeProduct'])->name('products.store');
         Route::put('/products/{id}', [AdminController::class, 'updateProduct'])->name('products.update');
         Route::delete('/products/{id}', [AdminController::class, 'destroyProduct'])->name('products.destroy');
+
+        // Product Colors
+        Route::post('/products/{id}/colors', [AdminController::class, 'addColor'])->name('colors.add');
+        Route::delete('/colors/{id}', [AdminController::class, 'deleteColor'])->name('colors.delete');
+
+        // Product Sizes
+        Route::post('/products/{id}/sizes', [AdminController::class, 'addSize'])->name('sizes.add');
+        Route::delete('/sizes/{id}', [AdminController::class, 'deleteSize'])->name('sizes.delete');
 
         // Appointments
         Route::get('/appointments', [AdminController::class, 'appointments'])->name('appointments');
