@@ -90,17 +90,19 @@
             @if($status === 'Aprobada')
                 <p>¡Estamos muy emocionados de tenerte con nosotros! Has sido aceptado oficialmente. Tu ayuda será invaluable para nuestros peluditos.</p>
                 
-                @if($password)
-                <div class="credentials">
-                    <p>Hemos creado una cuenta para que puedas acceder a nuestra plataforma:</p>
-                    <p><strong>Email:</strong> (Usa el correo donde recibiste este mensaje)</p>
-                    <p><strong>Contraseña Temporal:</strong> <code>{{ $password }}</code></p>
-                    <p style="font-size: 13px; color: #666;">Te recomendamos cambiar tu contraseña una vez ingreses a tu perfil.</p>
-                </div>
-                @endif
+                    <div class="credentials">
+                        <p>Hemos creado una cuenta para que puedas acceder a nuestra plataforma:</p>
+                        <p><strong>Usuario:</strong></p>
+                        <div class="credential-value">{{ $documento ?? 'Documento no disponible' }}</div>
 
-                <center>
-                    <a href="{{ url('/login') }}" class="btn">Acceder al Panel</a>
+                        @if($password)
+                            <p style="margin-top:12px;"><strong>Contraseña Temporal:</strong></p>
+                            <div class="credential-value"><code>{{ $password }}</code></div>
+                            <p style="font-size: 13px; color: #666; margin-top: 10px;">Te recomendamos cambiar tu contraseña una vez ingreses a tu perfil.</p>
+                        @else
+                            <p style="font-size: 13px; color: #666; margin-top: 10px;">Si ya tienes una cuenta, usa tu contraseña actual. Si no la recuerdas, restablécela desde la opción de recuperar contraseña.</p>
+                        @endif
+                    </div>
                 </center>
             @else
                 <p>Lamentablemente, en esta ocasión no hemos podido aprobar tu solicitud. Agradecemos mucho tu interés y te animamos a seguir apoyando la causa animal de otras formas.</p>
