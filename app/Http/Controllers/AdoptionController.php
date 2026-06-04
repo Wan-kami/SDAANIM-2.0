@@ -212,7 +212,7 @@ class AdoptionController extends Controller
             'Tar_fecha_limite' => $request->visita_fecha,
             'Tar_fecha_asignacion' => now(),
             'Tar_estado' => 'Pendiente',
-            'soli_id' => $solicitud->Soli_id, // Agregar referencia
+            'Soli_id' => $solicitud->Soli_id, // Agregar referencia
         ]);
 
         Notification::create([
@@ -261,7 +261,7 @@ class AdoptionController extends Controller
         // Completar la tarea relacionada
         $task = \App\Models\Task::where('Usu_documento', $solicitud->Soli_voluntario)
             ->where('Tar_estado', '!=', 'Completado')
-            ->where('soli_id', $solicitud->Soli_id)
+            ->where('Soli_id', $solicitud->Soli_id)
             ->first();
         if ($task) {
             $task->update([
@@ -275,7 +275,7 @@ class AdoptionController extends Controller
 if ($admin) {
             Notification::create([
                 'Usu_documento' => $admin->Usu_documento,
-                'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción #{$solicitud->Soli_id} de {$solicitud->animal->Anim_nombre}.",
+                'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción #{$solicitud->Soli_id} de {$solicitud->animal->Anim_nombre}. Evaluación: " . ($request->apto ? 'Apto para adopción' : 'No apto para adopción') . ".",
                 'Noti_fecha' => now(),
                 'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
             ]);

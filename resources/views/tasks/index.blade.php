@@ -26,6 +26,11 @@
                 $estado = $task->Tar_estado;
                 $routePrefix = Auth::user()->role == 'Veterinario' ? 'vet' : 'volunteer';
                 $colors = $task->status_colors;
+                $esAdopcion = $task->adoptionRequest || $task->soli_id || str_contains(strtolower($task->Tar_titulo), 'adop');
+                $reporteEnviado = $esAdopcion
+                    ? !empty($task->adoptionRequest->reporte_voluntario)
+                    : ($estado === 'En Proceso' && !empty($task->Tar_comentario));
+                $adoptionRequestId = $task->adoptionRequest->Soli_id ?? $task->soli_id;
             @endphp
 
             <div class="task-card" style="border-left-color: {{ $colors['border'] }};">
@@ -56,8 +61,8 @@
                 @if($estado !== 'Completado')
 
                     <div class="task-actions">
-                        {{-- Cambiar a Observación (solo tareas sin solicitud de adopción) --}}
-                        @if($estado == 'Pendiente' && !$task->adoptionRequest)
+                        {{-- Cambiar a Observación (solo tareas normales, no de adopción) --}}
+                        @if($estado == 'Pendiente' && !$esAdopcion)
                             <form action="{{ route($routePrefix . '.tasks.updateStatus', $task->Tar_id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -67,7 +72,7 @@
                         @endif
 
                         {{-- Cambiar a En Proceso (solo tareas normales, no de adopción) --}}
-                        @if(($estado == 'Pendiente' || $estado == 'Observación') && !$task->adoptionRequest)
+                        @if(($estado == 'Pendiente' || $estado == 'Observación') && !$esAdopcion)
                             <form action="{{ route($routePrefix . '.tasks.updateStatus', $task->Tar_id) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
@@ -95,14 +100,6 @@
                         </div>
                     @endif
 
-                    @php
-                        // Determinar si el voluntario ya envió un reporte
-                        $esAdopcion = (bool) $task->adoptionRequest;
-                        $reporteEnviado = $esAdopcion
-                            ? !empty($task->adoptionRequest->reporte_voluntario)
-                            : ($estado === 'En Proceso' && !empty($task->Tar_comentario));
-                    @endphp
-
                     @if($reporteEnviado)
                         {{-- ===================== BANNER: ya se envió el reporte ===================== --}}
                         <div style="background: #e0f2fe; color: #0369a1; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; margin-top: 15px;">
@@ -111,7 +108,7 @@
                             </h4>
                             <p style="margin: 0 0 4px 0; font-size: 0.93em;">
                                 <strong>Tu reporte:</strong>
-                                {{ $esAdopcion ? $task->adoptionRequest->reporte_voluntario : $task->Tar_comentario }}
+                                {{ !empty($task->adoptionRequest) ? $task->adoptionRequest->reporte_voluntario : $task->Tar_comentario }}
                             </p>
                             @if($esAdopcion && isset($task->adoptionRequest->apto))
                                 <p style="margin: 6px 0 0 0; font-size: 0.93em;">
@@ -125,24 +122,31 @@
 
                     @elseif($esAdopcion)
                         {{-- ===================== FORMULARIO de reporte de adopción ===================== --}}
-                        <form action="{{ route('admin.adoptions.report', $task->adoptionRequest->Soli_id) }}" method="POST" class="task-form-box">
+                        <form action="{{ route($routePrefix . '.tasks.complete', $task->Tar_id) }}" method="POST" class="task-form-box" onsubmit="return validarAptoSeleccionado({{ $task->Tar_id }})">
                             @csrf
+                            <input type="hidden" name="adoption_report" value="1">
+                            <input type="hidden" name="apto" id="apto-input-{{ $task->Tar_id }}" value="">
                             <label class="task-form-label">📋 Reporte de Visita de Adopción</label>
                             <textarea name="reporte" rows="4" class="task-form-textarea"
                                 placeholder="Describe lo que observaste en el hogar del adoptante: condiciones del espacio, trato con animales, compromisos, etc."
                                 required></textarea>
-                            <div style="margin: 10px 0 14px 0; display: flex; gap: 24px;">
-                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                    <input type="radio" name="apto" value="1" required>
-                                    <span style="color:#15803d; font-weight:600;">✓ Apto para adopción</span>
-                                </label>
-                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                    <input type="radio" name="apto" value="0">
-                                    <span style="color:#b91c1c; font-weight:600;">✕ No apto para adopción</span>
-                                </label>
+                            <div style="margin: 10px 0 14px 0; display: grid; gap: 12px;">
+                                <p style="margin: 0; font-size: 0.95em; color: #475569; font-weight: 700;">Evaluación de adopción</p>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <button type="button" onclick="seleccionarApto(1, this, {{ $task->Tar_id }})" data-task-id="{{ $task->Tar_id }}" data-value="1" class="apto-button" style="flex:1; padding: 14px 18px; border: 2px solid #4CAF50; border-radius: 10px; background: white; color: #166534; font-weight: 700; text-align: center; cursor: pointer; min-width: 150px;">
+                                        ✓ Apto para adopción
+                                    </button>
+                                    <button type="button" onclick="seleccionarApto(0, this, {{ $task->Tar_id }})" data-task-id="{{ $task->Tar_id }}" data-value="0" class="apto-button" style="flex:1; padding: 14px 18px; border: 2px solid #f44336; border-radius: 10px; background: white; color: #b91c1c; font-weight: 700; text-align: center; cursor: pointer; min-width: 150px;">
+                                        ✕ No apto para adopción
+                                    </button>
+                                </div>
                             </div>
+                            <p style="margin: 0 0 12px 0; color: #475569; font-size: 0.92em;">Selecciona si la solicitud es apta o no apta para adopción antes de enviar el reporte.</p>
                             <button class="task-btn btn-success">✓ Enviar Reporte de Adopción</button>
                         </form>
+                        @if(!$adoptionRequestId)
+                            <p style="margin: 10px 0 0 0; color: #b91c1c; font-size: 0.92em;">Nota: esta tarea aún no está vinculada a una solicitud de adopción con `soli_id`. El reporte se guardará como comentario de tarea.</p>
+                        @endif
 
                     @else
                         {{-- ===================== FORMULARIO de tarea normal ===================== --}}
@@ -189,4 +193,47 @@
 
     </div>
 </div>
+
+<script>
+    function seleccionarApto(valor, boton, tareaId) {
+        var inputApto = document.getElementById('apto-input-' + tareaId);
+        if (!inputApto) {
+            return;
+        }
+
+        // Asegurar que el valor es "1" o "0"
+        inputApto.value = String(valor);
+
+        var botones = document.querySelectorAll('.apto-button[data-task-id="' + tareaId + '"]');
+        botones.forEach(function(elemento) {
+            elemento.classList.remove('apto-selected');
+        });
+
+        boton.classList.add('apto-selected');
+    }
+
+    function validarAptoSeleccionado(tareaId) {
+        var inputApto = document.getElementById('apto-input-' + tareaId);
+        if (!inputApto || inputApto.value === '' || (inputApto.value !== '1' && inputApto.value !== '0')) {
+            alert('Por favor selecciona si la persona es apta o no apta para adopción antes de enviar el reporte.');
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<style>
+    .apto-selected {
+        color: white !important;
+    }
+    .apto-button[data-value="1"].apto-selected {
+        background-color: #16a34a !important;
+        border-color: #15803d !important;
+    }
+    .apto-button[data-value="0"].apto-selected {
+        background-color: #dc2626 !important;
+        border-color: #b91c1c !important;
+    }
+</style>
+
 @endsection

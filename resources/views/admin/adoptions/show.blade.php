@@ -144,7 +144,15 @@
                     </div>
                     <div>
                         <label style="color: #666; font-size: 12px; text-transform: uppercase; font-weight: 600;">¿Apto para adopción?</label>
-                        <p style="margin: 5px 0 0 0; color: #333; font-size: 14px;">{{ $adoption->apto !== null ? ($adoption->apto ? 'Sí' : 'No') : 'Pendiente' }}</p>
+                        @if($adoption->apto !== null)
+                            <div style="margin-top: 6px;">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 50px; font-weight: 700; font-size: 14px; {{ $adoption->apto ? 'background: #e8f5e9; color: #2e7d32; border: 2px solid #4CAF50;' : 'background: #ffebee; color: #c62828; border: 2px solid #f44336;' }}">
+                                    {{ $adoption->apto ? '✓ Apto para adopción' : '✕ No apto para adopción' }}
+                                </span>
+                            </div>
+                        @else
+                            <p style="margin: 5px 0 0 0; color: #999; font-size: 14px; font-style: italic;">Pendiente</p>
+                        @endif
                     </div>
                 </div>
             @else

@@ -534,7 +534,7 @@ class AdminController extends Controller
             'Tar_fecha_asignacion' => now(),
             'Tar_fecha_limite' => $request->visita_fecha,
             'Tar_estado' => 'Pendiente',
-            'soli_id' => $request->Soli_id,
+            'Soli_id' => $request->Soli_id,
         ]);
 
         Notification::create([
@@ -600,7 +600,7 @@ class AdminController extends Controller
         }
 
 // Completar tareas de seguimiento relacionadas
-        Task::where('soli_id', $id)
+        Task::where('Soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
 
@@ -629,7 +629,7 @@ class AdminController extends Controller
         $adoption->update(['Soli_estado' => 'Rechazada']);
 
 // Completar tareas de seguimiento relacionadas
-        Task::where('soli_id', $id)
+        Task::where('Soli_id', $id)
             ->where('Tar_estado', '!=', 'Completado')
             ->update(['Tar_estado' => 'Completado']);
 

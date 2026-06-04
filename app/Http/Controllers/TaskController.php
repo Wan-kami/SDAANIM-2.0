@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\Availability;
+use App\Models\AdoptionRequest;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -54,6 +56,46 @@ class TaskController extends Controller
 
         if ($task->Usu_documento != Auth::user()->Usu_documento) {
             abort(403, 'No autorizado.');
+        }
+
+        if ($request->has('adoption_report')) {
+            $request->validate([
+                'reporte' => 'required|string',
+                'apto' => 'required|in:0,1',
+            ]);
+
+            // Asegurarse de que apto sea un booleano
+            $apto = filter_var($request->apto, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            $apto = ($request->apto === '1' || $request->apto === 1) ? true : false;
+
+            $comentario = trim($request->reporte) . "\n\nEvaluación: " . ($apto ? 'Apto para adopción' : 'No apto para adopción');
+
+            if ($task->Soli_id) {
+                $solicitud = AdoptionRequest::find($task->Soli_id);
+                if ($solicitud) {
+                    $solicitud->reporte_voluntario = $request->reporte;
+                    $solicitud->apto = $apto;
+                    $solicitud->Soli_estado = 'En Revisión';
+                    $solicitud->save();
+
+                    $admin = User::where('role', 'Administrador')->first();
+                    if ($admin) {
+                        Notification::create([
+                            'Usu_documento' => $admin->Usu_documento,
+                            'Noti_mensaje' => "El voluntario ha enviado el reporte para la solicitud de adopción #{$solicitud->Soli_id} de {$solicitud->animal->Anim_nombre}. Evaluación: " . ($apto ? 'Apto para adopción' : 'No apto para adopción') . ".",
+                            'Noti_fecha' => now(),
+                            'Noti_link' => route('admin.adoptions.show', $solicitud->Soli_id),
+                        ]);
+                    }
+                }
+            }
+
+            $task->update([
+                'Tar_estado' => 'Completado',
+                'Tar_comentario' => $comentario,
+            ]);
+
+            return back()->with('success', 'Reporte de adopción enviado correctamente. La tarea ha sido completada.');
         }
 
         $task->update([

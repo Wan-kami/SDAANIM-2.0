@@ -11,7 +11,7 @@ class Task extends Model
     protected $fillable = [
         'Usu_documento', 'Tar_titulo', 'Tar_descripcion',
         'Tar_fecha_asignacion', 'Tar_fecha_limite',
-        'Tar_estado', 'Tar_comentario', 'Tar_hora', 'Tar_base', 'soli_id'
+        'Tar_estado', 'Tar_comentario', 'Tar_hora', 'Tar_base', 'Soli_id'
     ];
 
     // Cast de fechas a Carbon
@@ -27,7 +27,7 @@ class Task extends Model
 
     public function adoptionRequest()
     {
-        return $this->belongsTo(AdoptionRequest::class, 'soli_id', 'Soli_id');
+        return $this->belongsTo(AdoptionRequest::class, 'Soli_id', 'Soli_id');
     }
 
     public function getStatusColorsAttribute()
