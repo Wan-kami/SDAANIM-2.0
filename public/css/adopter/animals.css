@@ -139,6 +139,12 @@ tr {
     text-align: center;
 }
 
+.banner-quienes h2,
+.banner-quienes .page-hero-copy,
+.banner-quienes .page-hero-badge {
+    color: #ffffff !important;
+}
+
 .adopta-filtros {
     margin: 30px auto;
     display: flex;

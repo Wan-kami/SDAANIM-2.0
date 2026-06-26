@@ -13,7 +13,9 @@
     @yield('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -33,7 +35,7 @@
                 <a href="{{ route('adopta') }}">Adopta</a>
                 <a href="{{ route('products.public') }}">Productos</a>
                 @auth
-                <a href="{{ route('adopter.requests') }}">Solicitudes</a>
+                    <a href="{{ route('adopter.requests') }}">Solicitudes</a>
                 @endauth
                 <div class="dropdown">
                     <a href="#" class="dropbtn">Comunidad</a>
@@ -55,27 +57,30 @@
             <div class="search-container">
                 <nav class="nav-right">
                     @auth
-                    @php
-                        $notifCount = \App\Models\Notification::where('Usu_documento', Auth::user()->Usu_documento)->whereNull('read_at')->count();
-                    @endphp
-                    <div style="position: relative; display: inline-block; margin-right: 15px;">
-                        <button type="button" class="notif-toggle" onclick="toggleSidebar()" style="background: none; border: none; font-size: 1.4em; cursor: pointer; padding: 0;">🔔</button>
-                        @if($notifCount > 0)
-                            <span id="notifBadge" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7em; font-weight: bold;">{{ $notifCount }}</span>
-                        @endif
-                    </div>
-                    <a href="{{ route('profile.edit') }}" style="display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none;" title="Ir a mi perfil">
-                        <img src="{{ Auth::user()->Usu_foto ? asset('img/profiles/' . Auth::user()->Usu_foto) : asset('img/usuario.png') }}" alt="Perfil" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-                        <span style="font-weight: bold;">{{ Auth::user()->name }}</span>
-                    </a>
-                    <div style="width: 1px; height: 30px; background: rgba(0,0,0,0.1); margin: 0 5px;"></div>
-                    <form id="logoutForm-header" action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                        @csrf
-                        <button type="button" onclick="confirmarLogout(event, 'logoutForm-header')" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:6px; font-weight:bold; cursor:pointer;" title="Cerrar sesión">Cerrar sesión</button>
-                    </form>
+                        @php
+                            $notifCount = \App\Models\Notification::where('Usu_documento', Auth::user()->Usu_documento)->whereNull('read_at')->count();
+                        @endphp
+                        <div class="notification-badge-container">
+                            <button type="button" class="notif-toggle notification-button" onclick="toggleSidebar()"
+                                title="Ver notificaciones">🔔</button>
+                            @if($notifCount > 0)
+                                <span id="notifBadge" class="notification-badge">{{ $notifCount }}</span>
+                            @endif
+                        </div>
+                        <a href="{{ route('profile.edit') }}" class="profile-link" title="Ir a mi perfil">
+                            <img src="{{ Auth::user()->Usu_foto ? asset('img/profiles/' . Auth::user()->Usu_foto) : asset('img/usuario.png') }}"
+                                alt="Perfil">
+                            <span>{{ Auth::user()->name }}</span>
+                        </a>
+                        <div class="header-divider"></div>
+                        <form id="logoutForm-header" action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="button" onclick="confirmarLogout(event, 'logoutForm-header')"
+                                class="logout-button" title="Cerrar sesión">Cerrar sesión</button>
+                        </form>
                     @else
-                    <button onclick="window.location.href='{{ route('login') }}'" class="filtro">Iniciar Sesión</button>
-                    <button onclick="window.location.href='{{ route('register') }}'" class="filtro">Registrarse</button>
+                        <button onclick="window.location.href='{{ route('login') }}'" class="filtro">Iniciar Sesión</button>
+                        <button onclick="window.location.href='{{ route('register') }}'" class="filtro">Registrarse</button>
                     @endauth
                 </nav>
             </div>
@@ -85,18 +90,22 @@
     <div id="notifSidebar" class="notif-sidebar sidebar-adopter">
         <button class="close-btn" onclick="toggleSidebar()">✖</button>
         <h3>Notificaciones</h3>
-        <div style="margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;" id="notificationContainer">
+        <div style="margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;"
+            id="notificationContainer">
             @auth
-            @forelse(\App\Models\Notification::where('Usu_documento', Auth::user()->Usu_documento)->latest()->take(5)->get() as $notification)
-            <a href="{{ $notification->Noti_link ?? '#' }}" data-notification-id="{{ $notification->Noto_id }}" class="notification-link" style="font-size: 0.85em; border-left: 3px solid #2d7d46; margin-bottom: 5px; background: #fcfcfc;">
-                {{ $notification->Noti_mensaje }}<br>
-                <small style="color: #999;">{{ \Carbon\Carbon::parse($notification->Noti_fecha)->diffForHumans() }}</small>
-            </a>
-            @empty
-            <p style="text-align: center; color: #999; font-size: 0.9em;">No tienes notificaciones.</p>
-            @endforelse
+                @forelse(\App\Models\Notification::where('Usu_documento', Auth::user()->Usu_documento)->latest()->take(5)->get() as $notification)
+                    <a href="{{ $notification->Noti_link ?? '#' }}" data-notification-id="{{ $notification->Noto_id }}"
+                        class="notification-link"
+                        style="font-size: 0.85em; border-left: 3px solid #2d7d46; margin-bottom: 5px; background: #fcfcfc;">
+                        {{ $notification->Noti_mensaje }}<br>
+                        <small
+                            style="color: #999;">{{ \Carbon\Carbon::parse($notification->Noti_fecha)->diffForHumans() }}</small>
+                    </a>
+                @empty
+                    <p style="text-align: center; color: #999; font-size: 0.9em;">No tienes notificaciones.</p>
+                @endforelse
             @else
-            <p style="text-align: center; color: #999; font-size: 0.9em;">Inicia sesión para ver tus notificaciones.</p>
+                <p style="text-align: center; color: #999; font-size: 0.9em;">Inicia sesión para ver tus notificaciones.</p>
             @endauth
         </div>
         <h3>Mi Cuenta</h3>
@@ -108,7 +117,10 @@
         <a href="#" style="color: #666; font-weight: bold;">❓ Ayuda y Soporte</a>
         <form id="logoutForm-sidebar" action="{{ route('logout') }}" method="POST" style="margin: 0; padding: 0;">
             @csrf
-            <button type="button" onclick="confirmarLogout(event, 'logoutForm-sidebar')" style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;" onmouseover="this.style.backgroundColor='#ffe6e6'" onmouseout="this.style.backgroundColor='transparent'">
+            <button type="button" onclick="confirmarLogout(event, 'logoutForm-sidebar')"
+                style="width: 100%; text-align: left; padding: 12px; background: transparent; border: none; cursor: pointer; color: #d9534f; font-size: 0.9em; border-radius: 5px; font-family: inherit; transition: 0.3s;"
+                onmouseover="this.style.backgroundColor='#ffe6e6'"
+                onmouseout="this.style.backgroundColor='transparent'">
                 🚪 Cerrar sesión
             </button>
         </form>
@@ -116,21 +128,22 @@
 
     <main style="min-height: 70vh; padding-top: 20px;">
         @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 15px; margin: 20px auto; max-width: 1100px; border-radius: 8px; text-align: center; font-weight: bold;">
-            {{ session('success') }}
-        </div>
+            <div
+                style="background: #d4edda; color: #155724; padding: 15px; margin: 20px auto; max-width: 1100px; border-radius: 8px; text-align: center; font-weight: bold;">
+                {{ session('success') }}
+            </div>
         @endif
 
         @if(session('welcome'))
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            Swal.fire({
-                title: 'Bienvenido',
-                text: "{{ session('welcome') }}",
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-            });
-        </script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                Swal.fire({
+                    title: 'Bienvenido',
+                    text: "{{ session('welcome') }}",
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>
         @endif
 
         @yield('content')
@@ -147,22 +160,22 @@
             const sidebar = document.getElementById("notifSidebar");
             sidebar.classList.toggle("active");
             @auth
-            if (sidebar.classList.contains("active")) {
-                const badge = document.getElementById("notifBadge");
-                if (badge) {
-                    fetch('{{ route("notificaciones.leer") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    }).then(response => {
-                        if(response.ok) {
-                            badge.style.display = 'none';
-                        }
-                    }).catch(error => console.error('Error:', error));
+                if (sidebar.classList.contains("active")) {
+                    const badge = document.getElementById("notifBadge");
+                    if (badge) {
+                        fetch('{{ route("notificaciones.leer") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        }).then(response => {
+                            if (response.ok) {
+                                badge.style.display = 'none';
+                            }
+                        }).catch(error => console.error('Error:', error));
+                    }
                 }
-            }
             @endauth
         }
 
@@ -188,21 +201,21 @@
         }
 
         // Cerrar modal con tecla ESC
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 cerrarModalFoto();
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const notificationLinks = document.querySelectorAll('.notification-link');
             notificationLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     const notificationId = this.getAttribute('data-notification-id');
                     const href = this.getAttribute('href');
                     const linkElement = this;
-                    
+
                     fetch(`/notifications/${notificationId}`, {
                         method: 'DELETE',
                         headers: {
@@ -210,29 +223,29 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
                     })
-                    .then(response => {
-                        if(response.ok) {
-                            linkElement.style.opacity = '0';
-                            linkElement.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => {
-                                if (linkElement.parentElement) {
-                                    linkElement.remove();
-                                }
-                            }, 300);
-                            
-                            if (href && href !== '#') {
+                        .then(response => {
+                            if (response.ok) {
+                                linkElement.style.opacity = '0';
+                                linkElement.style.transition = 'opacity 0.3s ease';
                                 setTimeout(() => {
-                                    window.location.href = href;
+                                    if (linkElement.parentElement) {
+                                        linkElement.remove();
+                                    }
                                 }, 300);
+
+                                if (href && href !== '#') {
+                                    setTimeout(() => {
+                                        window.location.href = href;
+                                    }, 300);
+                                }
                             }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al eliminar notificación:', error);
-                        if (href && href !== '#') {
-                            window.location.href = href;
-                        }
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error al eliminar notificación:', error);
+                            if (href && href !== '#') {
+                                window.location.href = href;
+                            }
+                        });
                 });
             });
         });
@@ -240,4 +253,5 @@
 
     @include('partials.logout_modal')
 </body>
+
 </html>
