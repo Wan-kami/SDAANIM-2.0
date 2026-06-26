@@ -1,113 +1,135 @@
-/* Shared Pages Styles (Welcome, Public Pages) */
+/* ==========================================================================
+   SDAANIM 2.0 - Shared Public Pages
+   Uses huellas-theme design tokens for coherence with the home page.
+   ========================================================================== */
 
-/* Welcome/Hero Carousel */
-.swiper {
-    width: 100%;
-    padding: 20px 0;
+/* Import Google Fonts (same as huellas-theme) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Design tokens (mirror huellas-theme.css) ─────────────────────────── */
+:root {
+    --brand-primary:       #2D5A27;
+    --brand-primary-hover: #1E3F19;
+    --brand-light:         #E6F0E5;
+    --brand-bg:            #FAF8F5;
+    --brand-accent:        #E27D60;
+    --brand-text:          #2F3E2E;
+    --brand-text-muted:    #667065;
+    --white:               #ffffff;
+    --border-color:        #E9E3DB;
+    --shadow-soft:  0 10px 30px rgba(45,90,39,0.05);
+    --shadow-hover: 0 15px 40px rgba(45,90,39,0.12);
+    --transition:   all 0.3s cubic-bezier(0.4,0,0.2,1);
+    --font-heading: 'Outfit', sans-serif;
+    --font-body:    'Inter', sans-serif;
+    --radius-card:  24px;
+    --radius-sm:    14px;
 }
 
-.swiper-slide {
-    display: flex;
-    justify-content: center;
-}
-
+/* ── Swiper/Carousel (legacy keep) ────────────────────────────────────── */
+.swiper { width: 100%; padding: 20px 0; }
+.swiper-slide { display: flex; justify-content: center; }
 .card {
-    width: 100%;
-    max-width: 300px;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%; max-width: 300px;
+    background: var(--white);
+    border-radius: 12px; overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
     text-align: center;
 }
+.card img { width: 100%; height: 200px; object-fit: cover; }
+.card p { padding: 10px; font-weight: bold; font-family: var(--font-heading); }
 
-.card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.card p {
-    padding: 10px;
-    font-weight: bold;
-}
-
-/* Modal Animal */
+/* ── Modal (legacy keep) ───────────────────────────────────────────────── */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
+    display: none; position: fixed; z-index: 999;
+    inset: 0; background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
 }
-
 .modal-content {
-    background: white;
-    margin: 5% auto;
-    padding: 25px;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 15px;
+    background: var(--white);
+    margin: 5% auto; padding: 28px;
+    width: 90%; max-width: 420px;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
     text-align: center;
-    animation: fadeIn 0.3s ease;
+    animation: fadeInUp 0.3s ease;
 }
-
 .modal-content img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    width: 100%; height: 220px; object-fit: cover;
+    border-radius: var(--radius-sm); margin-bottom: 15px;
+}
+.close { float: right; font-size: 28px; cursor: pointer; color: var(--brand-text-muted); }
+
+/* ── Animations ───────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-.close {
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
+/* ========================================================================
+   PAGE-LEVEL WRAPPER
+   ======================================================================== */
+.quienes-somos,
+.role-page {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+    font-family: var(--font-body);
 }
 
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(-20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
-/* Quienes Somos Page — Paleta Khaki/Tierra */
-.quienes-somos {
-    max-width: 980px;
-    margin: 36px auto;
-    padding: 0 20px 40px;
-    font-family: 'Open Sans', sans-serif;
-}
-
+/* ========================================================================
+   PAGE BANNER / HERO HEADER
+   ======================================================================== */
 .banner-quienes {
-    background: linear-gradient(135deg, #8b7355 0%, #c8ad7f 60%, #a08858 100%);
-    color: #fff;
-    padding: 38px 30px;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #3a7532 60%, #2D5A27 100%);
+    color: var(--white);
+    padding: 44px 36px;
     text-align: center;
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     margin-bottom: 36px;
-    box-shadow: 0 8px 28px rgba(139, 115, 85, 0.25);
+    box-shadow: 0 12px 32px rgba(45,90,39,0.22);
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-quienes::before {
+    content: '🐾';
+    position: absolute;
+    font-size: 9rem;
+    opacity: 0.06;
+    right: -20px;
+    bottom: -20px;
+    pointer-events: none;
 }
 
 .banner-quienes h2 {
-    font-family: 'Pacifico', cursive;
-    font-size: 2.6em;
-    margin-bottom: 10px;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.18);
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    color: var(--white);
 }
 
 .banner-quienes p {
-    font-size: 1.05em;
-    opacity: 0.95;
+    font-size: 1.05rem;
+    opacity: 0.9;
     max-width: 520px;
     margin: 0 auto;
+    line-height: 1.6;
+    font-family: var(--font-body);
 }
 
-/* Grid de 2 columnas para misión y visión */
+/* ========================================================================
+   2-COLUMN GRID (Mission / Vision / Business)
+   ======================================================================== */
 .quienes-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -119,130 +141,145 @@
     .quienes-grid { grid-template-columns: 1fr; }
 }
 
+/* ========================================================================
+   SECTION CARDS
+   ======================================================================== */
 .seccion {
-    background: #faf7f2;
+    background: var(--white);
     padding: 28px 30px;
-    border-radius: 18px;
-    box-shadow: 0 4px 16px rgba(139,115,85,0.10);
-    border-left: 6px solid #c8ad7f;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--brand-primary);
+    transition: var(--transition);
 }
 
 .seccion:hover {
-    box-shadow: 0 8px 28px rgba(139,115,85,0.18);
-    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+    border-left-color: var(--brand-accent);
 }
 
 .seccion h3 {
-    color: #6b4f2a;
-    font-size: 1.45em;
-    margin-bottom: 14px;
+    font-family: var(--font-heading);
+    color: var(--brand-primary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 14px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
 .seccion p {
-    color: #5a4535;
-    line-height: 1.85;
-    font-size: 1em;
+    color: var(--brand-text-muted);
+    line-height: 1.8;
+    font-size: 0.97rem;
     margin: 0;
 }
 
-/* Sección valores — ocupa todo el ancho */
-.seccion.valores {
-    padding: 28px 30px;
-    margin-bottom: 0;
+.seccion ul {
+    padding-left: 20px;
+    color: var(--brand-text-muted);
+    margin-top: 10px;
+    line-height: 1.9;
+    font-size: 0.93rem;
 }
 
-.valores h3 {
-    color: #6b4f2a;
-    font-size: 1.45em;
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+/* ── Valores section ─────────────────────────────────────────────────── */
+.seccion.valores { padding: 28px 30px; margin-bottom: 0; }
 
 .valores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 14px;
+    margin-top: 10px;
 }
 
 .valor-card {
-    background: linear-gradient(145deg, #fff8ee, #f5edd9);
-    border: 1px solid #e0c99a;
-    border-radius: 14px;
-    padding: 18px 16px;
+    background: var(--brand-light);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 18px 14px;
     text-align: center;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    transition: var(--transition);
     cursor: default;
 }
 
 .valor-card:hover {
-    background: linear-gradient(145deg, #c8ad7f, #8b7355);
-    border-color: #8b7355;
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(139,115,85,0.3);
+    box-shadow: 0 8px 20px rgba(45,90,39,0.25);
 }
 
 .valor-card:hover .valor-titulo,
 .valor-card:hover .valor-desc {
-    color: #fff;
+    color: var(--white);
 }
 
 .valor-titulo {
-    font-weight: 800;
-    font-size: 0.95em;
-    color: #6b4f2a;
-    margin-bottom: 6px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--brand-primary);
+    margin-bottom: 4px;
     display: block;
     transition: color 0.25s;
 }
 
 .valor-desc {
-    font-size: 0.82em;
-    color: #8b7355;
+    font-size: 0.82rem;
+    color: var(--brand-text-muted);
     line-height: 1.5;
     transition: color 0.25s;
 }
 
-/* Public Role Pages (Volunteer, Veterinarian) */
-.role-page {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px 50px;
-}
-
+/* ========================================================================
+   ROLE PAGES (Volunteer / Veterinarian)
+   ======================================================================== */
 .role-hero {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
     gap: 30px;
-    background: #e9f7ec;
-    border-radius: 25px;
-    padding: 35px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.05);
+    background: linear-gradient(135deg, var(--brand-light) 0%, #f0f7ef 100%);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border-color);
+    padding: 36px;
+    box-shadow: var(--shadow-soft);
     margin-bottom: 30px;
 }
 
 .role-hero h1 {
-    margin: 0 0 15px;
-    font-size: 2.4rem;
-    color: #1f4d28;
+    font-family: var(--font-heading);
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--brand-primary);
+    margin: 0 0 14px;
+    line-height: 1.15;
 }
 
 .role-hero p {
     line-height: 1.8;
-    color: #34403d;
+    color: var(--brand-text-muted);
     font-size: 1rem;
 }
 
 .role-hero .hero-card {
-    background: white;
+    background: var(--white);
     border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+/* Vet variant */
+.role-hero.vet {
+    background: linear-gradient(135deg, #e8f4f8 0%, #dceef5 100%);
+}
+.role-hero.vet h1 {
+    color: #0f4f6f;
 }
 
 .role-grid {
@@ -253,189 +290,189 @@
 }
 
 .role-card {
-    background: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    background: var(--white);
+    border-radius: var(--radius-card);
+    padding: 26px 28px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--brand-primary);
+    transition: var(--transition);
+}
+
+.role-card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
 }
 
 .role-card h3 {
-    margin-top: 0;
-    color: #1f4d28;
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+    margin: 0 0 12px;
 }
 
 .role-card ul {
     padding-left: 18px;
-    color: #424f47;
+    color: var(--brand-text-muted);
+    line-height: 1.9;
+    font-size: 0.93rem;
+    margin: 0;
 }
 
-.role-card ul li {
-    margin-bottom: 10px;
-}
+.role-card ul li { margin-bottom: 8px; }
 
+/* Vet card variant */
+.role-card.vet { border-left-color: #1a7da8; }
+.role-card.vet h3 { color: #0f4f6f; }
+
+/* ── Role Form ─────────────────────────────────────────────────────────── */
 .role-form {
-    background: white;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    background: var(--white);
+    border-radius: var(--radius-card);
+    padding: 32px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
 }
 
 .role-form label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 700;
-    color: #2d7d46;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--brand-primary);
+    font-size: 0.9rem;
+    font-family: var(--font-body);
 }
 
 .role-form input,
 .role-form textarea,
 .role-form select {
     width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 18px;
-    border: 1px solid #d6e5d7;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border-color);
     border-radius: 12px;
     font-size: 0.95rem;
-    color: #2b3d34;
-    background: #fbfdf8;
+    color: var(--brand-text);
+    background: var(--brand-bg);
+    font-family: var(--font-body);
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
-.role-form textarea {
-    min-height: 110px;
-    resize: vertical;
+.role-form input:focus,
+.role-form textarea:focus,
+.role-form select:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    background: var(--white);
 }
 
-.role-form button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 999px;
-    background: #2d7d46;
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
+.role-form textarea { min-height: 110px; resize: vertical; }
+
+.role-form button[type="submit"] {
+    width: 100%; padding: 14px;
+    border: none; border-radius: 9999px;
+    background: var(--brand-primary);
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 700; font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
+    transition: var(--transition);
+    box-shadow: 0 6px 18px rgba(45,90,39,0.2);
 }
 
-.role-form button:hover {
-    background: #256038;
-    transform: translateY(-1px);
+.role-form button[type="submit"]:hover {
+    background: var(--brand-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(45,90,39,0.3);
 }
 
+/* Vet role-form variant */
+.role-form.vet label { color: #0f4f6f; }
+.role-form.vet input,
+.role-form.vet textarea,
+.role-form.vet select { border-color: #c9dfe9; background: #f7fafd; }
+.role-form.vet input:focus,
+.role-form.vet textarea:focus,
+.role-form.vet select:focus { border-color: #1a7da8; }
+.role-form.vet button[type="submit"] { background: #0f4f6f; }
+.role-form.vet button[type="submit"]:hover { background: #0a3b54; }
+
+/* ========================================================================
+   ALERT BANNERS
+   ======================================================================== */
 .alert-success {
     max-width: 1100px;
-    margin: 20px auto;
+    margin: 16px auto;
     padding: 16px 20px;
-    border-radius: 15px;
-    background: #daf7d9;
-    color: #1f4d28;
-    border: 1px solid #c0e7c2;
+    border-radius: 14px;
+    background: var(--brand-light);
+    color: var(--brand-primary);
+    border: 1px solid #bcd6b9;
+    font-family: var(--font-body);
+    font-weight: 600;
 }
 
 .alert-error {
     max-width: 1100px;
-    margin: 20px auto;
+    margin: 16px auto;
     padding: 16px 20px;
-    border-radius: 15px;
-    background: #fde6e6;
+    border-radius: 14px;
+    background: #fdecea;
     color: #7f1f1f;
-    border: 1px solid #f1c6c6;
+    border: 1px solid #f5c6c6;
+    font-family: var(--font-body);
 }
 
-/* Veterinarian Page - Different Color Scheme */
-.role-page .role-hero.vet {
-    background: #eaf5fb;
-}
-
-.role-page .role-hero.vet h1 {
-    color: #0f4f6f;
-}
-
-.role-page .role-hero.vet p {
-    color: #2f4f60;
-}
-
-.role-page .role-card.vet h3 {
-    color: #0f4f6f;
-}
-
-.role-page .role-card.vet ul {
-    color: #3b5565;
-}
-
-.role-form.vet label {
-    color: #0f4f6f;
-}
-
-.role-form.vet input,
-.role-form.vet textarea,
-.role-form.vet select {
-    border: 1px solid #d7e6ef;
-    background: #f8fbff;
-    color: #2f4f60;
-}
-
-.role-form.vet button[type="button"].btn-abrir-form,
-.role-form.vet button:hover {
-    background: #0a3b54;
-}
-
-.alert-success.vet {
-    background: #dfefff;
-    color: #0f4f6f;
-    border: 1px solid #bed6ed;
-}
-
-/* ===== MODAL DE FORMULARIO DE INSCRIPCIÓN ===== */
-
-/* Botón trigger visible en la página */
+/* ========================================================================
+   INSCRIPTION BUTTON (Volunteer / Vet trigger)
+   ======================================================================== */
 .btn-inscribirse {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     margin-top: 24px;
-    padding: 15px 32px;
+    padding: 14px 32px;
     border: none;
-    border-radius: 999px;
+    border-radius: 9999px;
+    font-family: var(--font-heading);
     font-size: 1.05rem;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
 
 .btn-inscribirse.vol {
-    background: linear-gradient(135deg, #2d7d46, #4caf50);
-    color: #fff;
+    background: var(--brand-primary);
+    color: var(--white);
 }
-
 .btn-inscribirse.vol:hover {
-    background: linear-gradient(135deg, #256038, #3a9c42);
+    background: var(--brand-primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(45,125,70,0.4);
+    box-shadow: 0 10px 28px rgba(45,90,39,0.3);
 }
 
 .btn-inscribirse.vet {
     background: linear-gradient(135deg, #0f4f6f, #1a7da8);
-    color: #fff;
+    color: var(--white);
 }
-
 .btn-inscribirse.vet:hover {
     background: linear-gradient(135deg, #0a3b54, #14618a);
     transform: translateY(-2px);
-    box-shadow: 0 10px 28px rgba(15,79,111,0.4);
+    box-shadow: 0 10px 28px rgba(15,79,111,0.35);
 }
 
-/* Overlay del modal */
+/* ========================================================================
+   FORM MODAL OVERLAY
+   ======================================================================== */
 .form-modal-overlay {
     display: none;
-    position: fixed;
-    z-index: 1200;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(3px);
-    animation: fadeIn 0.25s ease;
+    position: fixed; z-index: 1200; inset: 0;
+    background: rgba(45,90,39,0.35);
+    backdrop-filter: blur(5px);
+    animation: fadeInUp 0.25s ease;
 }
 
 .form-modal-overlay.active {
@@ -444,71 +481,389 @@
     justify-content: center;
 }
 
-/* Tarjeta del modal */
 .form-modal-card {
-    background: #fff;
-    border-radius: 22px;
-    padding: 36px 38px;
-    width: 95%;
-    max-width: 580px;
-    max-height: 88vh;
-    overflow-y: auto;
+    background: var(--white);
+    border-radius: 26px;
+    padding: 38px 40px;
+    width: 95%; max-width: 580px;
+    max-height: 88vh; overflow-y: auto;
     position: relative;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+    border: 1px solid var(--border-color);
     animation: slideUp 0.3s ease;
 }
 
-.form-modal-card.vet {
-    border-top: 5px solid #1a7da8;
-}
+.form-modal-card.vet  { border-top: 5px solid #1a7da8; }
+.form-modal-card.vol  { border-top: 5px solid var(--brand-primary); }
 
-.form-modal-card.vol {
-    border-top: 5px solid #2d7d46;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Botón cerrar dentro del modal */
 .form-modal-close {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 1.6rem;
-    cursor: pointer;
-    color: #999;
-    line-height: 1;
-    transition: color 0.2s;
-    padding: 4px;
+    position: absolute; top: 16px; right: 18px;
+    background: var(--brand-light);
+    border: none; border-radius: 50%;
+    width: 36px; height: 36px;
+    font-size: 1.2rem; cursor: pointer;
+    color: var(--brand-primary); line-height: 1;
+    transition: background 0.2s;
+    display: flex; align-items: center; justify-content: center;
 }
+.form-modal-close:hover { background: var(--brand-primary); color: var(--white); }
 
-.form-modal-close:hover {
-    color: #333;
-}
-
-/* Título dentro del modal */
 .form-modal-card h2 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem; font-weight: 800;
     margin: 0 0 22px;
-    font-size: 1.3rem;
-    font-weight: 800;
 }
-
 .form-modal-card.vet h2 { color: #0f4f6f; }
-.form-modal-card.vol h2 { color: #1f4d28; }
+.form-modal-card.vol h2 { color: var(--brand-primary); }
 
-/* Scrollbar elegante */
-.form-modal-card::-webkit-scrollbar {
-    width: 6px;
+.form-modal-card::-webkit-scrollbar { width: 6px; }
+.form-modal-card::-webkit-scrollbar-track { background: var(--brand-bg); border-radius: 10px; }
+.form-modal-card::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+
+/* ========================================================================
+   PRODUCTS PAGE
+   ======================================================================== */
+.products-page-wrapper {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+    font-family: var(--font-body);
 }
-.form-modal-card::-webkit-scrollbar-track {
-    background: #f5f5f5;
-    border-radius: 10px;
+
+.products-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
 }
-.form-modal-card::-webkit-scrollbar-thumb {
-    background: #ccc;
+
+.products-page-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--brand-primary);
+    margin: 0 0 6px;
+}
+
+.products-page-header p {
+    color: var(--brand-text-muted);
+    margin: 0;
+    font-size: 1rem;
+}
+
+.cart-btn {
+    background: var(--brand-primary);
+    color: var(--white);
+    padding: 12px 26px;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 6px 18px rgba(45,90,39,0.18);
+}
+
+.cart-btn:hover {
+    background: var(--brand-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(45,90,39,0.28);
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--brand-primary);
+}
+
+.product-card-img {
+    width: 100%; height: 200px; object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.product-card-img-placeholder {
+    width: 100%; height: 200px;
+    background: var(--brand-light);
+    display: flex; align-items: center;
+    justify-content: center; font-size: 3rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.product-card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-body h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--brand-text); margin: 0 0 8px;
+}
+
+.product-card-body .desc {
+    color: var(--brand-text-muted);
+    font-size: 0.88rem;
+    margin: 0 0 14px;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.product-meta {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 14px;
+}
+
+.product-category-tag {
+    background: var(--brand-light);
+    color: var(--brand-primary);
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.product-stock {
+    color: var(--brand-text-muted);
+    font-size: 0.88rem;
+}
+
+.product-price {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--brand-primary);
+    margin: 0 0 16px;
+}
+
+.product-form-row {
+    display: flex; gap: 10px; align-items: center;
+    margin-bottom: 10px;
+}
+
+.product-form-row select,
+.product-form-row input[type="number"] {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border-color);
     border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--brand-text);
+    background: var(--brand-bg);
+    font-family: var(--font-body);
+    transition: border-color 0.2s;
+}
+
+.product-form-row input[type="number"] { width: 64px; text-align: center; }
+.product-form-row select:focus,
+.product-form-row input:focus { outline: none; border-color: var(--brand-primary); }
+
+.btn-add-to-cart {
+    width: 100%; padding: 11px;
+    border: none; border-radius: 9999px;
+    background: var(--brand-primary);
+    color: var(--white);
+    font-family: var(--font-heading);
+    font-weight: 700; font-size: 0.95rem;
+    cursor: pointer; transition: var(--transition);
+}
+
+.btn-add-to-cart:hover {
+    background: var(--brand-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(45,90,39,0.25);
+}
+
+.btn-sold-out {
+    width: 100%; padding: 11px;
+    border: none; border-radius: 9999px;
+    background: #e2e8e0;
+    color: var(--brand-text-muted);
+    font-family: var(--font-heading);
+    font-weight: 700; font-size: 0.95rem;
+    cursor: not-allowed;
+}
+
+/* ========================================================================
+   ADOPT (Animals) PAGE
+   ======================================================================== */
+.adopta-section {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+    font-family: var(--font-body);
+}
+
+.adopta-section > h1 {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--brand-primary) !important;
+    margin: 0 0 8px;
+}
+
+.adopta-section > p {
+    color: var(--brand-text-muted) !important;
+    font-size: 1rem;
+    margin-bottom: 32px;
+}
+
+/* Filter pills */
+.adopta-filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.filtro-btn {
+    padding: 9px 22px;
+    border-radius: 9999px;
+    border: 2px solid var(--border-color);
+    background: var(--white);
+    color: var(--brand-text-muted);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.filtro-btn:hover {
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background: var(--brand-light);
+}
+
+.filtro-btn.activo {
+    background: var(--brand-primary);
+    color: var(--white);
+    border-color: var(--brand-primary);
+    box-shadow: 0 4px 12px rgba(45,90,39,0.2);
+}
+
+/* Animal cards grid */
+.premium-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 24px;
+}
+
+.premium-card {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.premium-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--brand-primary);
+}
+
+.premium-card > img {
+    width: 100%; height: 220px; object-fit: cover;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.premium-card > div {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.premium-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--brand-primary); margin: 0;
+}
+
+.premium-card p {
+    color: var(--brand-text-muted);
+    font-size: 0.9rem; margin: 0;
+}
+
+.premium-btn-adopter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 9999px;
+    background: var(--brand-primary) !important;
+    color: var(--white) !important;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.premium-btn-adopter:hover {
+    background: var(--brand-primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(45,90,39,0.25);
+}
+
+.no-animals {
+    font-family: var(--font-heading);
+    color: var(--brand-text-muted);
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+/* ========================================================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================================================== */
+@media (max-width: 820px) {
+    .role-hero {
+        grid-template-columns: 1fr;
+    }
+    .products-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .banner-quienes h2 { font-size: 1.9rem; }
+    .role-hero h1 { font-size: 1.8rem; }
+    .adopta-section > h1 { font-size: 2rem; }
 }

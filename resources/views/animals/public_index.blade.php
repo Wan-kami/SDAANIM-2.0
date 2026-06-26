@@ -1,20 +1,17 @@
 @extends('layouts.adopter.app')
 
-@section('title', 'Adopta un Amigo')
+@section('title', 'Adopta un Amigo | SDAANIM')
 
 @section('styles')
+    <link rel="stylesheet" href="{{ asset('css/shared/pages.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adopter/animals.css') }}">
 @endsection
 
 @section('content')
 <section class="adopta-section">
-    <h1 style="color: #2e8b57; margin-bottom: 10px; font-weight: 800;">
-        Adopta un Amigo 🐾
-    </h1>
+    <h1>Adopta un Amigo 🐾</h1>
 
-    <p style="color: #64748b; margin-bottom: 40px;">
-        Encuentra el compañero perfecto para tu hogar.
-    </p>
+    <p>Encuentra el compañero perfecto para tu hogar.</p>
 
     <!-- FILTROS -->
     <div class="adopta-filtros">
