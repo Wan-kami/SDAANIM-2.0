@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') | JKD</title>
+    <title>@yield('title') | SDAANIM</title>
     <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/premium.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/modal-foto.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adopter/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/shared/huellas-theme.css') }}">
     @yield('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -20,7 +21,10 @@
         <div class="header-top">
             <div class="logo">
                 <img src="{{ asset('img/a.png') }}" alt="logo">
-                <span>Esperanza Animal BQ</span>
+                <div class="logo-container">
+                    <span class="logo-brand-text">SDAANIM</span>
+                    <span class="logo-subtitle">ADOPTA. AMA. TRANSFORMA.</span>
+                </div>
             </div>
 
             <nav class="nav-menu">
@@ -133,8 +137,9 @@
     </main>
 
     <footer id="contacto">
+        <p>🐾 SDAANIM - ADOPTA. AMA. TRANSFORMA. 🐾</p>
         <p>📞 Contáctanos: sdaanimsystem@gmail.com | 📍 Barranquilla, Colombia</p>
-        <p>© 2025 AdoptaYa - Todos los derechos reservados</p>
+        <p>© 2026 SDAANIM - Todos los derechos reservados</p>
     </footer>
 
     <script>

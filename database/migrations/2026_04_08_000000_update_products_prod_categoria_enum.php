@@ -10,7 +10,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE products MODIFY prod_categoria ENUM('Alimentos','Juguetes','Camas','Accesorios','Ropa') NOT NULL");
+        if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE products MODIFY prod_categoria ENUM('Alimentos','Juguetes','Camas','Accesorios','Ropa') NOT NULL");
+        }
     }
 
     /**
@@ -18,6 +20,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("ALTER TABLE products MODIFY prod_categoria ENUM('Alimentos','Juguetes','Camas','Accesorios') NOT NULL");
+        if (\Illuminate\Support\Facades\DB::getDriverName() !== 'sqlite') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE products MODIFY prod_categoria ENUM('Alimentos','Juguetes','Camas','Accesorios') NOT NULL");
+        }
     }
 };

@@ -28,9 +28,9 @@
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
-    <div class="premium-card" style="text-align: center; margin-bottom: 50px; background: linear-gradient(135deg, #ffffff, #f0fdf4); border-top: 8px solid #2d7d46;">
-        <h1 style="font-family: 'Pacifico', cursive; color: #2d7d46; font-size: 3em; margin-bottom: 15px;">¡Hola, {{ Auth::user()->name }}! 🐾</h1>
-        <p style="color: #64748b; font-size: 1.2em; max-width: 600px; margin: 0 auto;">Gracias por ser parte de nuestra comunidad y apoyarnos en nuestra misión de rescatar vidas.</p>
+    <div class="welcome-jumbotron">
+        <h1>¡Hola, {{ Auth::user()->name }}! 🐾</h1>
+        <p>Gracias por ser parte de nuestra comunidad y apoyarnos en nuestra misión de rescatar vidas y conectar felicidad.</p>
     </div>
 
     <!-- Recién llegados -->
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Ubicación -->
-    <h2 style="margin-top: 50px; margin-bottom: 20px;">📍 Nuestra ubicación</h2>
+    <h2 class="location-section-title">📍 Nuestra ubicación</h2>
     <div style="height: 400px; width: 100%; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px;">
         <iframe
             width="100%"
@@ -90,33 +90,32 @@
     </div>
 
     <div class="adopter-grid">
-        <div class="premium-card" style="text-align: center;">
-            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">🐶</span>
-            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Busca un Amigo</h3>
-            <p style="color: #64748b; margin-bottom: 30px;">Explora nuestro catálogo de peluditos que buscan un hogar para siempre.</p>
-            <a href="{{ route('adopta') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center; box-sizing: border-box;">Ver Perros</a>
+        <div class="premium-card">
+            <span class="icon">🐶</span>
+            <h3>Busca un Amigo</h3>
+            <p>Explora nuestro catálogo de peluditos que buscan un hogar para siempre.</p>
+            <a href="{{ route('adopta') }}" class="premium-btn-adopter">Ver Perros</a>
         </div>
         
-        <div class="premium-card" style="text-align: center;">
-            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">📋</span>
-            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Mis Solicitudes</h3>
-            <p style="color: #64748b; margin-bottom: 8px;">Has enviado <strong>{{ $requestsCount ?? 0 }}</strong> solicitud{{ ($requestsCount ?? 0) === 1 ? '' : 'es' }}.</p>
-            <p style="color: #64748b; margin-bottom: 30px;">Sigue el estado de tus procesos de adopción en tiempo real.</p>
-            <a href="{{ route('adopter.requests') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center; box-sizing: border-box;">Ver Solicitudes</a>
+        <div class="premium-card">
+            <span class="icon">📋</span>
+            <h3>Mis Solicitudes</h3>
+            <p>Has enviado <strong>{{ $requestsCount ?? 0 }}</strong> solicitud{{ ($requestsCount ?? 0) === 1 ? '' : 'es' }}. Sigue el estado de tus procesos de adopción en tiempo real.</p>
+            <a href="{{ route('adopter.requests') }}" class="premium-btn-adopter">Ver Solicitudes</a>
         </div>
 
-        <div class="premium-card" style="text-align: center;">
-            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">🛍️</span>
-            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Tienda Animal</h3>
-            <p style="color: #64748b; margin-bottom: 30px;">Compra accesorios, comida y juguetes. Las ganancias salvan vidas.</p>
-            <a href="{{ route('products.public') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center; box-sizing: border-box;">Ver Productos</a>
+        <div class="premium-card">
+            <span class="icon">🛍️</span>
+            <h3>Tienda Animal</h3>
+            <p>Compra accesorios, comida y juguetes. Las ganancias salvan vidas.</p>
+            <a href="{{ route('products.public') }}" class="premium-btn-adopter">Ver Productos</a>
         </div>
 
-        <div class="premium-card" style="text-align: center;">
-            <span class="icon" style="font-size: 4em; margin-bottom: 20px; display: block;">🏢</span>
-            <h3 style="font-size: 1.5em; color: #1e293b; margin-bottom: 10px;">Quiénes Somos</h3>
-            <p style="color: #64748b; margin-bottom: 30px;">Conoce nuestra misión, visión y los valores que nos mueven.</p>
-            <a href="{{ route('about') }}" class="premium-btn premium-btn-adopter" style="width: 100%; justify-content: center; box-sizing: border-box;">Conocer más</a>
+        <div class="premium-card">
+            <span class="icon">🏢</span>
+            <h3>Quiénes Somos</h3>
+            <p>Conoce nuestra misión, visión y los valores que nos mueven.</p>
+            <a href="{{ route('about') }}" class="premium-btn-adopter">Conocer más</a>
         </div>
     </div>
 
