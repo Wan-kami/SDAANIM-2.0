@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: #f7f7f7;
     color: #333;
 }
@@ -37,7 +37,7 @@ body {
 }
 
 .logo span {
-    font-family: 'Pacifico', cursive;
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.4rem;
     color: #2d7d46;
     letter-spacing: 1px;
@@ -342,7 +342,7 @@ footer {
     align-items: center;
     gap: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .match-card h2 {
@@ -777,7 +777,7 @@ footer {
   border-radius: 8px;
   background-color: #fff;
   font-size: 16px;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: #333;
   outline: none;
   cursor: pointer;

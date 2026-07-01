@@ -7,10 +7,11 @@
     <title>@yield('title') | SDAANIM</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/shared/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/layout.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/admin-unified.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/shared/premium-dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('css/shared/modal-foto.css') }}">
     
     @yield('styles')
