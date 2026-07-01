@@ -1,6 +1,9 @@
 @extends('layouts.volunteer.app')
 
 @section('title', 'Panel Voluntario | SDAANIM')
+@extends('layouts.volunteer.app')
+
+@section('title', 'Panel Voluntario | SDAANIM')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/volunteer/dashboard.css') }}">
@@ -390,6 +393,16 @@
             <h3>Mis Tareas</h3>
             <p>Gestiona todas tus tareas asignadas en detalle.</p>
             <a href="{{ route('volunteer.tasks') }}">Ir a Tareas</a>
+        </div>
+        <div class="admin-card">
+            <div class="icon">🔔</div>
+            <h3>Notificaciones</h3>
+            <p>Mantente informado sobre todas tus actividades.</p>
+            <a href="{{ route('notifications') }}">Ver Notificaciones</a>
+        </div>
+    </section>
+</div>
+@endsection
         </div>
         <div class="admin-card">
             <div class="icon">🔔</div>
