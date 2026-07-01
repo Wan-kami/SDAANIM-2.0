@@ -1,7 +1,13 @@
-@extends('layouts.volunteer.app')
+@extends('layouts.app')
 
-@section('title', 'Perfil Voluntario | SDAANIM')
+@section('panel-title', 'Mi Perfil')
 
 @section('content')
-    @include('profiles.partials.profile_content')
+<div class="premium-dashboard-container">
+    @include('partials.volunteer_sidebar')
+
+    <main class="dashboard-main-panel">
+        @include('profiles.partials.profile_content')
+    </main>
+</div>
 @endsection

@@ -1,61 +1,152 @@
-@php
-    $layout = match(Auth::user()->role) {
-        'Administrador' => 'layouts.app',
-        'Veterinario' => 'layouts.vet.app',
-        'Adoptante' => 'layouts.adopter.app',
-        default => 'layouts.volunteer.app',
-    };
-@endphp
+@extends('layouts.app')
 
-@extends($layout)
+@section('panel-title', 'Notificaciones')
 
-@section('title', 'Notificaciones | SDAANIM')
+@section('styles')
+<style>
+    .notif-page-container {
+        padding: 0;
+    }
+    .notif-page-header {
+        margin-bottom: 32px;
+    }
+    .notif-page-header h1 {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+        margin: 0 0 8px 0;
+    }
+    .notif-page-header p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    .notif-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+        border-left: 5px solid #0ea5e9;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        transition: all 0.2s ease;
+    }
+    .notif-card:hover {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    .notif-card-content {
+        flex: 1;
+    }
+    .notif-card-message {
+        margin: 0 0 8px 0;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    .notif-card-date {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    .notif-card-link {
+        display: inline-block;
+        margin-top: 10px;
+        color: #0ea5e9;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
+    .notif-card-link:hover {
+        color: #0284c7;
+    }
+    .notif-delete-btn {
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: #94a3b8;
+        padding: 4px 8px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        margin-left: 16px;
+        flex-shrink: 0;
+    }
+    .notif-delete-btn:hover {
+        color: #ef4444;
+        background: #fef2f2;
+    }
+    .notif-empty {
+        text-align: center;
+        padding: 60px 20px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+    }
+    .notif-empty p {
+        font-size: 1.1rem;
+        color: #64748b;
+    }
+    .alert-success-custom {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        font-weight: 600;
+    }
+    @media (max-width: 768px) {
+        .notif-page-container { padding: 20px 16px; }
+    }
+</style>
+@endsection
 
 @section('content')
-<div style="max-width: 800px; margin: 30px auto; padding: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div>
-            <h2>Centro de Notificaciones</h2>
-            <p>Todas tus actividades y actualizaciones en un solo lugar.</p>
-        </div>
-        <a href="{{ route('dashboard') }}" style="text-decoration: none; background: #374151; color: white; padding: 8px 15px; border-radius: 8px; font-weight: 600;">← Volver</a>
-    </div>
+<div class="premium-dashboard-container">
+    @include(Auth::user()->role == 'Veterinario' ? 'partials.vet_sidebar' : 'partials.volunteer_sidebar')
 
-    @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 20px;">
-            {{ session('success') }}
-        </div>
-    @endif
+    <main class="dashboard-main-panel">
+        <div class="notif-page-container">
+            <div class="notif-page-header">
+                <h1>Centro de Notificaciones</h1>
+                <p>Todas tus actividades y actualizaciones en un solo lugar.</p>
+            </div>
 
-    @if($notifications->isEmpty())
-        <div style="text-align: center; padding: 60px 20px; background: #fff; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-            <p style="font-size: 1.1em; color: #666;">📭 No tienes notificaciones</p>
-        </div>
-    @else
-        <div style="margin-top: 20px;">
-            @foreach($notifications as $notif)
-                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid #0ea5e9; position: relative; display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="flex: 1;">
-                        <p style="margin: 0 0 8px 0; color: #1e293b; font-weight: 600;">{{ $notif->Noti_mensaje }}</p>
-                        <p style="margin: 0; font-size: 0.85em; color: #64748b;">
-                            <strong>Fecha:</strong> {{ $notif->Noti_fecha ? $notif->Noti_fecha->format('d/m/Y') : '-' }}
-                        </p>
-                        @if($notif->Noti_link)
-                            <a href="{{ $notif->Noti_link }}" style="display: inline-block; margin-top: 8px; color: #0ea5e9; text-decoration: none; font-weight: 600; font-size: 0.9em;">
-                                Ver más →
-                            </a>
-                        @endif
-                    </div>
-                    <form action="{{ route('notifications.delete', $notif->Noto_id) }}" method="POST" style="margin: 0; margin-left: 15px;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="background: none; border: none; font-size: 1.3em; cursor: pointer; color: #94a3b8; transition: color 0.3s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#94a3b8'" title="Eliminar notificación">
-                            ✕
-                        </button>
-                    </form>
+            @if(session('success'))
+                <div class="alert-success-custom">{{ session('success') }}</div>
+            @endif
+
+            @if($notifications->isEmpty())
+                <div class="notif-empty">
+                    <p>📭 No tienes notificaciones</p>
                 </div>
-            @endforeach
+            @else
+                <div>
+                    @foreach($notifications as $notif)
+                        <div class="notif-card">
+                            <div class="notif-card-content">
+                                <p class="notif-card-message">{{ $notif->Noti_mensaje }}</p>
+                                <p class="notif-card-date"><strong>Fecha:</strong> {{ $notif->Noti_fecha ? $notif->Noti_fecha->format('d/m/Y') : '-' }}</p>
+                                @if($notif->Noti_link)
+                                    <a href="{{ $notif->Noti_link }}" class="notif-card-link">Ver más →</a>
+                                @endif
+                            </div>
+                            <form action="{{ route('notifications.delete', $notif->Noto_id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="notif-delete-btn" title="Eliminar notificación">✕</button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
-    @endif
+    </main>
 </div>
 @endsection

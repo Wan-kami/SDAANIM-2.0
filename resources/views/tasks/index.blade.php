@@ -1,26 +1,250 @@
-@extends($layout)
+@extends('layouts.app')
 
-@section('title', 'Mis Tareas | SDAANIM')
+@section('panel-title', 'Mis Tareas')
+
+@section('styles')
+<style>
+    .tasks-page-container {
+        padding: 0;
+    }
+    .tasks-page-header {
+        margin-bottom: 32px;
+    }
+    .tasks-page-header h1 {
+        font-size: 1.85rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.5px;
+        margin: 0 0 8px 0;
+    }
+    .tasks-page-header p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    .task-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+        border-left: 5px solid #3b82f6;
+        transition: all 0.2s ease;
+    }
+    .task-card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        transform: translateY(-2px);
+    }
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .task-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+    }
+    .task-desc {
+        color: #64748b;
+        font-size: 0.92rem;
+        margin: 0 0 12px 0;
+        line-height: 1.5;
+    }
+    .task-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    .task-meta strong {
+        color: #475569;
+    }
+    .task-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 99px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+    }
+    .task-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+    }
+    .task-btn {
+        padding: 9px 20px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .task-btn:hover {
+        transform: translateY(-1px);
+    }
+    .btn-observation {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    .btn-observation:hover {
+        background: #fde68a;
+    }
+    .btn-process {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    .btn-process:hover {
+        background: #bfdbfe;
+    }
+    .btn-success {
+        background: #166534;
+        color: white;
+        box-shadow: 0 4px 10px rgba(22, 101, 52, 0.2);
+    }
+    .btn-success:hover {
+        background: #15803d;
+    }
+    .btn-update {
+        background: #f1f5f9;
+        color: #475569;
+    }
+    .btn-update:hover {
+        background: #e2e8f0;
+    }
+    .task-form-box {
+        background: #f8fafc;
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 20px;
+        border: 1px solid #f1f5f9;
+    }
+    .task-form-label {
+        display: block;
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+    }
+    .task-form-textarea {
+        width: 100%;
+        padding: 14px 18px;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        background: #ffffff;
+        font-size: 0.92rem;
+        color: #1e293b;
+        resize: vertical;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        box-sizing: border-box;
+    }
+    .task-form-textarea:focus {
+        outline: none;
+        border-color: #16a34a;
+        box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
+    }
+    .adoption-info-box {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 20px;
+    }
+    .adoption-info-title {
+        color: #166534;
+        margin: 0 0 16px 0;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+    .adoption-info-box p {
+        margin: 6px 0;
+        font-size: 0.9rem;
+        color: #475569;
+    }
+    .task-empty {
+        text-align: center;
+        padding: 60px 20px;
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
+    }
+    .task-empty h3 {
+        color: #64748b;
+        margin: 16px 0 8px;
+    }
+    .task-empty p {
+        color: #94a3b8;
+        margin: 0 0 20px;
+    }
+    .alert-success-custom {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        font-weight: 600;
+    }
+    .apto-button {
+        flex: 1;
+        padding: 14px 18px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 150px;
+    }
+    .apto-button:hover {
+        transform: translateY(-1px);
+    }
+    .apto-selected {
+        color: white !important;
+    }
+    .apto-button[data-value="1"].apto-selected {
+        background-color: #16a34a !important;
+        border-color: #15803d !important;
+    }
+    .apto-button[data-value="0"].apto-selected {
+        background-color: #dc2626 !important;
+        border-color: #b91c1c !important;
+    }
+    @media (max-width: 768px) {
+        .tasks-page-container { padding: 20px 16px; }
+        .task-header { flex-direction: column; }
+        .task-card { padding: 20px; }
+    }
+</style>
+@endsection
 
 @section('content')
-<div style="max-width: 900px; margin: 30px auto; padding: 20px;">
+<div class="premium-dashboard-container">
+    @include(Auth::user()->role == 'Veterinario' ? 'partials.vet_sidebar' : 'partials.volunteer_sidebar')
 
-    <a href="{{ route('dashboard') }}" style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; background: #ffffff; color: #475569; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.95em; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s ease;" onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#cbd5e1'; this.style.transform='translateY(-1px)';" onmouseout="this.style.backgroundColor='#ffffff'; this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)';">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Volver al Panel
-    </a>
-    <h2>Mis Tareas Asignadas</h2>
-    <p>Lista de actividades pendientes para el refugio.</p>
+    <main class="dashboard-main-panel">
+        <div class="tasks-page-container">
+            <div class="tasks-page-header">
+                <h1>Mis Tareas Asignadas</h1>
+                <p>Lista de actividades pendientes para el refugio.</p>
+            </div>
 
-    {{-- Mensaje de éxito --}}
-    @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-            {{ session('success') }}
-        </div>
-    @endif
+            @if(session('success'))
+                <div class="alert-success-custom">{{ session('success') }}</div>
+            @endif
 
-    <div style="margin-top: 20px;">
-        @forelse($tasks as $task)
+            <div>
+                @forelse($tasks as $task)
 
             @php
                 $estado = $task->Tar_estado;
@@ -191,7 +415,8 @@
             </div>
         @endforelse
 
-    </div>
+        </div>
+    </main>
 </div>
 
 <script>
@@ -221,19 +446,5 @@
         return true;
     }
 </script>
-
-<style>
-    .apto-selected {
-        color: white !important;
-    }
-    .apto-button[data-value="1"].apto-selected {
-        background-color: #16a34a !important;
-        border-color: #15803d !important;
-    }
-    .apto-button[data-value="0"].apto-selected {
-        background-color: #dc2626 !important;
-        border-color: #b91c1c !important;
-    }
-</style>
 
 @endsection

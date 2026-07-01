@@ -144,6 +144,7 @@ Route::middleware(['auth'])->group(function () {
         // Completar tarea (con comentario)
         Route::post('/tareas/{id}/completar', [TaskController::class, 'complete'])->name('tasks.complete');
         Route::post('/tareas/{id}/comentar', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
+        Route::delete('/progreso/{id}', [TaskController::class, 'removeFromProgress'])->name('tasks.removeProgress');
     });
 
     // VET PANEL
@@ -159,6 +160,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/tareas/{id}/estado', [TaskController::class, 'updateStatus'])->name('tasks.updateStatus');
         Route::post('/tareas/{id}/completar', [TaskController::class, 'complete'])->name('tasks.complete');
         Route::post('/tareas/{id}/comentar', [TaskController::class, 'updateComment'])->name('tasks.updateComment');
+        Route::delete('/progreso/{id}', [TaskController::class, 'removeFromProgress'])->name('tasks.removeProgress');
     });
 
     Route::post('/notificaciones/leer', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notificaciones.leer');

@@ -141,6 +141,26 @@ class TaskController extends Controller
     }
 
     /**
+     * Quitar tarea completada del progreso (solo el dueño, solo completadas)
+     */
+    public function removeFromProgress($id)
+    {
+        $task = Task::findOrFail($id);
+
+        if ($task->Usu_documento != Auth::user()->Usu_documento) {
+            abort(403, 'No autorizado.');
+        }
+
+        if ($task->Tar_estado !== 'Completado') {
+            return back()->with('error', 'Solo puedes eliminar tareas completadas.');
+        }
+
+        $task->delete();
+
+        return back()->with('success', 'Tarea eliminada del historial.');
+    }
+
+    /**
      * LISTAR todas las tareas para el ADMIN, con voluntarios y veterinarios
      */
     public function adminIndex(Request $request)

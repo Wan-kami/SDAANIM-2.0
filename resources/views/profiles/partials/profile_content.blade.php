@@ -178,8 +178,7 @@
 <style>
     /* Premium Profile Styles */
     .profile-premium-card {
-        max-width: 850px;
-        margin: 40px auto;
+        width: 100%;
         background: #ffffff;
         border-radius: 24px;
         box-shadow: 0 20px 50px rgba(0,0,0,0.06);
@@ -187,6 +186,7 @@
         padding: 50px;
         position: relative;
         overflow: hidden;
+        box-sizing: border-box;
     }
 
     /* Back Button */
@@ -620,7 +620,7 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-        .profile-premium-card { padding: 30px 20px; margin: 20px; }
+        .profile-premium-card { padding: 30px 20px; }
         .info-grid, .form-grid { grid-template-columns: 1fr; }
         .tab-btn { padding: 10px 15px; font-size: 0.85rem; }
         .btn-back-professional { top: 15px; left: 15px; padding: 8px 12px; }

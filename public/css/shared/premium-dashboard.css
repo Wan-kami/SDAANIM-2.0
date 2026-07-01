@@ -35,6 +35,7 @@
         display: grid;
         grid-template-columns: 280px 1fr;
         min-height: 100vh;
+        width: 100%;
         background-color: #f8fafc;
         color: #1e293b;
         font-family: 'Montserrat', sans-serif;
@@ -255,6 +256,8 @@
         padding: 32px 40px;
         overflow-y: auto;
         height: 100vh;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .main-panel-header {
